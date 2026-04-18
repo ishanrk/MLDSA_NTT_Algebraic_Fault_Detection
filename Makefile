@@ -5,21 +5,27 @@ SEED =
 CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -Wconversion -Wshadow $(OPT) $(SAN) -fno-omit-frame-pointer
 CPPFLAGS = -Iinclude
 
-.PHONY: test model clean
+.PHONY: test model shake vectors clean
 
 build/test_poly: test/test_poly.c src/poly.c src/ntt.c src/zetas.inc include/mldsa_poly.h
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) test/test_poly.c src/poly.c src/ntt.c -o $@
 
-build/libmldsa.so: src/poly.c src/ntt.c src/zetas.inc include/mldsa_poly.h
+build/libmldsa.so: src/poly.c src/ntt.c src/zetas.inc include/mldsa_poly.h src/shake.c src/keccak_tables.inc include/mldsa_shake.h
 	mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) -fPIC -shared src/poly.c src/ntt.c -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) -fPIC -shared src/poly.c src/ntt.c src/shake.c -o $@
 
 test: build/test_poly
 	./build/test_poly $(SEED)
 
 model: build/libmldsa.so
 	python3 tools/check_model.py build/libmldsa.so
+
+vectors:
+	python3 tools/fetch_nist.py
+
+shake: build/libmldsa.so vectors
+	python3 test/test_shake.py build/libmldsa.so build/nist
 
 clean:
 	rm -rf build
