@@ -11,12 +11,17 @@ build/test_poly: test/test_poly.c src/poly.c src/ntt.c src/zetas.inc include/mld
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) test/test_poly.c src/poly.c src/ntt.c -o $@
 
+build/test_round: test/test_round.c src/round.c src/poly.c src/mldsa44_internal.h
+	mkdir -p build
+	$(CC) $(CPPFLAGS) -Isrc $(CFLAGS) test/test_round.c src/round.c src/poly.c src/ntt.c -o $@
+
 build/libmldsa.so: src/poly.c src/ntt.c src/zetas.inc include/mldsa_poly.h src/shake.c src/keccak_tables.inc include/mldsa_shake.h
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -fPIC -shared src/poly.c src/ntt.c src/shake.c -o $@
 
-test: build/test_poly
+test: build/test_poly build/test_round
 	./build/test_poly $(SEED)
+	./build/test_round
 
 model: build/libmldsa.so
 	python3 tools/check_model.py build/libmldsa.so
