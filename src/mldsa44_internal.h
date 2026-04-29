@@ -13,7 +13,11 @@ enum {
     MLDSA44_GAMMA1 = 131072,
     MLDSA44_GAMMA2 = 95232,
     MLDSA44_OMEGA = 80,
-    MLDSA44_ALPHA = 190464
+    MLDSA44_ALPHA = 190464,
+    MLDSA44_PK_BYTES = 1312,
+    MLDSA44_SK_BYTES = 2560,
+    MLDSA44_SIG_BYTES = 2420,
+    MLDSA44_W1_BYTES = 768
 };
 
 void mldsa44_power2round(uint32_t r, uint32_t *hi, int32_t *lo);
@@ -23,5 +27,22 @@ int32_t mldsa44_lowbits(uint32_t r);
 uint8_t mldsa44_make_hint(uint32_t z, uint32_t r);
 uint32_t mldsa44_use_hint(uint8_t h, uint32_t r);
 int mldsa44_norm(const mldsa_poly *a, uint32_t bound);
+
+void mldsa44_pk_encode(uint8_t out[MLDSA44_PK_BYTES], const uint8_t rho[32],
+                       const mldsa_poly t1[4]);
+void mldsa44_pk_decode(uint8_t rho[32], mldsa_poly t1[4],
+                       const uint8_t in[MLDSA44_PK_BYTES]);
+void mldsa44_sk_encode(uint8_t out[MLDSA44_SK_BYTES], const uint8_t rho[32],
+                       const uint8_t key[32], const uint8_t tr[64],
+                       const mldsa_poly s1[4], const mldsa_poly s2[4],
+                       const mldsa_poly t0[4]);
+int mldsa44_sk_decode(uint8_t rho[32], uint8_t key[32], uint8_t tr[64],
+                      mldsa_poly s1[4], mldsa_poly s2[4], mldsa_poly t0[4],
+                      const uint8_t in[MLDSA44_SK_BYTES]);
+int mldsa44_sig_encode(uint8_t out[MLDSA44_SIG_BYTES], const uint8_t c[32],
+                       const mldsa_poly z[4], uint8_t h[4][256]);
+int mldsa44_sig_decode(uint8_t c[32], mldsa_poly z[4], uint8_t h[4][256],
+                       const uint8_t in[MLDSA44_SIG_BYTES]);
+void mldsa44_w1_encode(uint8_t out[MLDSA44_W1_BYTES], const mldsa_poly w1[4]);
 
 #endif
