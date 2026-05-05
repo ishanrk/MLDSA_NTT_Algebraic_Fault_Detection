@@ -27,6 +27,12 @@ int32_t mldsa44_lowbits(uint32_t r);
 uint8_t mldsa44_make_hint(uint32_t z, uint32_t r);
 uint32_t mldsa44_use_hint(uint8_t h, uint32_t r);
 int mldsa44_norm(const mldsa_poly *a, uint32_t bound);
+int mldsa44_unpack_bits(mldsa_poly *a, const uint8_t *in, unsigned bits,
+                        int32_t top, uint32_t max, int signed_coeff);
+void mldsa44_expand_a(mldsa_ntt a[4][4], const uint8_t rho[32]);
+void mldsa44_expand_s(mldsa_poly s1[4], mldsa_poly s2[4], const uint8_t rho[64]);
+void mldsa44_expand_mask(mldsa_poly y[4], const uint8_t rho[64], uint32_t nonce);
+void mldsa44_sample_ball(mldsa_poly *c, const uint8_t seed[32]);
 
 void mldsa44_pk_encode(uint8_t out[MLDSA44_PK_BYTES], const uint8_t rho[32],
                        const mldsa_poly t1[4]);

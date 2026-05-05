@@ -16,8 +16,8 @@ static void pack(uint8_t *out, const mldsa_poly *a, unsigned bits,
     }
 }
 
-static int unpack(mldsa_poly *a, const uint8_t *in, unsigned bits,
-                  int32_t top, uint32_t max, int signed_coeff)
+int mldsa44_unpack_bits(mldsa_poly *a, const uint8_t *in, unsigned bits,
+                        int32_t top, uint32_t max, int signed_coeff)
 {
     for (unsigned i = 0; i < MLDSA_N; i++) {
         uint32_t v = 0;
@@ -45,7 +45,7 @@ void mldsa44_pk_decode(uint8_t rho[32], mldsa_poly t1[4],
 {
     memcpy(rho, in, 32);
     for (unsigned i = 0; i < 4; i++)
-        (void)unpack(&t1[i], in + 32U + 320U * i, 10, 0, 1023U, 0);
+        (void)mldsa44_unpack_bits(&t1[i], in + 32U + 320U * i, 10, 0, 1023U, 0);
 }
 
 void mldsa44_sk_encode(uint8_t out[MLDSA44_SK_BYTES], const uint8_t rho[32],
@@ -71,9 +71,9 @@ int mldsa44_sk_decode(uint8_t rho[32], uint8_t key[32], uint8_t tr[64],
     memcpy(key, in + 32, 32);
     memcpy(tr, in + 64, 64);
     for (unsigned i = 0; i < 4; i++) {
-        if (unpack(&s1[i], in + 128U + 96U * i, 3, 2, 4U, 1) ||
-            unpack(&s2[i], in + 512U + 96U * i, 3, 2, 4U, 1) ||
-            unpack(&t0[i], in + 896U + 416U * i, 13, 4096, 8191U, 1))
+        if (mldsa44_unpack_bits(&s1[i], in + 128U + 96U * i, 3, 2, 4U, 1) ||
+            mldsa44_unpack_bits(&s2[i], in + 512U + 96U * i, 3, 2, 4U, 1) ||
+            mldsa44_unpack_bits(&t0[i], in + 896U + 416U * i, 13, 4096, 8191U, 1))
             return -1;
     }
     return 0;
@@ -110,7 +110,7 @@ int mldsa44_sig_decode(uint8_t c[32], mldsa_poly z[4], uint8_t h[4][256],
 
     memcpy(c, in, 32);
     for (unsigned i = 0; i < 4; i++)
-        (void)unpack(&z[i], in + 32U + 576U * i, 18, 131072, 262143U, 1);
+        (void)mldsa44_unpack_bits(&z[i], in + 32U + 576U * i, 18, 131072, 262143U, 1);
     memset(h, 0, 4U * 256U);
     for (unsigned i = 0; i < 4; i++) {
         unsigned end = tail[MLDSA44_OMEGA + i];
