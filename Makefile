@@ -5,7 +5,7 @@ SEED =
 CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -Wconversion -Wshadow $(OPT) $(SAN) -fno-omit-frame-pointer
 CPPFLAGS = -Iinclude
 
-.PHONY: test model shake sample vectors clean
+.PHONY: test model shake sample keygen vectors clean
 
 build/test_poly: test/test_poly.c src/poly.c src/ntt.c src/zetas.inc include/mldsa_poly.h
 	mkdir -p build
@@ -19,9 +19,9 @@ build/test_encode: test/test_encode.c src/encode.c src/poly.c src/mldsa44_intern
 	mkdir -p build
 	$(CC) $(CPPFLAGS) -Isrc $(CFLAGS) test/test_encode.c src/encode.c src/poly.c src/ntt.c -o $@
 
-build/libmldsa.so: src/poly.c src/ntt.c src/zetas.inc include/mldsa_poly.h src/shake.c src/keccak_tables.inc include/mldsa_shake.h src/round.c src/encode.c src/sample.c src/mldsa44_internal.h
+build/libmldsa.so: src/poly.c src/ntt.c src/zetas.inc include/mldsa_poly.h src/shake.c src/keccak_tables.inc include/mldsa_shake.h src/round.c src/encode.c src/sample.c src/vector.c src/keygen.c src/mldsa44_internal.h include/mldsa44.h
 	mkdir -p build
-	$(CC) $(CPPFLAGS) -Isrc $(CFLAGS) -fPIC -shared src/poly.c src/ntt.c src/shake.c src/round.c src/encode.c src/sample.c -o $@
+	$(CC) $(CPPFLAGS) -Isrc $(CFLAGS) -fPIC -shared src/poly.c src/ntt.c src/shake.c src/round.c src/encode.c src/sample.c src/vector.c src/keygen.c -o $@
 
 test: build/test_poly build/test_round build/test_encode
 	./build/test_poly $(SEED)
@@ -39,6 +39,9 @@ shake: build/libmldsa.so vectors
 
 sample: build/libmldsa.so
 	python3 test/test_sample.py build/libmldsa.so
+
+keygen: build/libmldsa.so vectors
+	python3 test/test_keygen.py build/libmldsa.so build/nist
 
 clean:
 	rm -rf build

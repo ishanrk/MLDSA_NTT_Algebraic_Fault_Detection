@@ -33,6 +33,8 @@ void mldsa44_expand_a(mldsa_ntt a[4][4], const uint8_t rho[32]);
 void mldsa44_expand_s(mldsa_poly s1[4], mldsa_poly s2[4], const uint8_t rho[64]);
 void mldsa44_expand_mask(mldsa_poly y[4], const uint8_t rho[64], uint32_t nonce);
 void mldsa44_sample_ball(mldsa_poly *c, const uint8_t seed[32]);
+void mldsa44_matvec(mldsa_poly out[4], mldsa_ntt a[4][4], const mldsa_ntt v[4]);
+void mldsa44_mul_ntt(mldsa_poly *out, const mldsa_ntt *a, const mldsa_ntt *b);
 
 void mldsa44_pk_encode(uint8_t out[MLDSA44_PK_BYTES], const uint8_t rho[32],
                        const mldsa_poly t1[4]);
