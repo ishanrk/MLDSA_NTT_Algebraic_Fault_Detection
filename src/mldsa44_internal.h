@@ -53,7 +53,9 @@ int mldsa44_sig_encode(uint8_t out[MLDSA44_SIG_BYTES], const uint8_t c[32],
 int mldsa44_sig_decode(uint8_t c[32], mldsa_poly z[4], uint8_t h[4][256],
                        const uint8_t in[MLDSA44_SIG_BYTES]);
 void mldsa44_w1_encode(uint8_t out[MLDSA44_W1_BYTES], const mldsa_poly w1[4]);
+size_t mldsa44_digest_len(unsigned hash);
 void mldsa44_representative(uint8_t mu[64], const uint8_t tr[64],
+                            unsigned hash,
                             const uint8_t *msg, size_t mlen,
                             const uint8_t *ctx, size_t clen);
 

@@ -2,10 +2,10 @@
 #include "mldsa44_internal.h"
 #include "mldsa_shake.h"
 
-int mldsa44_verify(const uint8_t *pk, size_t pklen,
-                   const uint8_t *msg, size_t mlen,
-                   const uint8_t *ctx, size_t clen,
-                   const uint8_t *sig, size_t siglen)
+static int verify_core(const uint8_t *pk, size_t pklen,
+                       unsigned hash, const uint8_t *msg, size_t mlen,
+                       const uint8_t *ctx, size_t clen,
+                       const uint8_t *sig, size_t siglen)
 {
     uint8_t rho[32], tr[64], mu[64], ctilde[32], check[32];
     uint8_t w1bytes[MLDSA44_W1_BYTES], h[4][256];
@@ -25,7 +25,7 @@ int mldsa44_verify(const uint8_t *pk, size_t pklen,
             return -1;
     }
     mldsa_shake256(tr, 64, pk, pklen);
-    mldsa44_representative(mu, tr, msg, mlen, ctx, clen);
+    mldsa44_representative(mu, tr, hash, msg, mlen, ctx, clen);
     mldsa44_sample_ball(&c, ctilde);
     mldsa_ntt_forward(&cn, &c);
     mldsa44_expand_a(a, rho);
@@ -52,4 +52,22 @@ int mldsa44_verify(const uint8_t *pk, size_t pklen,
     for (unsigned i = 0; i < 32; i++)
         diff |= (unsigned)(ctilde[i] ^ check[i]);
     return diff ? -1 : 0;
+}
+
+int mldsa44_verify(const uint8_t *pk, size_t pklen,
+                   const uint8_t *msg, size_t mlen,
+                   const uint8_t *ctx, size_t clen,
+                   const uint8_t *sig, size_t siglen)
+{
+    return verify_core(pk, pklen, 0, msg, mlen, ctx, clen, sig, siglen);
+}
+
+int mldsa44_verify_digest(const uint8_t *pk, size_t pklen,
+                          unsigned hash, const uint8_t *digest, size_t dlen,
+                          const uint8_t *ctx, size_t clen,
+                          const uint8_t *sig, size_t siglen)
+{
+    if (dlen == 0U || dlen != mldsa44_digest_len(hash))
+        return -1;
+    return verify_core(pk, pklen, hash, digest, dlen, ctx, clen, sig, siglen);
 }

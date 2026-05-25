@@ -4,11 +4,11 @@
 
 #include <string.h>
 
-int mldsa44_sign(uint8_t sig[MLDSA44_SIGNATURE_BYTES],
-                 const uint8_t *sk, size_t sklen,
-                 const uint8_t *msg, size_t mlen,
-                 const uint8_t *ctx, size_t clen,
-                 const uint8_t rnd[MLDSA44_RANDOM_BYTES])
+static int sign_core(uint8_t sig[MLDSA44_SIGNATURE_BYTES],
+                     const uint8_t *sk, size_t sklen,
+                     unsigned hash, const uint8_t *msg, size_t mlen,
+                     const uint8_t *ctx, size_t clen,
+                     const uint8_t rnd[MLDSA44_RANDOM_BYTES])
 {
     uint8_t rho[32], key[32], tr[64], mu[64], rhopp[64], in[128];
     uint8_t ctilde[32], w1bytes[MLDSA44_W1_BYTES], h[4][256];
@@ -29,7 +29,7 @@ int mldsa44_sign(uint8_t sig[MLDSA44_SIGNATURE_BYTES],
         mldsa_ntt_forward(&s2n[i], &s2[i]);
         mldsa_ntt_forward(&t0n[i], &t0[i]);
     }
-    mldsa44_representative(mu, tr, msg, mlen, ctx, clen);
+    mldsa44_representative(mu, tr, hash, msg, mlen, ctx, clen);
     memcpy(in, key, 32);
     memcpy(in + 32, rnd, 32);
     memcpy(in + 64, mu, 64);
@@ -86,4 +86,24 @@ int mldsa44_sign(uint8_t sig[MLDSA44_SIGNATURE_BYTES],
             continue;
         return mldsa44_sig_encode(sig, ctilde, z, h);
     }
+}
+
+int mldsa44_sign(uint8_t sig[MLDSA44_SIGNATURE_BYTES],
+                 const uint8_t *sk, size_t sklen,
+                 const uint8_t *msg, size_t mlen,
+                 const uint8_t *ctx, size_t clen,
+                 const uint8_t rnd[MLDSA44_RANDOM_BYTES])
+{
+    return sign_core(sig, sk, sklen, 0, msg, mlen, ctx, clen, rnd);
+}
+
+int mldsa44_sign_digest(uint8_t sig[MLDSA44_SIGNATURE_BYTES],
+                        const uint8_t *sk, size_t sklen,
+                        unsigned hash, const uint8_t *digest, size_t dlen,
+                        const uint8_t *ctx, size_t clen,
+                        const uint8_t rnd[MLDSA44_RANDOM_BYTES])
+{
+    if (dlen == 0U || dlen != mldsa44_digest_len(hash))
+        return -1;
+    return sign_core(sig, sk, sklen, hash, digest, dlen, ctx, clen, rnd);
 }
