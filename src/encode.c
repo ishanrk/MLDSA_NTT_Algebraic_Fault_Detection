@@ -23,7 +23,7 @@ int mldsa44_unpack_bits(mldsa_poly *a, const uint8_t *in, unsigned bits,
         uint32_t v = 0;
         for (unsigned j = 0; j < bits; j++) {
             unsigned pos = i * bits + j;
-            v |= (uint32_t)((in[pos / 8U] >> (pos % 8U)) & 1U) << j;
+            v |= (((uint32_t)in[pos / 8U] >> (pos % 8U)) & 1U) << j;
         }
         if (v > max)
             return -1;

@@ -91,7 +91,7 @@ int main(void)
             uint32_t v = 0;
             for (unsigned k = 0; k < 6; k++) {
                 unsigned pos = j * 6U + k;
-                v |= (uint32_t)((w1bytes[192U * i + pos / 8U] >> (pos % 8U)) & 1U) << k;
+                v |= (((uint32_t)w1bytes[192U * i + pos / 8U] >> (pos % 8U)) & 1U) << k;
             }
             if (v != w1[i].c[j])
                 abort();

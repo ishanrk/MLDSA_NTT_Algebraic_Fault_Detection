@@ -6,7 +6,7 @@ CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -Wconversion -Wshadow $(OPT) $(SAN) -
 CPPFLAGS = -Iinclude
 SRC = src/poly.c src/ntt.c src/shake.c src/round.c src/encode.c src/sample.c src/vector.c src/keygen.c src/sign.c src/verify.c src/message.c
 
-.PHONY: test model shake sample keygen sign verify prehash vectors clean
+.PHONY: test model shake sample keygen sign verify prehash differential vectors clean
 
 build/test_poly: test/test_poly.c src/poly.c src/ntt.c src/zetas.inc include/mldsa_poly.h
 	mkdir -p build
@@ -57,6 +57,9 @@ verify: build/libmldsa.so vectors
 
 prehash: build/libmldsa.so vectors
 	python3 test/test_prehash.py build/libmldsa.so build/nist
+
+differential: build/libmldsa.so
+	PYTHONPATH=build/oracle python3 test/test_differential.py build/libmldsa.so
 
 clean:
 	rm -rf build

@@ -1,13 +1,22 @@
+#include "mldsa44.h"
 #include "mldsa44_internal.h"
 #include "mldsa_shake.h"
 
 size_t mldsa44_digest_len(unsigned hash)
 {
     switch (hash) {
-    case 4: case 5: case 7: return 28;
-    case 1: case 6: case 8: case 11: return 32;
-    case 2: case 9: return 48;
-    case 3: case 10: case 12: return 64;
+    case MLDSA44_SHA2_224:
+    case MLDSA44_SHA2_512_224:
+    case MLDSA44_SHA3_224: return 28;
+    case MLDSA44_SHA2_256:
+    case MLDSA44_SHA2_512_256:
+    case MLDSA44_SHA3_256:
+    case MLDSA44_SHAKE128: return 32;
+    case MLDSA44_SHA2_384:
+    case MLDSA44_SHA3_384: return 48;
+    case MLDSA44_SHA2_512:
+    case MLDSA44_SHA3_512:
+    case MLDSA44_SHAKE256: return 64;
     default: return 0;
     }
 }

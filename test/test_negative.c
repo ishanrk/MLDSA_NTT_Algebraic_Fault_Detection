@@ -125,6 +125,15 @@ int main(void)
     if (mldsa44_sign(tmp, sk, sizeof sk, msg, sizeof msg,
                      ctx, sizeof ctx, rnd) == 0)
         abort();
+    if (mldsa44_sign_digest(tmp, sk, sizeof sk, 13, seed, 32,
+                            ctx, sizeof ctx, rnd) == 0 ||
+        mldsa44_sign_digest(tmp, sk, sizeof sk, MLDSA44_SHA2_256,
+                            seed, 31, ctx, sizeof ctx, rnd) == 0 ||
+        mldsa44_verify_digest(pk, sizeof pk, 13, seed, 32,
+                              ctx, sizeof ctx, sig, sizeof sig) == 0 ||
+        mldsa44_verify_digest(pk, sizeof pk, MLDSA44_SHA2_256, seed, 31,
+                              ctx, sizeof ctx, sig, sizeof sig) == 0)
+        abort();
     puts("negative verification and secret decode passed");
     printf("negative cases: %u\n", cases);
     return EXIT_SUCCESS;

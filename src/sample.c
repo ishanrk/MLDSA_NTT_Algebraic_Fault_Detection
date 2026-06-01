@@ -90,7 +90,7 @@ void mldsa44_sample_ball(mldsa_poly *c, const uint8_t seed[32])
             mldsa_shake_squeeze(&s, &j, 1);
         } while (j > i);
         c->c[i] = c->c[j];
-        c->c[j] = (signs[(i + MLDSA44_TAU - MLDSA_N) / 8U] >>
+        c->c[j] = ((uint32_t)signs[(i + MLDSA44_TAU - MLDSA_N) / 8U] >>
                    ((i + MLDSA44_TAU - MLDSA_N) % 8U)) & 1U ? MLDSA_Q - 1U : 1U;
     }
 }
