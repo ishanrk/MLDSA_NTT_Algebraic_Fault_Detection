@@ -14,8 +14,9 @@ ARM_CFLAGS = -mcpu=cortex-m4 -mthumb -mfloat-abi=soft -std=c11 -O2 -ffreestandin
 ARM_COMMON = $(SRC) platform/cortexm4/startup.c platform/cortexm4/mps2_io.c
 ARM_SRC = $(ARM_COMMON) platform/cortexm4/test_main.c
 ARM_DEPS = $(wildcard include/*.h) src/mldsa44_internal.h src/zetas.inc src/keccak_tables.inc platform/cortexm4/platform.h
+ARM_BENCH = $(ARM_COMMON) platform/cortexm4/core.c platform/cortexm4/bench_main.c
 
-.PHONY: test model shake sample keygen sign verify prehash differential vectors arm-mps2 clean
+.PHONY: test model shake sample keygen sign verify prehash differential vectors arm-mps2 arm-mps2-bench clean
 
 build/test_poly: test/test_poly.c src/poly.c src/ntt.c src/zetas.inc include/mldsa_poly.h
 	mkdir -p build
@@ -79,6 +80,13 @@ build/arm/mps2.bin: build/arm/mps2.elf
 
 arm-mps2: build/arm/mps2.bin
 	$(ARM_SIZE) build/arm/mps2.elf
+
+build/arm/mps2_bench.elf: $(ARM_BENCH) $(ARM_DEPS) platform/cortexm4/core.h platform/cortexm4/mps2.ld
+	mkdir -p build/arm
+	$(ARM_CC) $(CPPFLAGS) -Isrc -Iplatform/cortexm4 $(ARM_INC) $(ARM_CFLAGS) $(ARM_BENCH) -nostartfiles -nostdlib -Wl,--gc-sections -Wl,-Map,build/arm/mps2_bench.map -Tplatform/cortexm4/mps2.ld $(ARM_LIB) -lc -lgcc -o $@
+
+arm-mps2-bench: build/arm/mps2_bench.elf
+	$(ARM_SIZE) build/arm/mps2_bench.elf
 
 clean:
 	rm -rf build

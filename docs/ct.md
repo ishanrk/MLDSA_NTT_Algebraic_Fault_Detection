@@ -35,3 +35,7 @@ This stage has not established constant time behavior. The locations below need 
 - Inspect rotations and 64-bit operations in `src/shake.c`; Keccak-f[1600] uses 25 64-bit lanes and may be costly on a 32-bit core.
 - Inspect compiler output for conditional branches, table access, and spills in sampling, signing, and encoding. Current tests establish functional behavior only.
 - Ensure an embedded caller supplies independent signing randomness. Reusing the same `rnd` with a key and message changes the standardized hedging behavior.
+
+## Observed in the portable ARM build
+
+With `arm-none-eabi-gcc` 10.3.1 at `-O2 -mcpu=cortex-m4 -mthumb -mfloat-abi=soft`, disassembly of the emulator baseline shows `mldsa_mul` calling `__aeabi_uldivmod` after `umull`. Its `__udivmoddi4` callee uses `udiv` and conditional branches. `mldsa_add` branches on its result; `mldsa_sub` uses conditional Thumb instructions. `mldsa44_norm` exits early, and `mldsa44_sample_ball` uses a sampled coefficient index for both a load and a store. The NTT calls modular multiplication inside each butterfly. These are generated-code observations, not timing or physical leakage measurements. The actual STM32 core revision, memory system, compiler options, and physical side-channel behavior remain unknown until the board is identified.
