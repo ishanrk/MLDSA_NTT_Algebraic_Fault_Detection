@@ -4,7 +4,7 @@ SAN =
 SEED =
 CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -Wconversion -Wshadow $(OPT) $(SAN) -fno-omit-frame-pointer
 CPPFLAGS = -Iinclude
-SRC = src/poly.c src/ntt.c src/shake.c src/round.c src/encode.c src/sample.c src/vector.c src/keygen.c src/sign.c src/verify.c src/message.c
+SRC = src/poly.c src/ntt.c src/prior.c src/shake.c src/round.c src/encode.c src/sample.c src/vector.c src/keygen.c src/sign.c src/verify.c src/message.c
 ARM_CC = arm-none-eabi-gcc
 ARM_OBJCOPY = arm-none-eabi-objcopy
 ARM_SIZE = arm-none-eabi-size
@@ -30,9 +30,21 @@ build/test_encode: test/test_encode.c src/encode.c src/poly.c src/mldsa44_intern
 	mkdir -p build
 	$(CC) $(CPPFLAGS) -Isrc $(CFLAGS) test/test_encode.c src/encode.c src/poly.c src/ntt.c -o $@
 
-build/libmldsa.so: src/poly.c src/ntt.c src/zetas.inc include/mldsa_poly.h src/shake.c src/keccak_tables.inc include/mldsa_shake.h src/round.c src/encode.c src/sample.c src/vector.c src/keygen.c src/sign.c src/verify.c src/message.c src/mldsa44_internal.h include/mldsa44.h
+build/libmldsa.so: $(SRC) src/zetas.inc src/prior_tables.inc src/keccak_tables.inc src/mldsa44_internal.h $(wildcard include/*.h)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) -Isrc $(CFLAGS) -fPIC -shared $(SRC) -o $@
+
+build/libmldsa_prior.so: $(SRC) src/zetas.inc src/prior_tables.inc src/keccak_tables.inc src/mldsa44_internal.h $(wildcard include/*.h)
+	mkdir -p build
+	$(CC) $(CPPFLAGS) -Isrc $(CFLAGS) -DMLDSA_PRIOR_CHECKER -fPIC -shared $(SRC) -o $@
+
+build/test_prior: $(SRC) test/prior_cases.c test/prior_cases.h test/host_io.c platform/cortexm4/test_main.c platform/cortexm4/mps2_vectors.inc src/prior_tables.inc $(ARM_DEPS)
+	mkdir -p build
+	$(CC) $(CPPFLAGS) -Isrc -Itest -Iplatform/cortexm4 $(CFLAGS) -DMLDSA_PRIOR_CHECKER -DMLDSA_TEST_FAULTS platform/cortexm4/test_main.c test/prior_cases.c test/host_io.c $(SRC) -o $@
+
+.PHONY: prior
+prior: build/test_prior
+	./build/test_prior
 
 build/test_negative: test/test_negative.c $(SRC) include/mldsa44.h
 	mkdir -p build

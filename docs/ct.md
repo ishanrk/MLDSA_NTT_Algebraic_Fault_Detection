@@ -39,3 +39,7 @@ This stage has not established constant time behavior. The locations below need 
 ## Observed in the portable ARM build
 
 With `arm-none-eabi-gcc` 10.3.1 at `-O2 -mcpu=cortex-m4 -mthumb -mfloat-abi=soft`, disassembly of the emulator baseline shows `mldsa_mul` calling `__aeabi_uldivmod` after `umull`. Its `__udivmoddi4` callee uses `udiv` and conditional branches. `mldsa_add` branches on its result; `mldsa_sub` uses conditional Thumb instructions. `mldsa44_norm` exits early, and `mldsa44_sample_ball` uses a sampled coefficient index for both a load and a store. The NTT calls modular multiplication inside each butterfly. These are generated-code observations, not timing or physical leakage measurements. The actual STM32 core revision, memory system, compiler options, and physical side-channel behavior remain unknown until the board is identified.
+
+## Prior NTT checker
+
+`src/prior.c` visits every coefficient with public indices and a fixed iteration count. Its even/odd choice is public. The checksum arithmetic uses the existing modular functions and inherits their reduction and division concerns. The final decision reveals whether a checksum mismatch occurred; a mismatch exits the scheme operation. This code has not been established constant time. Checker constants, arithmetic, and control flow are trusted by the mathematical fault model.

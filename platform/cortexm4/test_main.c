@@ -2,6 +2,9 @@
 #include "mldsa_poly.h"
 #include "mldsa_shake.h"
 #include "platform.h"
+#ifdef MLDSA_PRIOR_CHECKER
+#include "prior_cases.h"
+#endif
 
 #include <stdint.h>
 
@@ -51,6 +54,11 @@ int main(void)
     const uint8_t ctx[] = "arm";
     uint32_t x = 20446U;
 
+#ifdef MLDSA_PRIOR_CHECKER
+    int rc = test_prior();
+    if (rc)
+        return 20 + rc;
+#endif
     mldsa_shake256(out, sizeof out, kat_shake_msg, sizeof kat_shake_msg);
     if (!same(out, kat_shake, sizeof out))
         return 1;
@@ -76,8 +84,8 @@ int main(void)
         return 5;
     platform_write("NTT fixed random PASS\n");
 
-    mldsa44_keygen(pk, sk, kat_seed);
-    if (!hash_matches(pk, sizeof pk, kat_pk) ||
+    if (mldsa44_keygen(pk, sk, kat_seed) ||
+        !hash_matches(pk, sizeof pk, kat_pk) ||
         !hash_matches(sk, sizeof sk, kat_sk))
         return 6;
     platform_write("KEYGEN PASS\n");
@@ -103,5 +111,21 @@ int main(void)
                         ctx, sizeof ctx - 1U, sig, sizeof sig))
         return 10;
     platform_write("VERIFY modified signature PASS\n");
+#ifdef MLDSA_PRIOR_CHECKER
+    sig[0] ^= 1U;
+    test_prior_inject(1, 1152, 17);
+    if (mldsa44_verify(pk, sizeof pk, msg, sizeof msg - 1U,
+                       ctx, sizeof ctx - 1U, sig, sizeof sig) != -1)
+        return 11;
+    test_prior_inject(1, 1152, 17);
+    if (mldsa44_sign(sig, sk, sizeof sk, msg, sizeof msg - 1U,
+                     ctx, sizeof ctx - 1U, rnd) != -1)
+        return 12;
+    test_prior_inject(1, 1152, 17);
+    if (mldsa44_keygen(pk, sk, kat_seed) != -1)
+        return 13;
+    test_prior_inject(0, 0, 0);
+    platform_write("PRIOR scheme fault propagation PASS\n");
+#endif
     return 0;
 }

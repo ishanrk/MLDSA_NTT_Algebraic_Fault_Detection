@@ -25,9 +25,10 @@ static int sign_core(uint8_t sig[MLDSA44_SIGNATURE_BYTES],
         return -1;
     mldsa44_expand_a(a, rho);
     for (unsigned i = 0; i < 4; i++) {
-        mldsa_ntt_forward(&s1n[i], &s1[i]);
-        mldsa_ntt_forward(&s2n[i], &s2[i]);
-        mldsa_ntt_forward(&t0n[i], &t0[i]);
+        if (mldsa44_ntt(&s1n[i], &s1[i]) ||
+            mldsa44_ntt(&s2n[i], &s2[i]) ||
+            mldsa44_ntt(&t0n[i], &t0[i]))
+            return -1;
     }
     mldsa44_representative(mu, tr, hash, msg, mlen, ctx, clen);
     memcpy(in, key, 32);
@@ -41,8 +42,10 @@ static int sign_core(uint8_t sig[MLDSA44_SIGNATURE_BYTES],
         int reject = 0;
 
         mldsa44_expand_mask(y, rhopp, nonce);
-        for (unsigned i = 0; i < 4; i++)
-            mldsa_ntt_forward(&yn[i], &y[i]);
+        for (unsigned i = 0; i < 4; i++) {
+            if (mldsa44_ntt(&yn[i], &y[i]))
+                return -1;
+        }
         mldsa44_matvec(w, a, yn);
         for (unsigned i = 0; i < 4; i++) {
             for (unsigned j = 0; j < MLDSA_N; j++)
@@ -54,7 +57,8 @@ static int sign_core(uint8_t sig[MLDSA44_SIGNATURE_BYTES],
         mldsa_shake_absorb(&s, w1bytes, sizeof w1bytes);
         mldsa_shake_squeeze(&s, ctilde, 32);
         mldsa44_sample_ball(&c, ctilde);
-        mldsa_ntt_forward(&cn, &c);
+        if (mldsa44_ntt(&cn, &c))
+            return -1;
         for (unsigned i = 0; i < 4; i++) {
             mldsa44_mul_ntt(&cs1[i], &cn, &s1n[i]);
             mldsa44_mul_ntt(&cs2[i], &cn, &s2n[i]);

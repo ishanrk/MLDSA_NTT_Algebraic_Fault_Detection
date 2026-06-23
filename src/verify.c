@@ -27,16 +27,20 @@ static int verify_core(const uint8_t *pk, size_t pklen,
     mldsa_shake256(tr, 64, pk, pklen);
     mldsa44_representative(mu, tr, hash, msg, mlen, ctx, clen);
     mldsa44_sample_ball(&c, ctilde);
-    mldsa_ntt_forward(&cn, &c);
+    if (mldsa44_ntt(&cn, &c))
+        return -1;
     mldsa44_expand_a(a, rho);
-    for (unsigned i = 0; i < 4; i++)
-        mldsa_ntt_forward(&zn[i], &z[i]);
+    for (unsigned i = 0; i < 4; i++) {
+        if (mldsa44_ntt(&zn[i], &z[i]))
+            return -1;
+    }
     mldsa44_matvec(w, a, zn);
     for (unsigned i = 0; i < 4; i++) {
         for (unsigned j = 0; j < MLDSA_N; j++)
             t1[i].c[j] = mldsa_mul(t1[i].c[j], 1U << MLDSA44_D);
         mldsa_ntt tn;
-        mldsa_ntt_forward(&tn, &t1[i]);
+        if (mldsa44_ntt(&tn, &t1[i]))
+            return -1;
         mldsa44_mul_ntt(&ct1, &cn, &tn);
         for (unsigned j = 0; j < MLDSA_N; j++) {
             uint32_t v = mldsa_sub(w[i].c[j], ct1.c[j]);

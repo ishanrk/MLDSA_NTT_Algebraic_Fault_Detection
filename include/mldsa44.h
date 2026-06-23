@@ -27,7 +27,7 @@ enum {
     MLDSA44_SHAKE256 = 12
 };
 
-void mldsa44_keygen(uint8_t pk[MLDSA44_PUBLICKEY_BYTES],
+int mldsa44_keygen(uint8_t pk[MLDSA44_PUBLICKEY_BYTES],
                     uint8_t sk[MLDSA44_SECRETKEY_BYTES],
                     const uint8_t seed[MLDSA44_SEED_BYTES]);
 

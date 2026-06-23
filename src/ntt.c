@@ -1,5 +1,9 @@
 #include "mldsa_poly.h"
 
+#ifdef MLDSA_TEST_FAULTS
+extern void mldsa_ntt_test_fault(unsigned l, uint32_t c[MLDSA_N]);
+#endif
+
 static const uint32_t zetas[MLDSA_N] = {
 #include "zetas.inc"
 };
@@ -11,6 +15,10 @@ void mldsa_ntt_forward(mldsa_ntt *r, const mldsa_poly *a)
     for (unsigned i = 0; i < MLDSA_N; i++)
         r->c[i] = a->c[i];
 
+#ifdef MLDSA_TEST_FAULTS
+    unsigned l = 0;
+    mldsa_ntt_test_fault(l, r->c);
+#endif
     for (unsigned len = MLDSA_N / 2; len > 0; len /= 2) {
         for (unsigned off = 0; off < MLDSA_N; off += 2 * len) {
             uint32_t z = zetas[++k];
@@ -21,6 +29,9 @@ void mldsa_ntt_forward(mldsa_ntt *r, const mldsa_poly *a)
                 r->c[j + len] = mldsa_sub(u, t);
             }
         }
+#ifdef MLDSA_TEST_FAULTS
+        mldsa_ntt_test_fault(++l, r->c);
+#endif
     }
 }
 

@@ -58,3 +58,38 @@ This run certified all 2653056 pairs with zero zero determinants, zero zero firs
 ## Scope
 
 The claim concerns at most two additive field deviations at distinct modeled forward NTT boundary wires. Checker arithmetic, constants, comparison, and control flow are trusted. Two deviations at one wire combine into one; exact cancellation causes no result error. A shared twiddle corruption can affect many modeled wires and is outside this two deviation guarantee. Physical injection resistance and physical Cortex M4 cycle, flash, RAM, and stack measurements remain pending.
+
+## C interface and selection
+
+`mldsa_ntt_forward_prior(r,a)` snapshots both expected input checks, calls the original forward NTT once, and compares both output checks. It returns 0 on acceptance and -1 on a mismatch. Both arguments use the existing canonical polynomial/NTT types. On failure the caller must discard the output. The checksum computations reduce every term and accumulation through the existing arithmetic functions; the bounds in [arithmetic.md](arithmetic.md) apply without widening the representation.
+
+Define `MLDSA_PRIOR_CHECKER` to select this function at the existing ML DSA forward-transform call sites through the small internal `mldsa44_ntt` helper. The default build remains baseline. `make build/libmldsa_prior.so` builds the protected library separately. The signing algorithm and verification equations are unchanged; a transform mismatch returns an error before its result is used. `mldsa44_keygen` now returns an `int` status, 0 on success and -1 on invalid pointers or a checker mismatch, so its caller can also handle detected faults. Callers must check that status and discard key/signature output on failure.
+
+The inverse NTT and matrix sampling are unprotected. The standalone baseline NTT and `mldsa_poly_mul` remain available. This is forward NTT coverage, not a claim that every ML DSA operation is fault protected.
+
+The test-only `MLDSA_TEST_FAULTS` build inserts a hook immediately after the input copy and after each complete forward layer. Production builds contain no injection state or callback. Hooks mutate canonical field values at exactly the boundaries used by the certificate.
+
+## Targeted host validation
+
+```sh
+make prior build/libmldsa.so build/libmldsa_prior.so
+python3 test/test_smoke.py build/libmldsa.so build/nist
+python3 test/test_smoke.py build/libmldsa_prior.so build/nist
+```
+
+The checker suite compares eight no-fault polynomials with the baseline: zero, `X`, all `q-1`, alternating `0`/`q-1`, and four successive fixed pseudorandom polynomials. It also checks inverse round trips and 36 arithmetic boundary pairs. Its 36 single injections cover first/middle/last wire regions at input, early, middle, late, and final boundaries with magnitudes `1`, `17`, and `q-1`.
+
+Ten location pairs, each with three magnitudes, give 30 two-fault cases. They include adjacent locations, far apart locations, equal layers, adjacent layers, and input/final or early/late combinations. The second magnitude is calculated to cancel the first checksum exactly using an independent evaluation formula. The test confirms that cancellation, confirms a nonzero NTT result error, and requires rejection by the second checksum. These are 66 runtime NTT injections, not an attempt to replace the exhaustive certificate. Three additional scheme-level injections require key generation, signing, and verification to propagate a transform error.
+
+The shared compact entry point also checks the NIST SHAKE case, official key generation digest, fixed host signature digest, valid verification, and modified-message/signature rejection. The Python official smoke test compares complete key and signature bytes for keyGen `tcId 1` and sigGen `tcId 1`, then checks sigVer cases `3` (valid) and `1` (invalid), from the existing pinned NIST data.
+
+GCC 11.4.0 debug and optimized builds, Clang 14.0.0, AddressSanitizer, and UndefinedBehaviorSanitizer passed the targeted checker suite. Both baseline and protected libraries passed official smoke vectors; the Clang protected library also passed them. The historical 10000-pair campaign and unrelated suites were not rerun. Valgrind was not needed.
+
+To repeat the sanitizer and alternate-compiler checks, force rebuilding this small target when changing flags:
+
+```sh
+make -B prior CC=gcc OPT='-O0 -g'
+make -B prior CC=clang
+make -B prior CC=gcc OPT='-O1 -g' SAN='-fsanitize=address'
+make -B prior CC=gcc OPT='-O1 -g' SAN='-fsanitize=undefined -fno-sanitize-recover=all'
+```

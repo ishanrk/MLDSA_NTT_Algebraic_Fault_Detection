@@ -2,7 +2,20 @@
 #define MLDSA44_INTERNAL_H
 
 #include "mldsa_poly.h"
+#ifdef MLDSA_PRIOR_CHECKER
+#include "mldsa_checker.h"
+#endif
 #include <stddef.h>
+
+static inline int mldsa44_ntt(mldsa_ntt *r, const mldsa_poly *a)
+{
+#ifdef MLDSA_PRIOR_CHECKER
+    return mldsa_ntt_forward_prior(r, a);
+#else
+    mldsa_ntt_forward(r, a);
+    return 0;
+#endif
+}
 
 enum {
     MLDSA44_K = 4,
