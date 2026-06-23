@@ -1,0 +1,31 @@
+{
+  "paper": "https://eprint.iacr.org/2025/170",
+  "sections": [
+    "3.1",
+    "3.2",
+    "3.3 Theorems 4 and 5",
+    "4.1",
+    "4.2"
+  ],
+  "n": 256,
+  "q": 8380417,
+  "h": 8,
+  "modeled_locations": 2304,
+  "checked_pairs": 2653056,
+  "zero_first_responses": 0,
+  "zero_second_responses": 0,
+  "zero_determinants": 0,
+  "row_identities": "direct evaluation and network pullback passed",
+  "propagation_identity": "all unit wires matched the production network",
+  "coefficients_sha256": "9281c37271baa76755a5873797b948142bc3ae8c45865df69326589a892a58df",
+  "digest_format": "b then a then beta then alpha in production order as uint32 little endian",
+  "network_sha256": "0353ec99eca78da433f92b5e6b756bd4b3f01187f8f1c502df98f4c241e6b861",
+  "stored_coefficients": 640,
+  "stored_bytes": 2560,
+  "largest_forbidden_set": 983161,
+  "tie_break": "smallest legal field value in descending natural output index order",
+  "fixed_natural_alpha_indices": [
+    128,
+    255
+  ]
+}
