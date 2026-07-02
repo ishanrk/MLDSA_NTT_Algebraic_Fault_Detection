@@ -1,0 +1,36 @@
+{
+  "purpose": "functional validation only",
+  "target": "QEMU mps2-an386 Cortex M4 emulator",
+  "physical_board": false,
+  "physical_measurements": "pending",
+  "compiler": "arm-none-eabi-gcc (15:10.3-2021.07-4) 10.3.1 20210621 (release)",
+  "emulator": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)",
+  "cases": [
+    "PRIOR arithmetic PASS",
+    "PRIOR NTT 8 cases PASS",
+    "PRIOR single faults 36 cases PASS",
+    "PRIOR cancelling fault pairs 30 cases PASS",
+    "SHAKE PASS",
+    "NTT zero PASS",
+    "NTT basis PASS",
+    "NTT boundary PASS",
+    "NTT fixed random PASS",
+    "KEYGEN PASS",
+    "SIGN PASS",
+    "VERIFY valid PASS",
+    "VERIFY modified message PASS",
+    "VERIFY modified signature PASS",
+    "PRIOR scheme fault propagation PASS"
+  ],
+  "command": [
+    "qemu-system-arm",
+    "-M",
+    "mps2-an386",
+    "-kernel",
+    "build/arm/mps2_prior.elf",
+    "-nographic",
+    "-semihosting-config",
+    "enable=on,target=native",
+    "-no-reboot"
+  ]
+}

@@ -1,6 +1,7 @@
 #include "core.h"
 #include "mldsa44.h"
 #include "mldsa_poly.h"
+#include "mldsa_checker.h"
 #include "platform.h"
 
 #include <stdint.h>
@@ -57,6 +58,16 @@ static uint32_t elapsed(uint32_t start, uint32_t end, uint32_t overhead)
     return n > overhead ? n - overhead : 0U;
 }
 
+static int forward(mldsa_ntt *r, const mldsa_poly *x)
+{
+#ifdef MLDSA_PRIOR_CHECKER
+    return mldsa_ntt_forward_prior(r, x);
+#else
+    mldsa_ntt_forward(r, x);
+    return 0;
+#endif
+}
+
 int main(void)
 {
     const uint8_t msg[] = "Cortex M4 portable baseline";
@@ -78,14 +89,16 @@ int main(void)
         a.c[i] = ((i + 1U) * (i + 17U)) % MLDSA_Q;
         b.c[i] = ((3U * i + 2U) * (7U * i + 5U)) % MLDSA_Q;
     }
-    mldsa_ntt_forward(&an, &a);
-    mldsa_ntt_forward(&bn, &b);
+    if (forward(&an, &a) || forward(&bn, &b))
+        return 2;
 
     for (unsigned i = 0; i < lengths[0]; i++) {
         uint32_t t = platform_cycles();
-        mldsa_ntt_forward(&pn, &a);
+        int rc = forward(&pn, &a);
         uint32_t u = platform_cycles();
         samples[0][i] = elapsed(t, u, overhead);
+        if (rc)
+            return 2;
     }
     for (unsigned i = 0; i < lengths[1]; i++) {
         uint32_t t = platform_cycles();
@@ -102,9 +115,11 @@ int main(void)
     for (unsigned i = 0; i < lengths[3]; i++) {
         seed[0] = (uint8_t)i;
         uint32_t t = platform_cycles();
-        mldsa44_keygen(pk, sk, seed);
+        int rc = mldsa44_keygen(pk, sk, seed);
         uint32_t u = platform_cycles();
         samples[3][i] = elapsed(t, u, overhead);
+        if (rc)
+            return 2;
     }
     for (unsigned i = 0; i < lengths[4]; i++) {
         rnd[0] = (uint8_t)i;
@@ -126,13 +141,17 @@ int main(void)
             return 3;
     }
     uint32_t mark = platform_stack_fill();
-    mldsa_ntt_forward(&pn, &a);
+    int rc = forward(&pn, &a);
     stack[0] = platform_stack_used(mark);
+    if (rc)
+        return 2;
     mark = platform_stack_fill();
-    mldsa44_keygen(pk, sk, seed);
+    rc = mldsa44_keygen(pk, sk, seed);
     stack[1] = platform_stack_used(mark);
+    if (rc)
+        return 2;
     mark = platform_stack_fill();
-    int rc = mldsa44_sign(sig, sk, sizeof sk, msg, sizeof msg - 1U,
+    rc = mldsa44_sign(sig, sk, sizeof sk, msg, sizeof msg - 1U,
                           ctx, sizeof ctx - 1U, rnd);
     stack[2] = platform_stack_used(mark);
     if (rc)

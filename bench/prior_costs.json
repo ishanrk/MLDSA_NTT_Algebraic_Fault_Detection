@@ -1,0 +1,53 @@
+{
+  "purpose": "field operation counts and linked emulator image sizes only",
+  "compiler": "arm-none-eabi-gcc (15:10.3-2021.07-4) 10.3.1 20210621 (release)",
+  "architecture": "-mcpu=cortex-m4 -mthumb -mfloat-abi=soft",
+  "optimization": "-O2",
+  "linker": "platform/cortexm4/mps2.ld",
+  "field_calls": {
+    "baseline": {
+      "mul": 1024,
+      "add": 1024,
+      "sub": 1024
+    },
+    "prior": {
+      "mul": 1664,
+      "add": 2048,
+      "sub": 1024
+    },
+    "extra": {
+      "mul": 640,
+      "add": 1024,
+      "sub": 0
+    }
+  },
+  "prior_checks": 2,
+  "prior_stored_coefficients": 640,
+  "prior_constant_bytes": 2560,
+  "coefficients_sha256": "9281c37271baa76755a5873797b948142bc3ae8c45865df69326589a892a58df",
+  "arm_images": {
+    "baseline": {
+      "text": 11248,
+      "data": 0,
+      "bss": 14876
+    },
+    "prior": {
+      "text": 14080,
+      "data": 0,
+      "bss": 14876
+    }
+  },
+  "arm_size_change": {
+    "text": 2832,
+    "data": 0,
+    "bss": 0
+  },
+  "qemu": {
+    "target": "QEMU mps2-an386 Cortex M4 emulator",
+    "status": "passed",
+    "emulator": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)",
+    "record": "test/qemu-mps2-an386-prior.json"
+  },
+  "physical_cycles": "pending",
+  "physical_flash_ram_stack": "pending"
+}

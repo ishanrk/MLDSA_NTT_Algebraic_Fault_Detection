@@ -93,3 +93,22 @@ make -B prior CC=clang
 make -B prior CC=gcc OPT='-O1 -g' SAN='-fsanitize=address'
 make -B prior CC=gcc OPT='-O1 -g' SAN='-fsanitize=undefined -fno-sanitize-recover=all'
 ```
+
+## ARM validation and provisional costs
+
+```sh
+make arm-mps2 arm-mps2-prior arm-mps2-bench arm-mps2-prior-bench build/count_prior
+python3 tools/run_mps2.py
+python3 tools/run_mps2.py --prior
+python3 tools/measure_prior.py
+```
+
+Use the toolchain overrides in [cortexm4.md](cortexm4.md) when the compiler and QEMU are outside `PATH`. `tools/measure_prior.py` accepts `ARM_CC` and `ARM_SIZE` for the same reason.
+
+Both compact QEMU suites passed with `arm-none-eabi-gcc` 10.3.1, Cortex M4 Thumb soft ABI, and QEMU 6.2.0 `mps2-an386`. The protected firmware runs the same targeted C tests as the host, including the single/pair injections and scheme error propagation. No thousands-case ARM campaign was run.
+
+The [generated costs](prior_costs.md) come from [raw JSON](../bench/prior_costs.json). A host counter intercepts the actual addition, subtraction, and multiplication functions while preserving their original bodies. For one protected forward transform there are 640 additional modular multiplications, 1024 additional modular additions, and no additional modular subtractions. The 256 input beta products, 256 output a products, and 128 nonunity output alpha products explain the multiplication count. Four 256-term checksum accumulations explain the addition count. Stored constants occupy 2560 bytes for 640 coefficients; the 384 unity coefficients are implicit.
+
+The matched benchmark ELF images contain no test injection code. The protected image adds 2832 text bytes, including readonly constants, with no `.data` or BSS increase. These are emulator-layout link sizes, not physical flash/RAM observations. Both benchmark images exit on the unavailable QEMU DWT counter without producing cycle or stack data. Real Cortex M4 performance and physical memory measurements remain pending.
+
+The baseline compact host suite also passed with combined ASan/UBSan. The complete exact certificate was regenerated at completion and matched the checked in coefficients and certificate byte for byte.

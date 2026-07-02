@@ -98,3 +98,9 @@ With this compiler and configuration, disassembly shows `mldsa_mul` using `umull
 ## Testing policy
 
 Use targeted tests during development: arithmetic tests for arithmetic edits, the selected NTT cases and a small fixed random sample for NTT edits, checker tests plus a small baseline NTT comparison for checker edits, encoding tests for encoding edits, and the compact suite above for ARM integration. Run complete regression and official NIST validation at major milestones: completion of each checker, formal verification, and the final thesis artifact. Keep exhaustive mathematical location/determinant certificates whenever they are part of a research result.
+
+## Prior checker target
+
+The [prior checker](prior_checker.md) also passes this machine's compact suite, including eight baseline/protected NTT comparisons, 66 selected runtime wire injections, and error propagation through the scheme API. Build with `make arm-mps2-prior` and run `python3 tools/run_mps2.py --prior`; the same compiler and QEMU overrides above apply. The results are recorded in [qemu-mps2-an386-prior.json](../test/qemu-mps2-an386-prior.json).
+
+`make arm-mps2-prior-bench` builds the matched protected benchmark image. Its forward timing/stack hook selects the protected transform, and key generation checks its new return status. Neither benchmark image contains injection hooks. Both counter-unavailable paths were smoke tested and emitted no observations. The [generated cost table](prior_costs.md) reports linked emulator image sizes and counted field operations. Physical measurements remain pending.
