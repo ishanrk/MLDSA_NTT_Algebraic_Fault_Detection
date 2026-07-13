@@ -19,7 +19,9 @@ def run(args, env=None):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument('--prior', action='store_true')
+    variants = p.add_mutually_exclusive_group()
+    variants.add_argument('--prior', action='store_true')
+    variants.add_argument('--our', action='store_true')
     args = p.parse_args()
     qemu = os.environ.get("QEMU", "qemu-system-arm")
     cc = os.environ.get("ARM_CC", "arm-none-eabi-gcc")
@@ -27,9 +29,11 @@ def main():
     if "QEMU_LIBDIR" in env:
         env["LD_LIBRARY_PATH"] = (env["QEMU_LIBDIR"] + os.pathsep +
                                   env.get("LD_LIBRARY_PATH", ""))
-    elf = 'build/arm/mps2_prior.elf' if args.prior else 'build/arm/mps2.elf'
-    dst = ROOT / ('test/qemu-mps2-an386-prior.json' if args.prior else
-                  'test/qemu-mps2-an386.json')
+    variant = 'prior' if args.prior else 'our' if args.our else 'baseline'
+    suffix = '' if variant == 'baseline' else '_' + variant
+    elf = f'build/arm/mps2{suffix}.elf'
+    record = '' if variant == 'baseline' else '-' + variant
+    dst = ROOT / f'test/qemu-mps2-an386{record}.json'
     cmd = [qemu, "-M", "mps2-an386", "-kernel", elf,
            "-nographic", "-semihosting-config", "enable=on,target=native",
            "-no-reboot"]
@@ -43,6 +47,11 @@ def main():
                  'PRIOR single faults 36 cases PASS',
                  'PRIOR cancelling fault pairs 30 cases PASS') + cases + (
                      'PRIOR scheme fault propagation PASS',)
+    elif args.our:
+        cases = ('OUR NTT 10 cases PASS', 'OUR single faults 45 cases PASS',
+                 'OUR cancelling fault pairs 30 cases PASS') + cases + (
+                     'VERIFY malformed signature PASS',
+                     'OUR scheme fault propagation PASS',)
     if out.splitlines() != list(cases):
         raise SystemExit(f"unexpected correctness output\n{out}")
     data = {

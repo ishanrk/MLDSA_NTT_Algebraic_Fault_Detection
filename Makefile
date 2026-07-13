@@ -4,7 +4,7 @@ SAN =
 SEED =
 CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -Wconversion -Wshadow $(OPT) $(SAN) -fno-omit-frame-pointer
 CPPFLAGS = -Iinclude
-SRC = src/poly.c src/ntt.c src/prior.c src/shake.c src/round.c src/encode.c src/sample.c src/vector.c src/keygen.c src/sign.c src/verify.c src/message.c
+SRC = src/poly.c src/ntt.c src/prior.c src/our.c src/shake.c src/round.c src/encode.c src/sample.c src/vector.c src/keygen.c src/sign.c src/verify.c src/message.c
 ARM_CC = arm-none-eabi-gcc
 ARM_OBJCOPY = arm-none-eabi-objcopy
 ARM_SIZE = arm-none-eabi-size
@@ -13,7 +13,7 @@ ARM_LIB =
 ARM_CFLAGS = -mcpu=cortex-m4 -mthumb -mfloat-abi=soft -std=c11 -O2 -ffreestanding -fno-builtin -fdata-sections -ffunction-sections -Wall -Wextra -Wpedantic -Wconversion -Wshadow
 ARM_COMMON = $(SRC) platform/cortexm4/startup.c platform/cortexm4/mps2_io.c
 ARM_SRC = $(ARM_COMMON) platform/cortexm4/test_main.c
-ARM_DEPS = $(wildcard include/*.h) src/mldsa44_internal.h src/zetas.inc src/prior_tables.inc src/keccak_tables.inc platform/cortexm4/platform.h
+ARM_DEPS = $(wildcard include/*.h) src/mldsa44_internal.h src/zetas.inc src/prior_tables.inc src/our_tables.inc src/keccak_tables.inc platform/cortexm4/platform.h
 ARM_BENCH = $(ARM_COMMON) platform/cortexm4/core.c platform/cortexm4/bench_main.c
 
 .PHONY: test model shake sample keygen sign verify prehash differential vectors arm-mps2 arm-mps2-bench clean
@@ -30,13 +30,25 @@ build/test_encode: test/test_encode.c src/encode.c src/poly.c src/mldsa44_intern
 	mkdir -p build
 	$(CC) $(CPPFLAGS) -Isrc $(CFLAGS) test/test_encode.c src/encode.c src/poly.c src/ntt.c -o $@
 
-build/libmldsa.so: $(SRC) src/zetas.inc src/prior_tables.inc src/keccak_tables.inc src/mldsa44_internal.h $(wildcard include/*.h)
+build/libmldsa.so: $(SRC) $(ARM_DEPS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) -Isrc $(CFLAGS) -fPIC -shared $(SRC) -o $@
 
-build/libmldsa_prior.so: $(SRC) src/zetas.inc src/prior_tables.inc src/keccak_tables.inc src/mldsa44_internal.h $(wildcard include/*.h)
+build/libmldsa_prior.so: $(SRC) $(ARM_DEPS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) -Isrc $(CFLAGS) -DMLDSA_PRIOR_CHECKER -fPIC -shared $(SRC) -o $@
+
+build/libmldsa_our.so: $(SRC) $(ARM_DEPS)
+	mkdir -p build
+	$(CC) $(CPPFLAGS) -Isrc $(CFLAGS) -DMLDSA_OUR_CHECKER -fPIC -shared $(SRC) -o $@
+
+build/test_our: $(SRC) test/our_cases.c test/our_cases.h test/host_io.c platform/cortexm4/test_main.c platform/cortexm4/mps2_vectors.inc $(ARM_DEPS)
+	mkdir -p build
+	$(CC) $(CPPFLAGS) -Isrc -Itest -Iplatform/cortexm4 $(CFLAGS) -DMLDSA_OUR_CHECKER -DMLDSA_TEST_FAULTS platform/cortexm4/test_main.c test/our_cases.c test/host_io.c $(SRC) -o $@
+
+.PHONY: our
+our: build/test_our
+	./build/test_our
 
 build/test_prior: $(SRC) test/prior_cases.c test/prior_cases.h test/host_io.c platform/cortexm4/test_main.c platform/cortexm4/mps2_vectors.inc src/prior_tables.inc $(ARM_DEPS)
 	mkdir -p build
@@ -107,6 +119,14 @@ build/arm/mps2_prior.elf: $(ARM_SRC) $(ARM_DEPS) platform/cortexm4/mps2.ld platf
 .PHONY: arm-mps2-prior arm-mps2-prior-bench
 arm-mps2-prior: build/arm/mps2_prior.elf
 	$(ARM_SIZE) build/arm/mps2_prior.elf
+
+build/arm/mps2_our.elf: $(ARM_SRC) $(ARM_DEPS) platform/cortexm4/mps2.ld platform/cortexm4/mps2_vectors.inc test/our_cases.c test/our_cases.h
+	mkdir -p build/arm
+	$(ARM_CC) $(CPPFLAGS) -Isrc -Itest -Iplatform/cortexm4 $(ARM_INC) $(ARM_CFLAGS) -DMLDSA_OUR_CHECKER -DMLDSA_TEST_FAULTS $(ARM_SRC) test/our_cases.c -nostartfiles -nostdlib -Wl,--gc-sections -Wl,-Map,build/arm/mps2_our.map -Tplatform/cortexm4/mps2.ld $(ARM_LIB) -lc -lgcc -o $@
+
+.PHONY: arm-mps2-our
+arm-mps2-our: build/arm/mps2_our.elf
+	$(ARM_SIZE) build/arm/mps2_our.elf
 
 build/arm/mps2_bench.elf: $(ARM_BENCH) $(ARM_DEPS) platform/cortexm4/core.h platform/cortexm4/mps2.ld
 	mkdir -p build/arm

@@ -63,3 +63,31 @@ python3 tools/gen_our_checker.py --check
 The [certificate](our_certificate.json) records the unshifted intermediate assignment, smallest shift, group sizes, forbidden counts, and the exact network and coefficient digests. Runtime is printed separately so it does not affect deterministic artifacts. The coefficient digest covers full `b`, `a`, `beta`, and `alpha` in production order, serialized as little endian 32 bit words. The C tables store `a`, `beta`, and `alpha`; the all one input row is implicit.
 
 The generator verifies both row identities by direct evaluation and graph pullback, both responses for every modeled wire, intermediate propagation, nonzero first and second responses, distinct normalized responses, and all 2653056 pair determinants independently of the greedy test. All failure counts are zero. A generation on this host took 6.642 seconds including certification. Regeneration is checked byte for byte against the emitted tables and certificate.
+
+## C selection and correctness
+
+`mldsa_ntt_forward_our(r,a)` computes expected checks from the input, calls the baseline NTT once, then computes and compares both output checks. It returns 0 on acceptance and -1 on a mismatch; discard its output on failure. There is no intermediate checksum during execution. Boundary 4 is used to construct the rows offline.
+
+Define `MLDSA_OUR_CHECKER` to select this function through the existing internal `mldsa44_ntt` helper. Define `MLDSA_PRIOR_CHECKER` for the published defense, or neither for baseline. Selecting both is a compile error. Key generation, signing, and verification share their original algorithms and propagate a transform failure through their existing status returns.
+
+The implementation uses three full 256 coefficient tables, including any zero or unity entries. The first input row is implicit ones. Every product and sum uses the existing canonical modular arithmetic, so the established [arithmetic bounds](arithmetic.md) apply. The reduction, division, and timing concerns in [ct.md](ct.md) also apply; this checker has no constant time claim.
+
+```sh
+make our prior build/libmldsa.so build/libmldsa_prior.so build/libmldsa_our.so
+python3 test/test_smoke.py build/libmldsa_our.so build/nist
+make -B our CC=clang
+make -B our CC=gcc OPT='-O1 -g' SAN='-fsanitize=address'
+make -B our CC=gcc OPT='-O1 -g' SAN='-fsanitize=undefined -fno-sanitize-recover=all'
+make arm-mps2 arm-mps2-prior arm-mps2-our
+python3 tools/run_mps2.py --our
+```
+
+The compact suite compares ten protected outputs against baseline: zero, unit vectors at positions 0, 127, and 255, all `q-1`, alternating `0`/`q-1`, and four fixed pseudorandom polynomials. Each inverse round trip must recover its entire input. Test hooks are the existing `MLDSA_TEST_FAULTS` boundaries, with no changes to the production transform.
+
+Forty five single injections cover slots 0, 127, and 255 at boundaries 0, 1, 4, 7, and 8 with magnitudes 1, 17, and `q-1`. Ten pair selections with those three first magnitudes cover nearby and distant wires in one layer, adjacent layers, boundaries 1 and 7, boundaries 4 and 7, and input/output pairs. Each second magnitude is derived independently to cancel the first checksum. The test verifies that this cancellation occurs, that the final output differs from baseline, and that the protected transform rejects it. These 75 selected injections check the C implementation; the exhaustive algebraic certificate supplies complete modeled pair coverage.
+
+The common entry point checks the NIST SHAKE case, deterministic key and signature digests, valid verification, modified message rejection, and modified signature rejection. Our variant additionally rejects a malformed signature with a hint count above 80, and checks that key generation, signing, and verification propagate an injected NTT failure. The official smoke tests compare complete NIST keyGen and sigGen outputs and check one valid and one invalid sigVer case for all three variants.
+
+GCC 11.4.0, Clang 14.0.0, AddressSanitizer, and UndefinedBehaviorSanitizer passed the targeted suite without diagnostics. Baseline, prior, and our compact suites also passed QEMU 6.2.0 `mps2-an386`, built with ARM GCC 10.3.1. The existing prior checker source, constants, generator, certificate, and selected injections are unchanged. No large random campaigns were repeated.
+
+The ARM toolchain overrides in [cortexm4.md](cortexm4.md) apply. This session restored extracted packages under ignored `build/toolchain/root`; use that absolute directory in place of the earlier `/tmp/mldsa-arm-toolchain/root` when repeating the recorded configuration.

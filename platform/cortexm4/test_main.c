@@ -4,6 +4,8 @@
 #include "platform.h"
 #ifdef MLDSA_PRIOR_CHECKER
 #include "prior_cases.h"
+#elif defined(MLDSA_OUR_CHECKER)
+#include "our_cases.h"
 #endif
 
 #include <stdint.h>
@@ -14,6 +16,17 @@ static uint8_t pk[MLDSA44_PUBLICKEY_BYTES], sk[MLDSA44_SECRETKEY_BYTES];
 static uint8_t sig[MLDSA44_SIGNATURE_BYTES], raw[MLDSA_N * 4U];
 static mldsa_poly a, back;
 static mldsa_ntt an;
+
+#if defined(MLDSA_PRIOR_CHECKER) || defined(MLDSA_OUR_CHECKER)
+static void inject(unsigned call)
+{
+#ifdef MLDSA_PRIOR_CHECKER
+    test_prior_inject(call, 1152, 17);
+#else
+    test_our_inject(call, 1152, 17);
+#endif
+}
+#endif
 
 static int same(const uint8_t *x, const uint8_t *y, unsigned n)
 {
@@ -56,6 +69,10 @@ int main(void)
 
 #ifdef MLDSA_PRIOR_CHECKER
     int rc = test_prior();
+#elif defined(MLDSA_OUR_CHECKER)
+    int rc = test_our();
+#endif
+#if defined(MLDSA_PRIOR_CHECKER) || defined(MLDSA_OUR_CHECKER)
     if (rc)
         return 20 + rc;
 #endif
@@ -111,21 +128,34 @@ int main(void)
                         ctx, sizeof ctx - 1U, sig, sizeof sig))
         return 10;
     platform_write("VERIFY modified signature PASS\n");
-#ifdef MLDSA_PRIOR_CHECKER
+#if defined(MLDSA_PRIOR_CHECKER) || defined(MLDSA_OUR_CHECKER)
     sig[0] ^= 1U;
-    test_prior_inject(1, 1152, 17);
+#ifdef MLDSA_OUR_CHECKER
+    uint8_t hint = sig[MLDSA44_SIGNATURE_BYTES - 4U];
+    sig[MLDSA44_SIGNATURE_BYTES - 4U] = 81;
+    if (mldsa44_verify(pk, sizeof pk, msg, sizeof msg - 1U,
+                       ctx, sizeof ctx - 1U, sig, sizeof sig) != -1)
+        return 14;
+    sig[MLDSA44_SIGNATURE_BYTES - 4U] = hint;
+    platform_write("VERIFY malformed signature PASS\n");
+#endif
+    inject(1);
     if (mldsa44_verify(pk, sizeof pk, msg, sizeof msg - 1U,
                        ctx, sizeof ctx - 1U, sig, sizeof sig) != -1)
         return 11;
-    test_prior_inject(1, 1152, 17);
+    inject(1);
     if (mldsa44_sign(sig, sk, sizeof sk, msg, sizeof msg - 1U,
                      ctx, sizeof ctx - 1U, rnd) != -1)
         return 12;
-    test_prior_inject(1, 1152, 17);
+    inject(1);
     if (mldsa44_keygen(pk, sk, kat_seed) != -1)
         return 13;
-    test_prior_inject(0, 0, 0);
+    inject(0);
+#ifdef MLDSA_PRIOR_CHECKER
     platform_write("PRIOR scheme fault propagation PASS\n");
+#else
+    platform_write("OUR scheme fault propagation PASS\n");
+#endif
 #endif
     return 0;
 }
