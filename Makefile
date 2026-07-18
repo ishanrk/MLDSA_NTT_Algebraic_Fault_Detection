@@ -65,6 +65,9 @@ build/count_poly.o: src/poly.c include/mldsa_poly.h
 build/count_prior: test/count_prior.c src/ntt.c src/prior.c src/prior_tables.inc build/count_poly.o $(ARM_DEPS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) test/count_prior.c src/ntt.c src/prior.c build/count_poly.o -o $@
 
+build/count_checkers: test/count_checkers.c src/ntt.c src/prior.c src/our.c build/count_poly.o $(ARM_DEPS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) test/count_checkers.c src/ntt.c src/prior.c src/our.c build/count_poly.o -o $@
+
 build/test_negative: test/test_negative.c $(SRC) include/mldsa44.h
 	mkdir -p build
 	$(CC) $(CPPFLAGS) -Isrc $(CFLAGS) test/test_negative.c $(SRC) -o $@
@@ -141,6 +144,14 @@ build/arm/mps2_prior_bench.elf: $(ARM_BENCH) $(ARM_DEPS) platform/cortexm4/core.
 
 arm-mps2-prior-bench: build/arm/mps2_prior_bench.elf
 	$(ARM_SIZE) build/arm/mps2_prior_bench.elf
+
+build/arm/mps2_our_bench.elf: $(ARM_BENCH) $(ARM_DEPS) platform/cortexm4/core.h platform/cortexm4/mps2.ld
+	mkdir -p build/arm
+	$(ARM_CC) $(CPPFLAGS) -Isrc -Iplatform/cortexm4 $(ARM_INC) $(ARM_CFLAGS) -DMLDSA_OUR_CHECKER $(ARM_BENCH) -nostartfiles -nostdlib -Wl,--gc-sections -Wl,-Map,build/arm/mps2_our_bench.map -Tplatform/cortexm4/mps2.ld $(ARM_LIB) -lc -lgcc -o $@
+
+.PHONY: arm-mps2-our-bench
+arm-mps2-our-bench: build/arm/mps2_our_bench.elf
+	$(ARM_SIZE) build/arm/mps2_our_bench.elf
 
 clean:
 	rm -rf build

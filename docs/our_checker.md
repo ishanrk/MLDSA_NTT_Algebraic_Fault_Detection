@@ -91,3 +91,16 @@ The common entry point checks the NIST SHAKE case, deterministic key and signatu
 GCC 11.4.0, Clang 14.0.0, AddressSanitizer, and UndefinedBehaviorSanitizer passed the targeted suite without diagnostics. Baseline, prior, and our compact suites also passed QEMU 6.2.0 `mps2-an386`, built with ARM GCC 10.3.1. The existing prior checker source, constants, generator, certificate, and selected injections are unchanged. No large random campaigns were repeated.
 
 The ARM toolchain overrides in [cortexm4.md](cortexm4.md) apply. This session restored extracted packages under ignored `build/toolchain/root`; use that absolute directory in place of the earlier `/tmp/mldsa-arm-toolchain/root` when repeating the recorded configuration.
+
+## Measured provisional costs
+
+```sh
+make build/count_checkers arm-mps2-bench arm-mps2-prior-bench arm-mps2-our-bench
+python3 tools/measure_checkers.py
+```
+
+The [comparison table](checker_costs.md) and [raw measurements](../bench/checker_costs.json) include all three variants. Per forward transform the prior checker adds 640 modular products and 1024 additions; our implementation adds 768 products and 1024 additions. There are no additional subtractions. Our three 256 term weighted rows account for the products and 3072 constant bytes. The four accumulated checksum rows account for the additions.
+
+Matched benchmark images have ARM text sizes 11248, 14080, and 14576 bytes for baseline, prior, and our checker. Readonly tables are included in text. All have zero `.data` and 14876 bytes BSS. Our checker adds 3328 linked text bytes over baseline, or 496 over prior. Test injection code is absent from these images. All three benchmark counter availability paths report `DWT UNAVAILABLE` under this QEMU target and emit no observations.
+
+The [our checker QEMU record](../test/qemu-mps2-an386-our.json) contains compact correctness results with the toolchain and emulator versions. These are functional validation and emulator layout sizes. Real DWT cycles, physical flash/RAM usage, and stack measurements await the physical target. Formal verification is also a future stage.

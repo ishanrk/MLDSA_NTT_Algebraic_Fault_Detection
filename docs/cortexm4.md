@@ -104,3 +104,11 @@ Use targeted tests during development: arithmetic tests for arithmetic edits, th
 The [prior checker](prior_checker.md) also passes this machine's compact suite, including eight baseline/protected NTT comparisons, 66 selected runtime wire injections, and error propagation through the scheme API. Build with `make arm-mps2-prior` and run `python3 tools/run_mps2.py --prior`; the same compiler and QEMU overrides above apply. The results are recorded in [qemu-mps2-an386-prior.json](../test/qemu-mps2-an386-prior.json).
 
 `make arm-mps2-prior-bench` builds the matched protected benchmark image. Its forward timing/stack hook selects the protected transform, and key generation checks its new return status. Neither benchmark image contains injection hooks. Both counter-unavailable paths were smoke tested and emitted no observations. The [generated cost table](prior_costs.md) reports linked emulator image sizes and counted field operations. Physical measurements remain pending.
+
+## Our checker target
+
+The [intermediate boundary checker](our_checker.md) passes the same Cortex M4 emulator. `make arm-mps2-our` builds its compact suite, and `python3 tools/run_mps2.py --our` checks the expected output and writes the [functional record](../test/qemu-mps2-an386-our.json). It includes ten selected NTT comparisons and round trips, 45 single fault cases, 30 first checksum cancelling pairs, and the shared ML DSA/SHAKE checks. A malformed signature case and injected failure propagation through each scheme API also pass.
+
+`make arm-mps2-our-bench` builds the protected benchmark without fault hooks. The forward benchmark selects our checker and the shared scheme algorithms use it through `MLDSA_OUR_CHECKER`. Its QEMU counter availability path reports `DWT UNAVAILABLE` and produces no timing or stack observations.
+
+`make build/count_checkers` and `python3 tools/measure_checkers.py` generate the [three variant comparison](checker_costs.md). Matched sizes and operation counts use ARM GCC 10.3.1 with the existing flags and linker. Physical measurement work is still pending. This stage restored the same toolchain packages under ignored `build/toolchain/root` after the previous temporary extraction was lost; the earlier overrides work with that absolute root substituted.

@@ -62,6 +62,8 @@ static int forward(mldsa_ntt *r, const mldsa_poly *x)
 {
 #ifdef MLDSA_PRIOR_CHECKER
     return mldsa_ntt_forward_prior(r, x);
+#elif defined(MLDSA_OUR_CHECKER)
+    return mldsa_ntt_forward_our(r, x);
 #else
     mldsa_ntt_forward(r, x);
     return 0;

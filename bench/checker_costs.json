@@ -1,0 +1,94 @@
+{
+  "purpose": "field operation counts and linked emulator image sizes only",
+  "compiler": "arm-none-eabi-gcc (15:10.3-2021.07-4) 10.3.1 20210621 (release)",
+  "architecture": "-mcpu=cortex-m4 -mthumb -mfloat-abi=soft",
+  "optimization": "-O2",
+  "linker": "platform/cortexm4/mps2.ld",
+  "variants": {
+    "baseline": {
+      "checks": 0,
+      "stored_coefficients": 0,
+      "constant_bytes": 0,
+      "field_calls": {
+        "mul": 1024,
+        "add": 1024,
+        "sub": 1024
+      },
+      "extra_field_calls": {
+        "mul": 0,
+        "add": 0,
+        "sub": 0
+      },
+      "arm_image": {
+        "text": 11248,
+        "data": 0,
+        "bss": 14876
+      },
+      "elf_sha256": "38691580df2a709808baff1adea09087103551f78e231f332d8b6101b35bfe1d",
+      "qemu": {
+        "status": "passed",
+        "target": "QEMU mps2-an386 Cortex M4 emulator",
+        "emulator": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)",
+        "record": "test/qemu-mps2-an386.json"
+      }
+    },
+    "prior": {
+      "checks": 2,
+      "stored_coefficients": 640,
+      "constant_bytes": 2560,
+      "field_calls": {
+        "mul": 1664,
+        "add": 2048,
+        "sub": 1024
+      },
+      "extra_field_calls": {
+        "mul": 640,
+        "add": 1024,
+        "sub": 0
+      },
+      "arm_image": {
+        "text": 14080,
+        "data": 0,
+        "bss": 14876
+      },
+      "elf_sha256": "d9ff7cf97954bd6776b84a3c208c82278c5e224a351a1803b44c172561dc6218",
+      "qemu": {
+        "status": "passed",
+        "target": "QEMU mps2-an386 Cortex M4 emulator",
+        "emulator": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)",
+        "record": "test/qemu-mps2-an386-prior.json"
+      },
+      "coefficients_sha256": "9281c37271baa76755a5873797b948142bc3ae8c45865df69326589a892a58df"
+    },
+    "our": {
+      "checks": 2,
+      "stored_coefficients": 768,
+      "constant_bytes": 3072,
+      "field_calls": {
+        "mul": 1792,
+        "add": 2048,
+        "sub": 1024
+      },
+      "extra_field_calls": {
+        "mul": 768,
+        "add": 1024,
+        "sub": 0
+      },
+      "arm_image": {
+        "text": 14576,
+        "data": 0,
+        "bss": 14876
+      },
+      "elf_sha256": "cae833db037578782500fd63c32e65d0772ee7278caf5a501ea35b995cdde3ff",
+      "qemu": {
+        "status": "passed",
+        "target": "QEMU mps2-an386 Cortex M4 emulator",
+        "emulator": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)",
+        "record": "test/qemu-mps2-an386-our.json"
+      },
+      "coefficients_sha256": "dc167f43461e2c9c079bb79ded94a5b6a3af39062ea1de36b64f71ce01f9b2ec"
+    }
+  },
+  "physical_cycles": "pending",
+  "physical_flash_ram_stack": "pending"
+}
