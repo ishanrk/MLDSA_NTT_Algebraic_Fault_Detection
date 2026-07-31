@@ -42,6 +42,14 @@ build/libmldsa_our.so: $(SRC) $(ARM_DEPS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) -Isrc $(CFLAGS) -DMLDSA_OUR_CHECKER -fPIC -shared $(SRC) -o $@
 
+build/test_baseline: $(SRC) test/host_io.c platform/cortexm4/test_main.c platform/cortexm4/mps2_vectors.inc $(ARM_DEPS)
+	mkdir -p build
+	$(CC) $(CPPFLAGS) -Isrc -Iplatform/cortexm4 $(CFLAGS) platform/cortexm4/test_main.c test/host_io.c $(SRC) -o $@
+
+.PHONY: baseline
+baseline: build/test_baseline
+	./build/test_baseline
+
 build/test_our: $(SRC) test/our_cases.c test/our_cases.h test/host_io.c platform/cortexm4/test_main.c platform/cortexm4/mps2_vectors.inc $(ARM_DEPS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) -Isrc -Itest -Iplatform/cortexm4 $(CFLAGS) -DMLDSA_OUR_CHECKER -DMLDSA_TEST_FAULTS platform/cortexm4/test_main.c test/our_cases.c test/host_io.c $(SRC) -o $@

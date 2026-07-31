@@ -1,0 +1,58 @@
+{
+  "normal_suites": {
+    "gcc": {
+      "status": "passed",
+      "log": "build/verify/milestone-gcc.log",
+      "log_sha256": "dbeb8d002aa04960bd1231ddd8bf55951b663f12c506cc74f22bebbb5d3325ef"
+    },
+    "clang": {
+      "status": "passed",
+      "log": "build/verify/milestone-clang.log",
+      "log_sha256": "d7d5cd0387fedb77992fc6dfcbca72eb33d98554439cb9f5e2df899783e4f3fa"
+    },
+    "asan": {
+      "status": "passed",
+      "log": "build/verify/milestone-asan.log",
+      "log_sha256": "984b776d74735ccc2b70a60614469bd17206624d45030755e69d34f472ca2e2c"
+    },
+    "ubsan": {
+      "status": "passed",
+      "log": "build/verify/milestone-ubsan.log",
+      "log_sha256": "e33c1d45307716899b5140a29d84f2ded22c114c56b5c2c13444c29eb15ece3e"
+    }
+  },
+  "certificates": {
+    "prior": {
+      "command": "python3 tools/gen_prior_checker.py --check",
+      "status": "passed",
+      "certificate_sha256": "48268702d362b578fac07cd960bc7ae379a8ccbd3015c11bb0030da4c94d84c1",
+      "checked_pairs": 2653056,
+      "zero_first_responses": 0,
+      "zero_second_responses": 0,
+      "zero_determinants": 0
+    },
+    "our": {
+      "command": "python3 tools/gen_our_checker.py --check",
+      "status": "passed",
+      "certificate_sha256": "f33852bbb9b469d34dc5684cccf35e35b5617854a8c50a49c76426f9e452e6ea",
+      "checked_pairs": 2653056,
+      "zero_first_responses": 0,
+      "zero_second_responses": 0,
+      "zero_determinants": 0
+    }
+  },
+  "qemu_records": [
+    "test/qemu-mps2-an386.json",
+    "test/qemu-mps2-an386-prior.json",
+    "test/qemu-mps2-an386-our.json"
+  ],
+  "production_and_benchmark_C_changed": false,
+  "unchanged_benchmark_elf_sha256": {
+    "baseline": "38691580df2a709808baff1adea09087103551f78e231f332d8b6101b35bfe1d",
+    "prior": "d9ff7cf97954bd6776b84a3c208c82278c5e224a351a1803b44c172561dc6218",
+    "our": "cae833db037578782500fd63c32e65d0772ee7278caf5a501ea35b995cdde3ff"
+  },
+  "production_bugs_found": 0,
+  "production_fixes": [],
+  "source_baseline_commit": "96f391badd3cbbd1f76be07a940b75ed6e146c66"
+}

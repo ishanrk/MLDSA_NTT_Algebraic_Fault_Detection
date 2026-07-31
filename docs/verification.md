@@ -2,7 +2,7 @@
 
 This stage uses CBMC 6.10.0 and Z3 4.8.12 (the QF_AUFBV backend) for portable C implementation properties. It uses a 32 bit little endian integer and pointer model with i386 preprocessing, whose fixed width types and `unsigned` widths match this crypto core's Cortex M4 C types. It does not verify ARM machine code, startup code, ABI behavior, SHAKE, or the full ML DSA standard. No production C or generated crypto constants were changed.
 
-The proof harnesses are in [verify/](../verify). The [arithmetic record](../verify/results_arithmetic.json) contains full commands, results, per job wall times, unwind bounds, tool versions, and SHA256 digests of production sources, harnesses, and generated proof views. Raw solver logs are in ignored `build/verify` and are identified by digest in the records. Passing a proof refers to all input values admitted by its documented preconditions, rather than random samples.
+The proof harnesses are in [verify/](../verify). The [arithmetic record](../verify/results_arithmetic.json) and [checker record](../verify/results_checkers.json) contain full commands, results, per job wall times, unwind bounds, tool versions, and SHA256 digests of production sources, harnesses, and generated proof views. Raw solver logs are in ignored `build/verify` and are identified by digest in the records. Passing a proof refers to all input values admitted by its documented preconditions, rather than random samples.
 
 ## Reproduction
 
@@ -40,7 +40,7 @@ $CBMC SOURCES -Iinclude -Ibuild/verify --arch i386 --32 --little-endian \
   --function ENTRY --unwind BOUND
 ```
 
-`SOURCES`, `ENTRY`, extra defines, and `BOUND` are given below. Include flags for the local preprocessing headers appear in the JSON commands. Unwinding assertions are enabled in every job. All loop checks passed, including their unwinding assertions; scalar jobs contain no reachable loops. See the [CBMC documentation](https://diffblue.github.io/cbmc/cbmc-tutorial.html) for bounded checking and the role of unwinding assertions. No partial loop option or assertion to assumption conversion is used.
+`SOURCES`, `ENTRY`, extra defines, and `BOUND` are given below. Include flags for the local preprocessing headers appear in the JSON commands. Unwinding assertions are enabled in every job. All loop checks passed, including their unwinding assertions; scalar jobs contain no reachable loops. See the [CBMC documentation](https://github.com/diffblue/cbmc/blob/develop/doc/cprover-manual/cbmc-tutorial.md) for bounded checking and the role of unwinding assertions. No partial loop option or assertion to assumption conversion is used.
 
 ## Arithmetic properties
 
@@ -90,8 +90,76 @@ All explicit assumptions are either documented caller ranges or established comp
 3. Symbolic butterfly indices select an actual layer, block, and pair. These assumptions name the region being verified, without excluding any production pair.
 4. Arbitrary checksum prefix accumulators are canonical. The zero initialization and preservation of this invariant are checked separately.
 5. Replacement arithmetic results and baseline NTT output coefficients are canonical. Arithmetic range is proved on the production scalar functions and propagated through full loop safety. Replacements are side effect free. Layer and checksum replacements additionally check the exact operands.
-6. The harnesses construct valid full sized, live, disjoint objects. Null, dangling, too short, and overlapping pointers violate the documented interface; there is no assumed arbitrary pointer validity predicate hiding such cases.
+6. The harnesses construct valid full sized, live, disjoint objects. The baseline NTT and checker jobs follow their documented nonoverlap contract. The pointwise safety job covers disjoint objects; permitted in place pointwise aliasing is outside its scope. Null, dangling, and too short pointers violate the valid object contract. There is no assumed arbitrary pointer validity predicate hiding such cases.
 
 There are no assumptions about selected input vectors, zero coefficients, small fault magnitudes, successful checker return codes, or already equal checksum values. No assumption is added merely to avoid a timeout. CBMC, Z3, their frontend/library models, the source view extractor, and the exact arithmetic certificate generators are trusted tools. No physical hardware behavior is an assumption or a result of this stage.
 
 The 19 arithmetic, layer, and NTT memory jobs passed. Their recorded wall times total 65.023 seconds, with no individual job exceeding the 45 second limit and no timeouts. This is the sum of individual job times, rather than overall stage elapsed time.
+
+## Algebraic checker specifications
+
+For input column `p` and returned NTT column `r`, the specification of the four local accumulators is
+
+```
+x = sum(p[i]) mod q
+y = sum(beta[i]*p[i]) mod q
+u = sum(a[i]*r[i]) mod q
+v = sum(alpha[i]*r[i]) mod q
+accept exactly when x == u and y == v
+```
+
+The prior output row uses `alpha[i]=1` at odd physical indices and its stored `prior_alpha[i/2]` at even indices. Our checker uses the full `our_alpha[i]` table. The specification uses the exact generated production rows whose identities are established in their certificates. An individual product is formed in 64 bits and reduced modulo `q`. The summation specification is a fold starting at zero: `S_next=(S+term) mod q`.
+
+| Property and entry | Production region | Sources | Extra define | Unwind | Result |
+| --- | --- | --- | --- | ---: | --- |
+| `base` | Accumulator initialization in `mldsa_ntt_forward_prior` | `verify/checker_step.c` | `-DPRIOR` | 1 | Passed |
+| `input_step` | Prior input checksum loop body | Same | `-DPRIOR` | 1 | Passed |
+| `output_step` | Prior output checksum loop body | Same | `-DPRIOR` | 1 | Passed |
+| `decide` | Prior final return expression | Same | `-DPRIOR` | 1 | Passed |
+| `memory` | Entire `mldsa_ntt_forward_prior` | `verify/checker_memory.c src/prior.c` | `-DPRIOR` | 257 | Passed |
+| `base` | Accumulator initialization in `mldsa_ntt_forward_our` | `verify/checker_step.c` | None | 1 | Passed |
+| `input_step` | Our input checksum loop body | Same | None | 1 | Passed |
+| `output_step` | Our output checksum loop body | Same | None | 1 | Passed |
+| `decide` | Our final return expression | Same | None | 1 | Passed |
+| `memory` | Entire `mldsa_ntt_forward_our` | `verify/checker_memory.c src/our.c` | None | 257 | Passed |
+
+The initialization proofs use the actual extracted declaration. Step proofs allow every physical coefficient index and every canonical prefix accumulator. They verify the correct table weight and coefficient operands, then verify the actual production addition against the modular fold specification. Multiplication is replaced by an arbitrary canonical result of a call with those checked operands, using the separately proved multiplication contract. This verifies weighted and ordinary sums, the prior odd/even layout, all generated array accesses, canonical result bounds, and safe index/representation conversions. There is no additional Montgomery conversion.
+
+Induction on the unchanged `i=0; i<256; i++` loop headers combines the proved zero base case and arbitrary index step with the arithmetic contract. It establishes that all four C accumulators equal the fold specification. This composition argument is explicit; CBMC does not automatically prove a 256 term dot product identity with a single nonlinear solver query. The source view tool checks the original checker function structure, including its initialization, both complete loop headers, the intervening baseline call, and the final return.
+
+The decision proofs cover every four `uint32_t` words, so they also cover all canonical checksum values. They prove exact equivalence to the two equality tests and prove acceptance when called with `(x,y,x,y)`, without assuming a successful return value.
+
+The full wrapper safety proofs execute both complete checksum loops and their final decision from the actual production files. Their NTT contract writes an arbitrary canonical output to the supplied result object. CBMC verifies that the wrapper calls the baseline exactly once with the original arguments, never changes the input, preserves every returned NTT coefficient, and returns only 0 or -1. Output preservation holds even for rejected outputs. This contract is an overapproximation of all baseline results, not an assumption that the NTT is the identity.
+
+## No fault acceptance and scope
+
+When the baseline produces the mathematical result `r=T*p`, the concrete certificate identities `b=T^T*a` and `beta=T^T*alpha`, with `b` all ones, give `x=u` and `y=v`. The verified accumulator folds and decision then give acceptance. The verified layer updates, their input copy, and the production layer schedule support this compositional use of the forward transform. Both checker variants preserve the baseline output under the stronger arbitrary-output wrapper proof.
+
+The no fault acceptance result therefore combines CBMC implementation lemmas with the exact network/row certificate. There is no end to end CBMC job containing the complete numerical NTT and both complete numerical checksum computations. The layer schedule and the assembly of the component lemmas are inspected reasoning, rather than an automatically checked global refinement proof. An independently machine checked assembly of that global proof remains outside this result.
+
+The general two fault determinant theorem and the greedy construction theorem are not CBMC targets. The unchanged exact generators certify the concrete coefficient conditions for all 2304 locations and 2653056 pairs for each checker. Mathematical field properties and those certificates are part of the compositional argument. This stage does not verify the generator algorithms themselves, inverse transform functional equivalence or round trips, polynomial ring multiplication end to end, ML DSA key/signature logic, SHAKE, constant time behavior, physical faults, or ARM machine instructions.
+
+## Evidence checks and milestone tests
+
+The ten checker proof jobs passed in a sum of 21.483 seconds. Together with arithmetic, the 29 successful jobs took 86.506 seconds of summed per job wall time. All passed under the recorded unwind bounds with no timeouts or failed unwinding assertions.
+
+Two [negative controls](../verify/negative_controls.json) introduced deliberate mistakes only in temporary proof views: replacing our input beta weight with our output first weight, and loading a forward layer's low wire as its high input. Both produced the expected assertion counterexample and CBMC exit status 10. To reproduce a control, copy its named view into `build/verify/negative`, apply the recorded textual substitution, execute its saved command, and remove that temporary view. The original generated views and production files stay intact.
+
+The directly relevant normal milestone commands were
+
+```sh
+make -B baseline prior our CC=gcc
+make -B baseline prior our CC=clang
+make -B baseline prior our CC=gcc OPT='-O1 -g' SAN='-fsanitize=address'
+make -B baseline prior our CC=gcc OPT='-O1 -g' SAN='-fsanitize=undefined -fno-sanitize-recover=all'
+python3 tools/gen_prior_checker.py --check
+python3 tools/gen_our_checker.py --check
+make arm-mps2 arm-mps2-prior arm-mps2-our
+python3 tools/run_mps2.py
+python3 tools/run_mps2.py --prior
+python3 tools/run_mps2.py --our
+```
+
+The existing Cortex M4 toolchain overrides apply. GCC 11.4.0, Clang 14.0.0, ASan, UBSan, and all three QEMU 6.2.0 `mps2-an386` compact suites passed. ARM GCC was 10.3.1. Both exhaustive certificates matched the checked in data and had zero failure counts. The new `make baseline` target runs the existing compact baseline entry point on the host; it adds no crypto or test vector changes. The old 10000 pair campaign and unrelated suites were not repeated.
+
+The [milestone record](../verify/milestone.json) identifies normal test logs, certificates, and unchanged benchmark ELF digests. No production bug was found. No production fix, checksum constant change, or benchmark relevant C change was made, so the previous operation counts and matched ARM image sizes still describe the same implementation. Physical measurements remain deferred.

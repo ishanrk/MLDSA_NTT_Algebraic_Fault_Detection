@@ -1,0 +1,81 @@
+[
+  {
+    "name": "our_input_step",
+    "mutation": "our_beta[i] => our_a[i]",
+    "view": "our_input.inc",
+    "mutated_view_sha256": "df990b9d873778b3aae2bcf05291093ddc99d06d715bcd53a38e900ed32860ae",
+    "command": [
+      "/home/ishan/.local/toolchains/cbmc-6.10.0/usr/bin/cbmc",
+      "verify/checker_step.c",
+      "-Iinclude",
+      "-Ibuild/verify/negative",
+      "-Ibuild/verify",
+      "--arch",
+      "i386",
+      "--32",
+      "--little-endian",
+      "--bounds-check",
+      "--pointer-check",
+      "--pointer-overflow-check",
+      "--signed-overflow-check",
+      "--unsigned-overflow-check",
+      "--conversion-check",
+      "--undefined-shift-check",
+      "--unwinding-assertions",
+      "--drop-unused-functions",
+      "--z3",
+      "-Ibuild/verify/headers/root/usr/include/x86_64-linux-gnu",
+      "-I/usr/include/x86_64-linux-gnu",
+      "--function",
+      "input_step",
+      "--unwind",
+      "1"
+    ],
+    "result": "expected counterexample",
+    "exit_code": 10,
+    "failures": [
+      "[mldsa_mul.assertion.2] line 32 assertion a == weight[calls] && b == coeff: FAILURE"
+    ],
+    "seconds": 0.288
+  },
+  {
+    "name": "forward_layer_3",
+    "mutation": "z, r->c[j + len] => z, r->c[j]",
+    "view": "forward_layer.inc",
+    "mutated_view_sha256": "beb03ebcfc392218e85f4af77b27e4b20baa592dacdadab1e8b61c9667f74e23",
+    "command": [
+      "/home/ishan/.local/toolchains/cbmc-6.10.0/usr/bin/cbmc",
+      "verify/layer.c",
+      "-Iinclude",
+      "-Ibuild/verify/negative",
+      "-Ibuild/verify",
+      "--arch",
+      "i386",
+      "--32",
+      "--little-endian",
+      "--bounds-check",
+      "--pointer-check",
+      "--pointer-overflow-check",
+      "--signed-overflow-check",
+      "--unsigned-overflow-check",
+      "--conversion-check",
+      "--undefined-shift-check",
+      "--unwinding-assertions",
+      "--drop-unused-functions",
+      "--z3",
+      "-Ibuild/verify/headers/root/usr/include/x86_64-linux-gnu",
+      "-I/usr/include/x86_64-linux-gnu",
+      "-DLAYER=3",
+      "--function",
+      "layer",
+      "--unwind",
+      "257"
+    ],
+    "result": "expected counterexample",
+    "exit_code": 10,
+    "failures": [
+      "[mldsa_mul.assertion.2] line 26 assertion b == input.c[j + LEN]: FAILURE"
+    ],
+    "seconds": 6.225
+  }
+]
