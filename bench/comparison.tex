@@ -1,0 +1,45 @@
+% Generated from bench/comparison.json; do not edit numbers.
+
+% Forward NTT operations
+\begin{tabular}{lrrrrrr}
+\hline
+Variant & Checks & Stored coefficients & Total field mul & Total field add & Extra field mul & Extra field add \\
+\hline
+Baseline & 0 & 0 & 1024 & 1024 & 0 & 0 \\
+Abdelmonem two checks & 2 & 640 & 1664 & 2048 & 640 & 1024 \\
+Our deterministic two checks & 2 & 768 & 1792 & 2048 & 768 & 1024 \\
+\hline
+\end{tabular}
+
+% Matched ARM emulator images (bytes)
+\begin{tabular}{lrrrr}
+\hline
+Variant & Constant tables & ARM text & ARM data & ARM BSS \\
+\hline
+Baseline & 0 & 11248 & 0 & 14876 \\
+Abdelmonem two checks & 2560 & 14080 & 0 & 14876 \\
+Our deterministic two checks & 3072 & 14576 & 0 & 14876 \\
+\hline
+\end{tabular}
+
+% Implementation evidence
+\begin{tabular}{lrrrrr}
+\hline
+Variant & Exact certificate & Pairs & Certificate failures & CBMC jobs passed & QEMU correctness \\
+\hline
+Baseline & not applicable & N/A & N/A & 19 common + 0 checker & passed \\
+Abdelmonem two checks & passed & 2653056 & 0 & 19 common + 5 checker & passed \\
+Our deterministic two checks & passed & 2653056 & 0 & 19 common + 5 checker & passed \\
+\hline
+\end{tabular}
+
+% Physical measurements
+\begin{tabular}{lrrrrrrr}
+\hline
+Variant & NTT cycles & Keygen cycles & Sign cycles & Verify cycles & Flash bytes & Static RAM bytes & Stack bytes \\
+\hline
+Baseline & pending & pending & pending & pending & pending & pending & pending \\
+Abdelmonem two checks & pending & pending & pending & pending & pending & pending & pending \\
+Our deterministic two checks & pending & pending & pending & pending & pending & pending & pending \\
+\hline
+\end{tabular}

@@ -5,11 +5,11 @@ SEED =
 CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -Wconversion -Wshadow $(OPT) $(SAN) -fno-omit-frame-pointer
 CPPFLAGS = -Iinclude
 SRC = src/poly.c src/ntt.c src/prior.c src/our.c src/shake.c src/round.c src/encode.c src/sample.c src/vector.c src/keygen.c src/sign.c src/verify.c src/message.c
-ARM_CC = arm-none-eabi-gcc
-ARM_OBJCOPY = arm-none-eabi-objcopy
-ARM_SIZE = arm-none-eabi-size
-ARM_INC =
-ARM_LIB =
+ARM_CC ?= arm-none-eabi-gcc
+ARM_OBJCOPY ?= arm-none-eabi-objcopy
+ARM_SIZE ?= arm-none-eabi-size
+ARM_INC ?=
+ARM_LIB ?=
 ARM_CFLAGS = -mcpu=cortex-m4 -mthumb -mfloat-abi=soft -std=c11 -O2 -ffreestanding -fno-builtin -fdata-sections -ffunction-sections -Wall -Wextra -Wpedantic -Wconversion -Wshadow
 ARM_COMMON = $(SRC) platform/cortexm4/startup.c platform/cortexm4/mps2_io.c
 ARM_SRC = $(ARM_COMMON) platform/cortexm4/test_main.c
@@ -163,3 +163,7 @@ arm-mps2-our-bench: build/arm/mps2_our_bench.elf
 
 clean:
 	rm -rf build
+
+.PHONY: comparison
+comparison:
+	python3 tools/compare.py

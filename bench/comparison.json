@@ -1,0 +1,513 @@
+{
+  "purpose": "pre hardware research comparison",
+  "compiler": "arm-none-eabi-gcc (15:10.3-2021.07-4) 10.3.1 20210621 (release)",
+  "architecture": "-mcpu=cortex-m4 -mthumb -mfloat-abi=soft",
+  "optimization": "-O2",
+  "linker": "platform/cortexm4/mps2.ld",
+  "variants": {
+    "baseline": {
+      "checks": 0,
+      "stored_coefficients": 0,
+      "constant_bytes": 0,
+      "field_calls": {
+        "mul": 1024,
+        "add": 1024,
+        "sub": 1024
+      },
+      "extra_field_calls": {
+        "mul": 0,
+        "add": 0,
+        "sub": 0
+      },
+      "arm_image": {
+        "text": 11248,
+        "data": 0,
+        "bss": 14876
+      },
+      "elf_sha256": "38691580df2a709808baff1adea09087103551f78e231f332d8b6101b35bfe1d",
+      "qemu": {
+        "status": "passed",
+        "target": "QEMU mps2-an386 Cortex M4 emulator",
+        "emulator": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)",
+        "record": "test/qemu-mps2-an386.json",
+        "record_sha256": "bc7096f23b5ed77c3b418ac74c115bf252f161dbbe643f255fd6e2dedda6ff5d"
+      },
+      "exact_certificate": {
+        "status": "not applicable"
+      },
+      "formal": {
+        "status": "focused component proofs passed",
+        "common_jobs": 19,
+        "checker_jobs": 0,
+        "scope_document": "docs/verification.md"
+      },
+      "modeled_fault_coverage": {
+        "additive_wire_deviations": 0,
+        "locations": null,
+        "conditions": "trusted checker arithmetic, stored weights and control flow; nonzero erroneous transform result",
+        "physical_fault_injection": "not evaluated"
+      },
+      "physical": {
+        "status": "pending",
+        "board": null,
+        "clock_hz": null,
+        "cycles": null,
+        "flash_bytes": null,
+        "static_ram_bytes": null,
+        "stack_bytes": null
+      }
+    },
+    "prior": {
+      "checks": 2,
+      "stored_coefficients": 640,
+      "constant_bytes": 2560,
+      "field_calls": {
+        "mul": 1664,
+        "add": 2048,
+        "sub": 1024
+      },
+      "extra_field_calls": {
+        "mul": 640,
+        "add": 1024,
+        "sub": 0
+      },
+      "arm_image": {
+        "text": 14080,
+        "data": 0,
+        "bss": 14876
+      },
+      "elf_sha256": "d9ff7cf97954bd6776b84a3c208c82278c5e224a351a1803b44c172561dc6218",
+      "qemu": {
+        "status": "passed",
+        "target": "QEMU mps2-an386 Cortex M4 emulator",
+        "emulator": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)",
+        "record": "test/qemu-mps2-an386-prior.json",
+        "record_sha256": "fc3b57f1c2097a46290593ff9b200fa7490b51e379bd38a431612eec32751aa6"
+      },
+      "coefficients_sha256": "9281c37271baa76755a5873797b948142bc3ae8c45865df69326589a892a58df",
+      "exact_certificate": {
+        "status": "passed",
+        "record": "docs/prior_certificate.json",
+        "sha256": "48268702d362b578fac07cd960bc7ae379a8ccbd3015c11bb0030da4c94d84c1",
+        "modeled_locations": 2304,
+        "checked_pairs": 2653056,
+        "failure_counts": {
+          "zero_first_responses": 0,
+          "zero_second_responses": 0,
+          "zero_determinants": 0
+        },
+        "row_identities": "direct evaluation and network pullback passed",
+        "propagation_identity": "all unit wires matched the production network",
+        "coefficients_sha256": "9281c37271baa76755a5873797b948142bc3ae8c45865df69326589a892a58df",
+        "network_sha256": "0353ec99eca78da433f92b5e6b756bd4b3f01187f8f1c502df98f4c241e6b861"
+      },
+      "formal": {
+        "status": "focused component proofs passed",
+        "common_jobs": 19,
+        "checker_jobs": 5,
+        "scope_document": "docs/verification.md"
+      },
+      "modeled_fault_coverage": {
+        "additive_wire_deviations": 2,
+        "locations": 2304,
+        "conditions": "trusted checker arithmetic, stored weights and control flow; nonzero erroneous transform result",
+        "physical_fault_injection": "not evaluated"
+      },
+      "physical": {
+        "status": "pending",
+        "board": null,
+        "clock_hz": null,
+        "cycles": null,
+        "flash_bytes": null,
+        "static_ram_bytes": null,
+        "stack_bytes": null
+      }
+    },
+    "our": {
+      "checks": 2,
+      "stored_coefficients": 768,
+      "constant_bytes": 3072,
+      "field_calls": {
+        "mul": 1792,
+        "add": 2048,
+        "sub": 1024
+      },
+      "extra_field_calls": {
+        "mul": 768,
+        "add": 1024,
+        "sub": 0
+      },
+      "arm_image": {
+        "text": 14576,
+        "data": 0,
+        "bss": 14876
+      },
+      "elf_sha256": "cae833db037578782500fd63c32e65d0772ee7278caf5a501ea35b995cdde3ff",
+      "qemu": {
+        "status": "passed",
+        "target": "QEMU mps2-an386 Cortex M4 emulator",
+        "emulator": "QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)",
+        "record": "test/qemu-mps2-an386-our.json",
+        "record_sha256": "31fd5ad15dc27d2fc7c6db709df7420502416da9b6ceb618d1dc66fd97246e90"
+      },
+      "coefficients_sha256": "dc167f43461e2c9c079bb79ded94a5b6a3af39062ea1de36b64f71ce01f9b2ec",
+      "exact_certificate": {
+        "status": "passed",
+        "record": "docs/our_certificate.json",
+        "sha256": "f33852bbb9b469d34dc5684cccf35e35b5617854a8c50a49c76426f9e452e6ea",
+        "modeled_locations": 2304,
+        "checked_pairs": 2653056,
+        "failure_counts": {
+          "zero_first_responses": 0,
+          "zero_second_responses": 0,
+          "duplicate_normalized_responses": 0,
+          "zero_determinants": 0
+        },
+        "row_identities": "direct evaluation and network pullback passed",
+        "propagation_identity": "all unit wires matched the production network",
+        "coefficients_sha256": "dc167f43461e2c9c079bb79ded94a5b6a3af39062ea1de36b64f71ce01f9b2ec",
+        "network_sha256": "0353ec99eca78da433f92b5e6b756bd4b3f01187f8f1c502df98f4c241e6b861"
+      },
+      "formal": {
+        "status": "focused component proofs passed",
+        "common_jobs": 19,
+        "checker_jobs": 5,
+        "scope_document": "docs/verification.md"
+      },
+      "modeled_fault_coverage": {
+        "additive_wire_deviations": 2,
+        "locations": 2304,
+        "conditions": "trusted checker arithmetic, stored weights and control flow; nonzero erroneous transform result",
+        "physical_fault_injection": "not evaluated"
+      },
+      "physical": {
+        "status": "pending",
+        "board": null,
+        "clock_hz": null,
+        "cycles": null,
+        "flash_bytes": null,
+        "static_ram_bytes": null,
+        "stack_bytes": null
+      }
+    }
+  },
+  "physical_cycles": "pending",
+  "physical_flash_ram_stack": "pending",
+  "schema_version": 1,
+  "source_sha256": {
+    "Makefile": "7ea8f9d9adfda86848c083a670bdd54ea5635e01a9b4ee822b418fd6df4d524d",
+    "include/mldsa44.h": "cbac6a37ecdeb981a2797727967c8040ed486bb7bf497731ef94f24a4db81cc6",
+    "include/mldsa_checker.h": "ce56e9f35c71cae1182a5c6b71854b97faf2d6ffcf439e05038c77f26b2b5b3c",
+    "include/mldsa_poly.h": "f2d92e9f73a353ae184093e9e47b51d784d6024d3e64e862e46d6a3dad591d0f",
+    "include/mldsa_shake.h": "c549e913cb46d4a2480c40509f35deff440b3bae93c1c776b1467f9c02bf8907",
+    "platform/cortexm4/bench_main.c": "1506b4db44f9571a9cdae1f4bcf89555ed00868998b5e0a8edd2fc85031cd4ea",
+    "platform/cortexm4/core.c": "3fa116668761e35c0970e7cd6557133613f9016808daa54f5f263bb4ba619f19",
+    "platform/cortexm4/core.h": "802594cd766073a168ec071809f2d56bcca57c597b39320230157259b137e2a0",
+    "platform/cortexm4/mps2.ld": "f5a1ebb31c03ae25c9bc1a8e53016e8d6291e5064cbe090f24c1494bc5d957b6",
+    "platform/cortexm4/mps2_io.c": "47e4d134d05dc558db1f1a2bfebce56b8584222f453a02dce5e0b6e0912ecc8f",
+    "platform/cortexm4/mps2_vectors.inc": "ddd4568bb1186119978b7fca40ace1cf671822fecb684fc474625c188b5ab6c4",
+    "platform/cortexm4/platform.h": "0a10b6576c500cf8962a905d9c612a61201b37fc20c1abdf1c71ca5b8289f0d0",
+    "platform/cortexm4/startup.c": "5197d8d14044b118b2e12b78151744e3a2a39e998f5fafeacc4f01e4e41028ba",
+    "platform/cortexm4/test_main.c": "82bf56ad6f444eea4351c130668a0e6338b70df97523b26d90629a46582c8256",
+    "src/encode.c": "8a972d3acd5e16437b11516e3a7221f0af5fd6fa48e4e595c78e627e96667cc7",
+    "src/keccak_tables.inc": "7ce9338598407e3006281e3cfec568d1617c3086eb1e2f84c8d9893f8b7e064b",
+    "src/keygen.c": "1941ffcd2d4a0a477af73d81bd87a5b576ef7c91704afdc17ac2f8b8d808d450",
+    "src/message.c": "559f41312c2ae70bcc8bd9e91f8b833192b7ca700b8afa501cb7e822a59aa602",
+    "src/mldsa44_internal.h": "67146be180e3d04a2eec8465ef1352bf5f16f14e005767c45c1aa1ec9ce9316c",
+    "src/ntt.c": "77ef52bcdd3387aca4ecba29f146c07b463f7070da044705d9c228a9db90af23",
+    "src/our.c": "0a7dee1ef22ef1c244f65c5a543cd8a1eb42c03d16afffc698f3ed6cbe7eae5f",
+    "src/our_tables.inc": "1e9caf847ebc5eeb8200e7713d5fe1f7762ddf3b9389cfc7bd1156cc5aa602eb",
+    "src/poly.c": "499b45f1faaf9d7e08a7be51f4cecc6874f59420640e0213966a838f427cad46",
+    "src/prior.c": "897d7396093515481b5f933c13235bf9a2edaa1799d7238fb96fdc8922f7ffcb",
+    "src/prior_tables.inc": "e5b40129aa09a46d35ba46a286b5ce2b5572a613468548229a2c7da2088ba534",
+    "src/round.c": "c140241c1038bd4f0ff9c264a5b49ad407689e88e6dddafc08dc55721cacb932",
+    "src/sample.c": "88523eaf12d6db36b641652b05721f2ac3fd23f2a5009f821e802eacd1d541de",
+    "src/shake.c": "4dc41981bd0e827a24e94dbf7b83600f3025871688c34007dca09f5114114a15",
+    "src/sign.c": "0b53f7c7989082b8ba02007addf45aadab65c484dc230800a01db0dcb5328310",
+    "src/vector.c": "f33ac4d226d8f589b9bd98416d2ef588daa5e3779f05de89b4c0819012e838f9",
+    "src/verify.c": "6c097f9d03dfa8054261743625c7dd8614dc760efaed1f36ef2960d9e0721e3c",
+    "src/zetas.inc": "268f373132c4be8c6a4e1ce2eefdcf2530cee779d88d5b9033b750356378545f",
+    "test/count_checkers.c": "aaaddf6fd94b6ab6b623048e5aee947702676cfa84102cf978dfba8da107ef1a",
+    "test/count_prior.c": "62cd79f1e8c63f1c4c67e822c8d115e8bbc73cefc2aeb2d5b8ccb1c35ad9a810",
+    "test/host_io.c": "01973a0224413ea6bb1c3ae1c201d9dd2c5315b15c48d8598a1785a24705481a",
+    "test/our_cases.c": "ebea415b9792aa091dde1b8919b951826f83bdc021acf52629a2bb6db64ea776",
+    "test/our_cases.h": "6fba5f17c3565c84fc9063030612bd6f77dfb1f59afef981774530a47d9a2575",
+    "test/prior_cases.c": "fa655f9310d02f4bf3b93c57913f04306d1941109a2f3b15ae124433b5354241",
+    "test/prior_cases.h": "6bd03d3253dd75adda0389c51e3c375727844700346d14ed454ae5c61f37a140",
+    "test/test_differential.py": "849f2602ec6891a1a3543110a37f4e35afe393bcf8c4955ce7c7968560853e16",
+    "test/test_encode.c": "e5117dcc1bbf2a89e28eaeabe800674d16e5454ecd1a72f8ed9b8acdeb70d521",
+    "test/test_keygen.py": "a67885ede16bfc0576ecd900b1860d43192c76eb5798f90989e4a5a880760bf0",
+    "test/test_negative.c": "d982b529382c77e8900c87f587d9441414341055d70465290183c73b81f9d933",
+    "test/test_poly.c": "01a21b86f2ea3dee59e65080479c1309e24dafd1fd0113bae5357ef4e217bfec",
+    "test/test_prehash.py": "dc6deb0fd929a0c640866fe43edb670005e3d18548619c6e9b6414e47d47ab66",
+    "test/test_round.c": "e950598d14f19d9824ef55e0d5091f467713f095e81c2b0e59ee82392b8e3879",
+    "test/test_sample.py": "79d5cfae88fe6805655e087e57524ad52af5e70e4f8261b5958246603b07fc0b",
+    "test/test_shake.py": "a24de9e080f0a50d614c5281f5fd9c93237cbb8371325630b3138e615fdc88a7",
+    "test/test_sign.py": "c70f993da8af425874663212d93d014032fdc3150b77b2b6ef7071270b8a5450",
+    "test/test_smoke.py": "0d11208c96e9a8bb611850a29379ef301d08e6c637ad129fa31ca5ffc303fcf4",
+    "test/test_verify.py": "00b636e8e813e080a87057808789f6140cd581fd133a3b79d812c9a756516936",
+    "tools/check_model.py": "3610ad8820204db8eca0fb4704e6b6281e1530aa54c4e9a9413fc6e041a9969e",
+    "tools/compare.py": "5f50b4ebe24ec800a9aadfa5ef1c9174403fde90bcf9f9b5d42bf872ec65ea0a",
+    "tools/fetch_nist.py": "5770391b69dfb6737f5b71a511c4066ad4239a6d91d22ffaa095627f871aea79",
+    "tools/gen_arm_vectors.py": "4a5eae85b2db15045c4700982780a0f28e64961381b61da39865667cd1dec73c",
+    "tools/gen_keccak.py": "f9e3b971e174e105fb7740361ad245dd1f57944868a7cc614ed0caf7af9c2c8f",
+    "tools/gen_our_checker.py": "dfc935cdec46b3f4fdb92b7848339477b530a8a56ea7d721532b2a8d02b64737",
+    "tools/gen_prior_checker.py": "355f3b94ca1c9209fbef701a5e94c4f127bcad874093ad667b33bc5aa5bc6ba7",
+    "tools/gen_zetas.py": "ac04de985d8d57c64268be68a0c285a62cdce11fc7b0aafadc7ff2f876cf0102",
+    "tools/measure_checkers.py": "49e43a0e22f013a0f25dca834d20c38668bb67e1dc39f119113920e419ccf443",
+    "tools/measure_prior.py": "b3d7734ce2335c99864723ac459348577422f36b92bdf22c414b56c2f46371e8",
+    "tools/ntt_network.py": "252f7f7c6df6a7405f9da379cefb8bf51d030edd6ad800d4ecfb5d1f2e35a97a",
+    "tools/render_comparison.py": "d34e4660f890074bc2f8d6716ae4009e6c90ccbffd7fe3df3b2fb1ab4ccb3366",
+    "tools/run_mps2.py": "cc052195d4c88ce9836c030db579e42a2dd4b5323d28b61231f1d7a10c326952",
+    "tools/summarize_bench.py": "a0f6bfbb67bd9323d351e5dd74f5ffc81f9837100034c984f6d2f0b6107bfe99",
+    "verify/arithmetic.c": "ca9f73312499930a27920e71f1b7f78202b262c59352cadd8da574a592fe7b85",
+    "verify/butterfly.c": "5e24ae3a9ccc8086969e39852258ccbe7b96622851e804051a69122bce8c82bb",
+    "verify/checker_memory.c": "28feb12a214dac9ed2dab2942c43f81f483d81b35a9026002696f76aa793d5fa",
+    "verify/checker_step.c": "1b98aa67edd77fc72e0903bc48b2d2df04f7a3e48f92bbdfe5f53d72449aab34",
+    "verify/layer.c": "4731e8a247a2305d6163830d3f98eda88d6504b9de4ad56dbd788c7ab6041310",
+    "verify/ntt_memory.c": "6095218321c02a4f9a09b7d0f7293d71f3f1fe348e3293c29ba1e1a4f4a87de3",
+    "verify/range_ops.h": "5d6f08e3467a3c61f5803b3eddc5b8968a69040329e390a5afd27ce01f976f9c",
+    "verify/run.py": "4833d7ead8841ce35e75f476cfa6751f9bf6eeffb51d2adfd54e526a0be7a9c3",
+    "verify/source_views.py": "43c275abf620b1e0c79e815efcc6f4a3350f8f78b4938fa79516ab547ec36a06"
+  },
+  "stages": {
+    "gcc": {
+      "status": "passed",
+      "command": [
+        "make",
+        "-B",
+        "baseline",
+        "prior",
+        "our",
+        "CC=gcc",
+        "OPT=-O2",
+        "SAN="
+      ],
+      "seconds": 1.548,
+      "log": "build/comparison/gcc.log",
+      "log_sha256": "9220de833dede22c085bccf203a86c169e517b12c9d890a3d510eadfc9e4ceb8"
+    },
+    "clang": {
+      "status": "passed",
+      "command": [
+        "make",
+        "-B",
+        "baseline",
+        "prior",
+        "our",
+        "CC=clang",
+        "OPT=-O2",
+        "SAN="
+      ],
+      "seconds": 1.966,
+      "log": "build/comparison/clang.log",
+      "log_sha256": "71c9379d45cf3e446e371a73a1b04a35129dd8dc8adc0f778bcffaf42b0ad065"
+    },
+    "asan": {
+      "status": "passed",
+      "command": [
+        "make",
+        "-B",
+        "baseline",
+        "prior",
+        "our",
+        "CC=gcc",
+        "OPT=-O1 -g",
+        "SAN=-fsanitize=address"
+      ],
+      "seconds": 1.806,
+      "log": "build/comparison/asan.log",
+      "log_sha256": "ba4c3cf0f230863966df03eefbbcf2a5d64bdd32283b13f7d673ecacf848b185"
+    },
+    "ubsan": {
+      "status": "passed",
+      "command": [
+        "make",
+        "-B",
+        "baseline",
+        "prior",
+        "our",
+        "CC=gcc",
+        "OPT=-O1 -g",
+        "SAN=-fsanitize=undefined -fno-sanitize-recover=all"
+      ],
+      "seconds": 2.063,
+      "log": "build/comparison/ubsan.log",
+      "log_sha256": "61742c923bab057bb961aa4f766a2509b4a2a302f39762eed2c5a4c80a737d62"
+    },
+    "certificate_prior": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "tools/gen_prior_checker.py",
+        "--check"
+      ],
+      "seconds": 5.245,
+      "log": "build/comparison/certificate_prior.log",
+      "log_sha256": "8037d9eb71db0ed7033673ed74d4750a05cf77eb318774959fb55d46d456bad6"
+    },
+    "certificate_our": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "tools/gen_our_checker.py",
+        "--check"
+      ],
+      "seconds": 6.164,
+      "log": "build/comparison/certificate_our.log",
+      "log_sha256": "12b635e427ca77e6b8e715d0981f23d3a6565fbcf355669f3046d2c7aee5df54"
+    },
+    "formal_arithmetic": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "verify/run.py",
+        "--group",
+        "arithmetic"
+      ],
+      "seconds": 64.168,
+      "log": "build/comparison/formal_arithmetic.log",
+      "log_sha256": "e1076d26fc100106440e4368df78b36ea8b25aec5ee85408d19cdd816fcb3d46"
+    },
+    "formal_checkers": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "verify/run.py",
+        "--group",
+        "checkers"
+      ],
+      "seconds": 21.439,
+      "log": "build/comparison/formal_checkers.log",
+      "log_sha256": "633239e7097b6d9e9a7e2a7b2a222c845fe7d0fa136f20f259e7c46907f553a3"
+    },
+    "counter": {
+      "status": "passed",
+      "command": [
+        "make",
+        "-B",
+        "build/count_checkers",
+        "CC=gcc",
+        "OPT=-O2",
+        "SAN="
+      ],
+      "seconds": 0.22,
+      "log": "build/comparison/counter.log",
+      "log_sha256": "3dc62abf6742e1cb317b2cf2cda91893f91a0d299d9627bda13d1a9d5cedbfb0"
+    },
+    "arm": {
+      "status": "passed",
+      "command": [
+        "make",
+        "-B",
+        "arm-mps2",
+        "arm-mps2-prior",
+        "arm-mps2-our",
+        "arm-mps2-bench",
+        "arm-mps2-prior-bench",
+        "arm-mps2-our-bench",
+        "ARM_CC=/home/ishan/code/DiscreteGaussianSampler/build/toolchain/root/usr/bin/arm-none-eabi-gcc",
+        "ARM_OBJCOPY=/home/ishan/code/DiscreteGaussianSampler/build/toolchain/root/usr/bin/arm-none-eabi-objcopy",
+        "ARM_SIZE=/home/ishan/code/DiscreteGaussianSampler/build/toolchain/root/usr/bin/arm-none-eabi-size",
+        "ARM_INC=-isystem /home/ishan/code/DiscreteGaussianSampler/build/toolchain/root/usr/include/newlib",
+        "ARM_LIB=-L/home/ishan/code/DiscreteGaussianSampler/build/toolchain/root/usr/lib/arm-none-eabi/newlib/thumb/v7e-m/nofp"
+      ],
+      "seconds": 4.107,
+      "log": "build/comparison/arm.log",
+      "log_sha256": "89924a8e7de18565d9dc8e9eb2b3ef4a522b7127369ac4284024dbd61486a19f"
+    },
+    "qemu_baseline": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "tools/run_mps2.py"
+      ],
+      "seconds": 0.168,
+      "log": "build/comparison/qemu_baseline.log",
+      "log_sha256": "d812ac93b155509057c936dc4199c3d0e0f934231c418dc4d586a8457d26aaa5"
+    },
+    "qemu_prior": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "tools/run_mps2.py",
+        "--prior"
+      ],
+      "seconds": 0.166,
+      "log": "build/comparison/qemu_prior.log",
+      "log_sha256": "1d6aefb7d2e0924e4d4b61e131088b7725acb0b75e30ce06d8d093180e4248c5"
+    },
+    "qemu_our": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "tools/run_mps2.py",
+        "--our"
+      ],
+      "seconds": 0.168,
+      "log": "build/comparison/qemu_our.log",
+      "log_sha256": "bd12ae485b329d09c4212dde6f4ccb7f48c4f3086698019a298e2fbba3c0bae1"
+    }
+  },
+  "host_compilers": {
+    "gcc": "gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+    "clang": "Ubuntu clang version 14.0.0-1ubuntu1.1"
+  },
+  "arm_cflags": "-mcpu=cortex-m4 -mthumb -mfloat-abi=soft -std=c11 -O2 -ffreestanding -fno-builtin -fdata-sections -ffunction-sections -Wall -Wextra -Wpedantic -Wconversion -Wshadow",
+  "link_flags": "-nostartfiles -nostdlib -Wl,--gc-sections -lc -lgcc",
+  "formal": {
+    "arithmetic": {
+      "record": "verify/results_arithmetic.json",
+      "sha256": "d4a77395685184d5396adec0c4394bbaf33fb84d20ed5d7caf8dfa2163deafab",
+      "cbmc": "6.10.0 (cbmc-6.10.0)",
+      "solver": "Z3 version 4.8.12 - 64 bit",
+      "model": "32 bit little endian portable C with i386 preprocessing",
+      "jobs_passed": [
+        "reduce",
+        "add",
+        "sub",
+        "mul",
+        "center",
+        "uncenter",
+        "forward_butterfly",
+        "inverse_butterfly",
+        "forward_layer_0",
+        "forward_layer_1",
+        "forward_layer_2",
+        "forward_layer_3",
+        "forward_layer_4",
+        "forward_layer_5",
+        "forward_layer_6",
+        "forward_layer_7",
+        "forward_memory",
+        "inverse_memory",
+        "pointwise_memory"
+      ],
+      "unwinding_assertions": "passed",
+      "seconds": 64.118
+    },
+    "checkers": {
+      "record": "verify/results_checkers.json",
+      "sha256": "87ea35235aeb4101bd1afa6aecc02bbb69523705bdbaa2bc114c5445e110ece1",
+      "cbmc": "6.10.0 (cbmc-6.10.0)",
+      "solver": "Z3 version 4.8.12 - 64 bit",
+      "model": "32 bit little endian portable C with i386 preprocessing",
+      "jobs_passed": [
+        "prior_base",
+        "prior_input_step",
+        "prior_output_step",
+        "prior_decide",
+        "our_base",
+        "our_input_step",
+        "our_output_step",
+        "our_decide",
+        "prior_memory",
+        "our_memory"
+      ],
+      "unwinding_assertions": "passed",
+      "seconds": 21.362
+    },
+    "scope": "Portable C component proofs and compositional reasoning; no automatically checked global NTT or ML DSA refinement",
+    "documentation": "docs/verification.md"
+  }
+}
