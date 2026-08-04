@@ -1,15 +1,35 @@
-# ML DSA research
+# ML DSA 44: NTT checker research
 
-This is an independently written portable C implementation of ML DSA 44 derived from [FIPS 204](https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.204.pdf) and its [NIST errata](https://csrc.nist.gov/files/pubs/fips/204/final/docs/fips-204-potential-updates.xlsx). It provides seeded key generation, pure signing and verification with contexts, and HashML DSA signing and verification from caller-supplied digests. The caller supplies key seeds, signing randomness, and any prehash digest; the core does not acquire randomness or call a host hash library.
+An independently written [FIPS 204](https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.204.pdf) ML DSA 44 implementation in portable C, with a Cortex M4 build path and three selectable forward NTT variants:
 
-Official NIST ACVP vectors validate SHAKE, key generation, pure and prehash signing, and valid and invalid verification. The [algorithm map](docs/fips204.md), [arithmetic bounds](docs/arithmetic.md), and [constant time audit](docs/ct.md) describe the current implementation and its limits. This is research code, with no claim of side channel resistance or FIPS validation.
+- **Baseline:** the unprotected transform.
+- **Prior checker:** the [Abdelmonem et al. algebraic NTT defense](docs/prior_checker.md), independently derived from [ePrint 2025/170](https://eprint.iacr.org/2025/170).
+- **Our checker:** the [deterministic intermediate boundary checksum construction](docs/our_checker.md).
 
-The [Abdelmonem two checksum forward NTT defense](docs/prior_checker.md) is independently derived from ePrint 2025/170. Its exact certificate covers all 2,653,056 pairs among 2,304 modeled boundary wires. `make prior` runs the targeted checker suite; `make build/libmldsa_prior.so` selects it for ML DSA. Key generation now returns a status that callers must check. The default build retains the baseline NTT.
+Both defenses have exact certificates for every modeled wire pair. [Focused CBMC verification](docs/verification.md) covers arithmetic, butterfly and layer updates, loop safety and compositional checksum computation. The three variants pass compact Cortex M4 tests in QEMU. **Real hardware benchmarks are pending.** Mathematical coverage applies to the documented additive wire fault model with trusted checker arithmetic and control flow; no physical fault resistance is claimed.
 
-Our [deterministic intermediate boundary defense](docs/our_checker.md) constructs two checks at boundary 4 and certifies the same complete location set and all pairs. Its sufficient field bound is `q>138653`. `make our` runs its targeted suite and `make build/libmldsa_our.so` selects it for the shared ML DSA implementation. Both defenses trust checker arithmetic and control flow.
+## Reproduce the comparison
 
-[Focused CBMC verification](docs/verification.md) covers scalar arithmetic, both butterfly updates, each forward layer, loop safety, and compositional checksum computation for both defenses. Proof harnesses and result records are under `verify/`. The document states the assumptions and the boundary between C proofs and exact algebraic certificates. `make baseline prior our` runs the compact host suites.
+With the [required host, ARM, QEMU and CBMC tools](docs/reproduction.md) installed:
 
-Run the complete milestone suite with `make test model shake sample keygen sign verify prehash` after installing GCC and Python 3. Use targeted tests during development. `make vectors` downloads NIST ACVP files at a pinned commit into ignored `build/nist`. For the optional black box comparison, run `python3 -m pip install --target build/oracle --only-binary=:all: pqcrypto==1.0.0` and then `make differential`.
+```sh
+make comparison
+```
 
-A provisional Cortex M4 target passes compact baseline, prior, and our checker suites on QEMU `mps2-an386`. Build with `make arm-mps2 arm-mps2-prior arm-mps2-our`, then run `python3 tools/run_mps2.py`, `python3 tools/run_mps2.py --prior`, and `python3 tools/run_mps2.py --our`. The [ARM documentation](docs/cortexm4.md) covers the benchmark scaffold and future physical target; the [three variant cost comparison](docs/checker_costs.md) records field operations and linked image sizes. QEMU supplies functional validation only; real Nucleo cycle, flash, RAM, and stack measurements are pending. Formal verification remains a future stage. No physical fault resistance is claimed.
+This runs compact tests, both exact certificates, focused formal checks and matched ARM builds. It generates [machine readable results](bench/comparison.json), a [Markdown comparison](docs/comparison.md) and [LaTeX tables](bench/comparison.tex). Physical cycle, flash, RAM and stack fields remain pending. No board is required for this command.
+
+For a quick host check:
+
+```sh
+make baseline prior our
+```
+
+## Implementation and evidence
+
+The shared scheme supports seeded key generation, pure signing and verification with contexts, and HashML DSA from caller-supplied digests. Callers supply key seeds and signing randomness and must check return statuses. Select a scheme variant with `make build/libmldsa.so`, `make build/libmldsa_prior.so` or `make build/libmldsa_our.so`; signing and verification use the same implementation.
+
+Official NIST ACVP vectors validate SHAKE, key generation, pure/prehash signing and valid/invalid verification. The [algorithm map](docs/fips204.md), [arithmetic bounds](docs/arithmetic.md), [constant time audit](docs/ct.md), [Cortex M4 notes](docs/cortexm4.md) and [formal scope](docs/verification.md) describe the implementation and its limits. This is research code, with no claim of FIPS validation or side channel resistance.
+
+The [reproduction guide](docs/reproduction.md) gives individual generation, certificate, proof, cross compilation and QEMU commands. It also explains tool overrides and how to regenerate thesis tables from the same raw data.
+
+The larger historical validation suite remains available through `make test model shake sample keygen sign verify prehash`. `make vectors` downloads pinned NIST ACVP data into ignored `build/nist`. Those larger suites are separate from the focused comparison pipeline.

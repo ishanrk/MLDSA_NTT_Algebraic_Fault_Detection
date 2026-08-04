@@ -2,6 +2,8 @@
 
 The generic Cortex M4 build boots and passes a compact correctness suite under QEMU. QEMU is used only for functional validation. Physical Nucleo measurements are deferred until hardware is available; they are not a prerequisite for continuing implementation or research.
 
+The complete current comparison is produced by `make comparison`; see the [reproduction guide](reproduction.md) and [generated tables](comparison.md). This command includes both certificates and focused formal checks, in addition to matched builds and QEMU correctness.
+
 ## Execution target
 
 | Item | Validated configuration |
@@ -111,4 +113,4 @@ The [intermediate boundary checker](our_checker.md) passes the same Cortex M4 em
 
 `make arm-mps2-our-bench` builds the protected benchmark without fault hooks. The forward benchmark selects our checker and the shared scheme algorithms use it through `MLDSA_OUR_CHECKER`. Its QEMU counter availability path reports `DWT UNAVAILABLE` and produces no timing or stack observations.
 
-`make build/count_checkers` and `python3 tools/measure_checkers.py` generate the [three variant comparison](checker_costs.md). Matched sizes and operation counts use ARM GCC 10.3.1 with the existing flags and linker. Physical measurement work is still pending. This stage restored the same toolchain packages under ignored `build/toolchain/root` after the previous temporary extraction was lost; the earlier overrides work with that absolute root substituted.
+`make comparison` generates the [three variant comparison](comparison.md), including actual modular calls, matched ARM images and current certificate/formal/QEMU evidence. The lower level `make build/count_checkers` and `python3 tools/measure_checkers.py` remain cost-only collection commands. Physical measurement work is pending. The extracted toolchain is under ignored `build/toolchain/root`; the [reproduction guide](reproduction.md#tool-overrides) gives current overrides for it.

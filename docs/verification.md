@@ -94,7 +94,7 @@ All explicit assumptions are either documented caller ranges or established comp
 
 There are no assumptions about selected input vectors, zero coefficients, small fault magnitudes, successful checker return codes, or already equal checksum values. No assumption is added merely to avoid a timeout. CBMC, Z3, their frontend/library models, the source view extractor, and the exact arithmetic certificate generators are trusted tools. No physical hardware behavior is an assumption or a result of this stage.
 
-The 19 arithmetic, layer, and NTT memory jobs passed. Their recorded wall times total 65.023 seconds, with no individual job exceeding the 45 second limit and no timeouts. This is the sum of individual job times, rather than overall stage elapsed time.
+The arithmetic, layer, and NTT memory jobs passed, with no individual job exceeding the recorded per job limit and no timeouts. The current count and summed per job wall times are in the [arithmetic record](../verify/results_arithmetic.json); they are not overall stage elapsed time or hardware cycles.
 
 ## Algebraic checker specifications
 
@@ -141,7 +141,7 @@ The general two fault determinant theorem and the greedy construction theorem ar
 
 ## Evidence checks and milestone tests
 
-The ten checker proof jobs passed in a sum of 21.483 seconds. Together with arithmetic, the 29 successful jobs took 86.506 seconds of summed per job wall time. All passed under the recorded unwind bounds with no timeouts or failed unwinding assertions.
+The checker proof jobs passed under the recorded unwind bounds with no timeouts or failed unwinding assertions. Current counts and summed per job wall times are in the [checker record](../verify/results_checkers.json) and the [generated comparison](comparison.md). Reproduction updates the JSON evidence without requiring hand edits to timing statements.
 
 Two [negative controls](../verify/negative_controls.json) introduced deliberate mistakes only in temporary proof views: replacing our input beta weight with our output first weight, and loading a forward layer's low wire as its high input. Both produced the expected assertion counterexample and CBMC exit status 10. To reproduce a control, copy its named view into `build/verify/negative`, apply the recorded textual substitution, execute its saved command, and remove that temporary view. The original generated views and production files stay intact.
 
