@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "purpose": "physical hardware discovery only",
-  "observed_utc": "2026-10-03T13:34:03.348646+00:00",
+  "observed_utc": "2026-10-03T13:41:27.148897+00:00",
   "host_kernel": "6.6.87.2-microsoft-standard-WSL2",
   "usbipd_version": "5.3.0-54+Branch.master.Sha.aa3db8b82c4cb5071fd31bc54211606c70886912.aa3db8b82c4cb5071fd31bc54211606c70886912",
   "linux_stlink_candidates": [],

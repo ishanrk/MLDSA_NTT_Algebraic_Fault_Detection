@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "status": "pending",
+  "physical_board": null,
+  "metadata": {
+    "nucleo_model": null,
+    "mcu": null,
+    "core_revision": null,
+    "clock_hz": null,
+    "flash_capacity_bytes": null,
+    "ram_capacity_bytes": null,
+    "fpu_configuration": null,
+    "compiler": null,
+    "compiler_flags": null,
+    "linker_script": null,
+    "linker_sha256": null,
+    "startup_file": null,
+    "startup_sha256": null,
+    "firmware_commit": null,
+    "benchmark_source_sha256": null,
+    "st_link_method": null,
+    "serial_method": null,
+    "serial_baud": null,
+    "interrupt_policy": null,
+    "timer_calibration_method": null,
+    "intervals_below_counter_wrap_confirmed": null,
+    "stack_measurement_method": null,
+    "stack_kind": null,
+    "stack_reserve_bytes": null,
+    "input_schedule": null,
+    "sample_counts": null
+  },
+  "variants": {
+    "baseline": {
+      "benchmark_elf": "baseline-bench.elf",
+      "benchmark_sha256": null,
+      "benchmark_log": "baseline-cycles.jsonl",
+      "compact_elf": "baseline-compact.elf",
+      "compact_sha256": null,
+      "compact_log": "baseline-compact.txt"
+    },
+    "prior": {
+      "benchmark_elf": "prior-bench.elf",
+      "benchmark_sha256": null,
+      "benchmark_log": "prior-cycles.jsonl",
+      "compact_elf": "prior-compact.elf",
+      "compact_sha256": null,
+      "compact_log": "prior-compact.txt"
+    },
+    "our": {
+      "benchmark_elf": "our-bench.elf",
+      "benchmark_sha256": null,
+      "benchmark_log": "our-cycles.jsonl",
+      "compact_elf": "our-compact.elf",
+      "compact_sha256": null,
+      "compact_log": "our-compact.txt"
+    }
+  }
+}
