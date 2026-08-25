@@ -4,6 +4,8 @@ The generic Cortex M4 build boots and passes a compact correctness suite under Q
 
 The complete current comparison is produced by `make comparison`; see the [reproduction guide](reproduction.md) and [generated tables](comparison.md). This command includes both certificates and focused formal checks, in addition to matched builds and QEMU correctness.
 
+The board-independent physical-stage software now has explicit F411RE/F446RE reference targets and a complete build/freeze/acquire/report path. See [hardware/README.md](../hardware/README.md) and the [generated offline results](cortexm4_offline.md). The MPS2 benchmark below remains the unchanged earlier scaffold; physical measurements require the separately prepared STM32 target and remain pending.
+
 ## Execution target
 
 | Item | Validated configuration |

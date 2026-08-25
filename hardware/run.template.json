@@ -1,7 +1,8 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "status": "pending",
-  "physical_board": null,
+  "physical_board": false,
+  "note": "Format illustration only. Generate a complete frozen manifest with hardware/prepare.py; do not fill this template by hand.",
   "metadata": {
     "nucleo_model": null,
     "mcu": null,

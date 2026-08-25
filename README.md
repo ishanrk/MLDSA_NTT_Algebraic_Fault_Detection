@@ -6,7 +6,7 @@ An independently written [FIPS 204](https://nvlpubs.nist.gov/nistpubs/fips/nist.
 - **Prior checker:** the [Abdelmonem et al. algebraic NTT defense](docs/prior_checker.md), independently derived from [ePrint 2025/170](https://eprint.iacr.org/2025/170).
 - **Our checker:** the [deterministic intermediate boundary checksum construction](docs/our_checker.md).
 
-Both defenses have exact certificates for every modeled wire pair. [Focused CBMC verification](docs/verification.md) covers arithmetic, butterfly and layer updates, loop safety and compositional checksum computation. The three variants pass compact Cortex M4 tests in QEMU. **Real hardware benchmarks are pending;** [acquisition preparation](hardware/README.md) includes device discovery and raw result validation. Mathematical coverage applies to the documented additive wire fault model with trusted checker arithmetic and control flow; no physical fault resistance is claimed.
+Both defenses have exact certificates for every modeled wire pair. [Focused CBMC verification](docs/verification.md) covers arithmetic, butterfly and layer updates, loop safety and compositional checksum computation. The three variants pass compact Cortex M4 tests in QEMU. **Real hardware benchmarks are pending;** [physical-stage software](hardware/README.md) provides explicit F411RE/F446RE reference builds, DWT/stack sampling, flashing/capture and report generation. Mathematical coverage applies to the documented additive wire fault model with trusted checker arithmetic and control flow; no physical fault resistance is claimed.
 
 ## Reproduce the comparison
 

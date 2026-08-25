@@ -1,0 +1,734 @@
+{
+  "schema_version": 2,
+  "purpose": "offline physical-stage preparation only",
+  "physical_board": false,
+  "physical_measurements": "pending",
+  "source_sha256": {
+    "Makefile": "7ea8f9d9adfda86848c083a670bdd54ea5635e01a9b4ee822b418fd6df4d524d",
+    "hardware/acquire.py": "ad8cabd02fdd4a39a1a58e12e14d8817e67acd8cf518ac0156eab1a6c6970374",
+    "hardware/bench.c": "e0fd924f8a96af2fdebe0d72125745de4c62650868dbc3c8c57a05f475db6132",
+    "hardware/boot.c": "bfeeb67ef2e7183b2331f887360d41f18a7a36883b0a54e34979b359cdc3adef",
+    "hardware/build.py": "44e2b75f75725ac8b235bfe1f783ce448da198b1df8c60d3155c5ab58e45e817",
+    "hardware/config.py": "fe7b5805925cab5aace76738be92665ce7ce003b4cf08c9136fe8c83e8cdbcfb",
+    "hardware/core.c": "f0c465401c34616eec1d39084594b6d661638df1c1c371abba39373e445bfab9",
+    "hardware/discover.py": "a44ae92901e32a4d1414bf0be569602e91fd519a1c886c34ba1baf56f9ac800a",
+    "hardware/mock.c": "53dc9ef4658e867be3a1290516a09a863ee032a0a9f17527419001429bc785bf",
+    "hardware/offline.py": "4ba27c979ea6e23b1a3128adc8725c3d9b4a6079c64271af046c4c4bfb83fd63",
+    "hardware/prepare.py": "c8d7590a02e928e73e602d63637e81667707f864869036d50f601f41c63e1d35",
+    "hardware/protocol.py": "64b3b44c48b07bdd95f5e711d846159af18a23240f5a5ec0976789fbdf1b2632",
+    "hardware/report.py": "f0b30b354a0495c78f8c2c0c77292ccc1544a9642a80de31f5eec4f1f653c605",
+    "hardware/startup.S": "186acadb10d54524935ef792e154121a4fb7f95d635882dc1a2129657320f198",
+    "hardware/stm32f4.c": "a8ee782219127c8706279bf04309c865ec103ed3f4af59df356c48bd980cefe2",
+    "hardware/stm32f4.ld": "ebe67457098090c39cb10324e6653aa11dcabf20a0148e4812f74fad001cbd97",
+    "hardware/target.h": "0db226570de28d67c5d21f311c6d6548e5decba41a5508b2d63ea4bb8ffc10b3",
+    "hardware/test_core.c": "b734ba5f018498fe21653a485eec60be40a79ba3eb3b5dad8a727df01e064701",
+    "hardware/test_integration.py": "797f515b398fa3df03c58f29b75546c9447e68cecea254bf649e7e9e16b6b4a5",
+    "hardware/test_protocol.py": "991e03e65ba47f5d3e4d33185443ec03f7491f752533f80925c5a8567b434ce3",
+    "hardware/test_report.py": "6d9c100ef26888f834660e511cc0120f79c8d03467703ae59c2d042873a23f3d",
+    "include/mldsa44.h": "cbac6a37ecdeb981a2797727967c8040ed486bb7bf497731ef94f24a4db81cc6",
+    "include/mldsa_checker.h": "ce56e9f35c71cae1182a5c6b71854b97faf2d6ffcf439e05038c77f26b2b5b3c",
+    "include/mldsa_poly.h": "f2d92e9f73a353ae184093e9e47b51d784d6024d3e64e862e46d6a3dad591d0f",
+    "include/mldsa_shake.h": "c549e913cb46d4a2480c40509f35deff440b3bae93c1c776b1467f9c02bf8907",
+    "platform/cortexm4/bench_main.c": "1506b4db44f9571a9cdae1f4bcf89555ed00868998b5e0a8edd2fc85031cd4ea",
+    "platform/cortexm4/core.c": "3fa116668761e35c0970e7cd6557133613f9016808daa54f5f263bb4ba619f19",
+    "platform/cortexm4/core.h": "802594cd766073a168ec071809f2d56bcca57c597b39320230157259b137e2a0",
+    "platform/cortexm4/mps2.ld": "f5a1ebb31c03ae25c9bc1a8e53016e8d6291e5064cbe090f24c1494bc5d957b6",
+    "platform/cortexm4/mps2_io.c": "47e4d134d05dc558db1f1a2bfebce56b8584222f453a02dce5e0b6e0912ecc8f",
+    "platform/cortexm4/mps2_vectors.inc": "ddd4568bb1186119978b7fca40ace1cf671822fecb684fc474625c188b5ab6c4",
+    "platform/cortexm4/platform.h": "0a10b6576c500cf8962a905d9c612a61201b37fc20c1abdf1c71ca5b8289f0d0",
+    "platform/cortexm4/startup.c": "5197d8d14044b118b2e12b78151744e3a2a39e998f5fafeacc4f01e4e41028ba",
+    "platform/cortexm4/test_main.c": "82bf56ad6f444eea4351c130668a0e6338b70df97523b26d90629a46582c8256",
+    "src/encode.c": "8a972d3acd5e16437b11516e3a7221f0af5fd6fa48e4e595c78e627e96667cc7",
+    "src/keccak_tables.inc": "7ce9338598407e3006281e3cfec568d1617c3086eb1e2f84c8d9893f8b7e064b",
+    "src/keygen.c": "1941ffcd2d4a0a477af73d81bd87a5b576ef7c91704afdc17ac2f8b8d808d450",
+    "src/message.c": "559f41312c2ae70bcc8bd9e91f8b833192b7ca700b8afa501cb7e822a59aa602",
+    "src/mldsa44_internal.h": "67146be180e3d04a2eec8465ef1352bf5f16f14e005767c45c1aa1ec9ce9316c",
+    "src/ntt.c": "77ef52bcdd3387aca4ecba29f146c07b463f7070da044705d9c228a9db90af23",
+    "src/our.c": "0a7dee1ef22ef1c244f65c5a543cd8a1eb42c03d16afffc698f3ed6cbe7eae5f",
+    "src/our_tables.inc": "1e9caf847ebc5eeb8200e7713d5fe1f7762ddf3b9389cfc7bd1156cc5aa602eb",
+    "src/poly.c": "499b45f1faaf9d7e08a7be51f4cecc6874f59420640e0213966a838f427cad46",
+    "src/prior.c": "897d7396093515481b5f933c13235bf9a2edaa1799d7238fb96fdc8922f7ffcb",
+    "src/prior_tables.inc": "e5b40129aa09a46d35ba46a286b5ce2b5572a613468548229a2c7da2088ba534",
+    "src/round.c": "c140241c1038bd4f0ff9c264a5b49ad407689e88e6dddafc08dc55721cacb932",
+    "src/sample.c": "88523eaf12d6db36b641652b05721f2ac3fd23f2a5009f821e802eacd1d541de",
+    "src/shake.c": "4dc41981bd0e827a24e94dbf7b83600f3025871688c34007dca09f5114114a15",
+    "src/sign.c": "0b53f7c7989082b8ba02007addf45aadab65c484dc230800a01db0dcb5328310",
+    "src/vector.c": "f33ac4d226d8f589b9bd98416d2ef588daa5e3779f05de89b4c0819012e838f9",
+    "src/verify.c": "6c097f9d03dfa8054261743625c7dd8614dc760efaed1f36ef2960d9e0721e3c",
+    "src/zetas.inc": "268f373132c4be8c6a4e1ce2eefdcf2530cee779d88d5b9033b750356378545f",
+    "test/count_checkers.c": "aaaddf6fd94b6ab6b623048e5aee947702676cfa84102cf978dfba8da107ef1a",
+    "test/count_prior.c": "62cd79f1e8c63f1c4c67e822c8d115e8bbc73cefc2aeb2d5b8ccb1c35ad9a810",
+    "test/host_io.c": "01973a0224413ea6bb1c3ae1c201d9dd2c5315b15c48d8598a1785a24705481a",
+    "test/our_cases.c": "ebea415b9792aa091dde1b8919b951826f83bdc021acf52629a2bb6db64ea776",
+    "test/our_cases.h": "6fba5f17c3565c84fc9063030612bd6f77dfb1f59afef981774530a47d9a2575",
+    "test/prior_cases.c": "fa655f9310d02f4bf3b93c57913f04306d1941109a2f3b15ae124433b5354241",
+    "test/prior_cases.h": "6bd03d3253dd75adda0389c51e3c375727844700346d14ed454ae5c61f37a140",
+    "test/test_differential.py": "849f2602ec6891a1a3543110a37f4e35afe393bcf8c4955ce7c7968560853e16",
+    "test/test_encode.c": "e5117dcc1bbf2a89e28eaeabe800674d16e5454ecd1a72f8ed9b8acdeb70d521",
+    "test/test_keygen.py": "a67885ede16bfc0576ecd900b1860d43192c76eb5798f90989e4a5a880760bf0",
+    "test/test_negative.c": "d982b529382c77e8900c87f587d9441414341055d70465290183c73b81f9d933",
+    "test/test_poly.c": "01a21b86f2ea3dee59e65080479c1309e24dafd1fd0113bae5357ef4e217bfec",
+    "test/test_prehash.py": "dc6deb0fd929a0c640866fe43edb670005e3d18548619c6e9b6414e47d47ab66",
+    "test/test_round.c": "e950598d14f19d9824ef55e0d5091f467713f095e81c2b0e59ee82392b8e3879",
+    "test/test_sample.py": "79d5cfae88fe6805655e087e57524ad52af5e70e4f8261b5958246603b07fc0b",
+    "test/test_shake.py": "a24de9e080f0a50d614c5281f5fd9c93237cbb8371325630b3138e615fdc88a7",
+    "test/test_sign.py": "c70f993da8af425874663212d93d014032fdc3150b77b2b6ef7071270b8a5450",
+    "test/test_smoke.py": "0d11208c96e9a8bb611850a29379ef301d08e6c637ad129fa31ca5ffc303fcf4",
+    "test/test_verify.py": "00b636e8e813e080a87057808789f6140cd581fd133a3b79d812c9a756516936"
+  },
+  "checks": {
+    "test_report": {
+      "command": [
+        "/usr/bin/python3",
+        "hardware/test_report.py"
+      ],
+      "log_sha256": "6299c61ecefc2c6e262ba2dccd92b35e4ade4e41b723fe2eac602dbd7b324b98",
+      "status": "passed"
+    },
+    "test_protocol": {
+      "command": [
+        "/usr/bin/python3",
+        "hardware/test_protocol.py"
+      ],
+      "log_sha256": "cbe4b84d897ac017db0552ccb3a31855ff0fb172bc344c967c4c4c92eb19e624",
+      "status": "passed"
+    },
+    "openocd_config": {
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/hardware-tools/root/usr/bin/openocd",
+        "-s",
+        "/home/ishan/code/DiscreteGaussianSampler/build/hardware-tools/root/usr/share/openocd/scripts",
+        "-f",
+        "interface/stlink.cfg",
+        "-f",
+        "target/stm32f4x.cfg",
+        "-c",
+        "echo OFFLINE_CONFIG_PASS; shutdown"
+      ],
+      "log_sha256": "6be0f92ca0e8719b2db8d0f5b4f766cfcfcea4bfefa08596e4e7cf65323cec1c",
+      "status": "passed"
+    },
+    "gcc-baseline": {
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/hardware-offline/gcc-baseline"
+      ],
+      "log_sha256": "81edda4c6fb345e0e5504c89440a0965a2dc4315c513ef373c26fe7c6271ddab",
+      "status": "passed"
+    },
+    "gcc-prior": {
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/hardware-offline/gcc-prior"
+      ],
+      "log_sha256": "2aa9f9a3daa774959c4b0db8049259dd0db87360be067efe547fec8dddebd502",
+      "status": "passed"
+    },
+    "gcc-our": {
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/hardware-offline/gcc-our"
+      ],
+      "log_sha256": "b55d8bd3f02d5e3a82ead65274ffec0a17ca77b7bfd8cbe79ab25c98004f303f",
+      "status": "passed"
+    },
+    "clang-baseline": {
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/hardware-offline/clang-baseline"
+      ],
+      "log_sha256": "81edda4c6fb345e0e5504c89440a0965a2dc4315c513ef373c26fe7c6271ddab",
+      "status": "passed"
+    },
+    "clang-prior": {
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/hardware-offline/clang-prior"
+      ],
+      "log_sha256": "2aa9f9a3daa774959c4b0db8049259dd0db87360be067efe547fec8dddebd502",
+      "status": "passed"
+    },
+    "clang-our": {
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/hardware-offline/clang-our"
+      ],
+      "log_sha256": "b55d8bd3f02d5e3a82ead65274ffec0a17ca77b7bfd8cbe79ab25c98004f303f",
+      "status": "passed"
+    },
+    "asan-baseline": {
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/hardware-offline/asan-baseline"
+      ],
+      "log_sha256": "81edda4c6fb345e0e5504c89440a0965a2dc4315c513ef373c26fe7c6271ddab",
+      "status": "passed"
+    },
+    "asan-prior": {
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/hardware-offline/asan-prior"
+      ],
+      "log_sha256": "2aa9f9a3daa774959c4b0db8049259dd0db87360be067efe547fec8dddebd502",
+      "status": "passed"
+    },
+    "asan-our": {
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/hardware-offline/asan-our"
+      ],
+      "log_sha256": "b55d8bd3f02d5e3a82ead65274ffec0a17ca77b7bfd8cbe79ab25c98004f303f",
+      "status": "passed"
+    },
+    "ubsan-baseline": {
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/hardware-offline/ubsan-baseline"
+      ],
+      "log_sha256": "81edda4c6fb345e0e5504c89440a0965a2dc4315c513ef373c26fe7c6271ddab",
+      "status": "passed"
+    },
+    "ubsan-prior": {
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/hardware-offline/ubsan-prior"
+      ],
+      "log_sha256": "2aa9f9a3daa774959c4b0db8049259dd0db87360be067efe547fec8dddebd502",
+      "status": "passed"
+    },
+    "ubsan-our": {
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/hardware-offline/ubsan-our"
+      ],
+      "log_sha256": "b55d8bd3f02d5e3a82ead65274ffec0a17ca77b7bfd8cbe79ab25c98004f303f",
+      "status": "passed"
+    },
+    "unavailable_counter": {
+      "status": "passed"
+    },
+    "report_integration": {
+      "command": [
+        "/usr/bin/python3",
+        "hardware/test_integration.py"
+      ],
+      "log_sha256": "dbcee2493e82c9d70993edc92e9edbd26f98478a47bd894dad4013d157174839",
+      "status": "passed"
+    },
+    "core_compile": {
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/toolchain/root/usr/bin/arm-none-eabi-gcc",
+        "-mcpu=cortex-m4",
+        "-mthumb",
+        "-mfloat-abi=soft",
+        "-std=c11",
+        "-O2",
+        "-ffreestanding",
+        "-fno-builtin",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wconversion",
+        "-Wshadow",
+        "-Iinclude",
+        "-Ihardware",
+        "-Iplatform/cortexm4",
+        "-isystem",
+        "/home/ishan/code/DiscreteGaussianSampler/build/toolchain/root/usr/include/newlib",
+        "hardware/test_core.c",
+        "hardware/core.c",
+        "platform/cortexm4/startup.c",
+        "platform/cortexm4/mps2_io.c",
+        "-nostartfiles",
+        "-nostdlib",
+        "-Wl,--gc-sections",
+        "-Tplatform/cortexm4/mps2.ld",
+        "-L/home/ishan/code/DiscreteGaussianSampler/build/toolchain/root/usr/lib/arm-none-eabi/newlib/thumb/v7e-m/nofp",
+        "-lc",
+        "-lgcc",
+        "-o",
+        "/home/ishan/code/DiscreteGaussianSampler/build/hardware-offline/core-test.elf"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "passed"
+    },
+    "core_qemu": {
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/toolchain/root/usr/bin/qemu-system-arm",
+        "-M",
+        "mps2-an386",
+        "-kernel",
+        "/home/ishan/code/DiscreteGaussianSampler/build/hardware-offline/core-test.elf",
+        "-nographic",
+        "-semihosting-config",
+        "enable=on,target=native",
+        "-no-reboot"
+      ],
+      "log_sha256": "bda6aae0be8b6f3afefe634b7e8d831d7656b7e29480277b0d25ade9c04173a4",
+      "status": "passed"
+    }
+  },
+  "profiles": {
+    "NUCLEO-F411RE": {
+      "schema_version": 2,
+      "status": "pending",
+      "physical_board": false,
+      "metadata": {
+        "nucleo_model": "NUCLEO-F411RE",
+        "mcu": "STM32F411RET6",
+        "core_revision": null,
+        "clock_hz": 16000000,
+        "clock_status": "configured nominal HSI; hardware pending",
+        "flash_capacity_bytes": 524288,
+        "ram_capacity_bytes": 131072,
+        "fpu_configuration": "FPU disabled, soft ABI",
+        "compiler": "arm-none-eabi-gcc (15:10.3-2021.07-4) 10.3.1 20210621 (release)",
+        "compiler_flags": [
+          "-mcpu=cortex-m4",
+          "-mthumb",
+          "-mfloat-abi=soft",
+          "-std=c11",
+          "-O2",
+          "-ffreestanding",
+          "-fno-builtin",
+          "-fdata-sections",
+          "-ffunction-sections",
+          "-Wall",
+          "-Wextra",
+          "-Wpedantic",
+          "-Wconversion",
+          "-Wshadow",
+          "-Iinclude",
+          "-Isrc",
+          "-Itest",
+          "-Ihardware",
+          "-Iplatform/cortexm4",
+          "-I/home/ishan/code/DiscreteGaussianSampler/build/physical/NUCLEO-F411RE",
+          "-fstack-usage",
+          "-isystem",
+          "/home/ishan/code/DiscreteGaussianSampler/build/toolchain/root/usr/include/newlib"
+        ],
+        "linker_script": "linker.ld",
+        "linker_sha256": "2681c1206f13b720d2057055aa1edf2c54955e71a47c19f892d4555dda837181",
+        "startup_file": "boot.c",
+        "startup_sha256": "bfeeb67ef2e7183b2331f887360d41f18a7a36883b0a54e34979b359cdc3adef",
+        "startup_assembly_sha256": "186acadb10d54524935ef792e154121a4fb7f95d635882dc1a2129657320f198",
+        "build_manifest_sha256": "6f5d3c6531a5d9d76cee6a257040fb577b376257c2a81ea5813753755c22279b",
+        "firmware_commit": "fc00bf72304584179699040a840aae39e54c1d37",
+        "firmware_worktree_dirty": true,
+        "benchmark_source_sha256": "e0fd924f8a96af2fdebe0d72125745de4c62650868dbc3c8c57a05f475db6132",
+        "benchmark_file": "hardware/bench.c",
+        "plan_sha256": "16392f0442a0ce787910ea3f1cad709ebd1455308fe9f1f9c7c317d020ee91b1",
+        "input_schedule": {
+          "samples_per_operation": 101,
+          "timer_calibration_pairs": 101,
+          "sample_counts": {
+            "ntt_forward": 101,
+            "ntt_inverse": 101,
+            "pointwise": 101,
+            "keygen": 101,
+            "sign": 101,
+            "verify": 101
+          },
+          "message": "Cortex M4 portable baseline",
+          "context": "arm",
+          "ntt_input_a": "((i+1)*(i+17)) mod q",
+          "ntt_input_b": "((3*i+2)*(7*i+5)) mod q",
+          "keygen_seed": "bytes 0..31, with seed[0]=sample index",
+          "signing_key_seed": "bytes 0..31",
+          "sign_randomness": "32 zero bytes, with rnd[0]=sample index",
+          "verify_signature": "last signing sample, rnd[0]=100",
+          "stack": "total high water, each timed forward/keygen/sign/verify invocation",
+          "interrupt_policy": "PRIMASK=1, SysTick off, polling UART"
+        },
+        "sample_counts": {
+          "ntt_forward": 101,
+          "ntt_inverse": 101,
+          "pointwise": 101,
+          "keygen": 101,
+          "sign": 101,
+          "verify": 101
+        },
+        "calibration_pairs": 101,
+        "stack_kind": "total_high_water",
+        "stack_reserve_bytes": 98304,
+        "stack_measurement_method": "frameless watermark helpers; stack top minus deepest changed word; all samples",
+        "timer_calibration_method": "minimum of complete DWT read-pair distribution; raw counts retained",
+        "interrupt_policy": "PRIMASK=1, SysTick off, polling UART",
+        "intervals_below_counter_wrap_confirmed": null,
+        "st_link_method": null,
+        "serial_method": null,
+        "serial_baud": 115200
+      },
+      "manifest_sha256": "9e492a21b3deb591f8a6c62fa767d41136c40d9840a29b2590bcbaa44fda76a9",
+      "comparison_sha256": "079c79fa6b61d906cedf1a320d370fd2fd3e3429a0c7df73dfcf7c13cfe744bc",
+      "variants": {
+        "baseline": {
+          "cycles": null,
+          "stack_bytes": null,
+          "compact_correctness": "pending",
+          "arm_image": {
+            "text": 12812,
+            "data": 0,
+            "bss": 17096
+          },
+          "flash_bytes": 12812,
+          "static_ram_bytes": 17096,
+          "stack_static_analysis": {
+            "largest_individual_frame": {
+              "function": "src/sign.c:7:12:sign_core",
+              "bytes": 82376,
+              "kind": "static"
+            },
+            "reserved_bytes": 98304,
+            "total_call_stack_bound": "not proven"
+          },
+          "checks": 0,
+          "extra_field_calls": {
+            "mul": 0,
+            "add": 0,
+            "sub": 0
+          },
+          "modeled_fault_coverage": {
+            "additive_wire_deviations": 0,
+            "locations": null,
+            "conditions": "trusted checker arithmetic, stored weights and control flow; nonzero erroneous transform result",
+            "physical_fault_injection": "not evaluated"
+          },
+          "exact_certificate": {
+            "status": "not applicable"
+          }
+        },
+        "prior": {
+          "cycles": null,
+          "stack_bytes": null,
+          "compact_correctness": "pending",
+          "arm_image": {
+            "text": 15644,
+            "data": 0,
+            "bss": 17096
+          },
+          "flash_bytes": 15644,
+          "static_ram_bytes": 17096,
+          "stack_static_analysis": {
+            "largest_individual_frame": {
+              "function": "src/sign.c:7:12:sign_core",
+              "bytes": 82376,
+              "kind": "static"
+            },
+            "reserved_bytes": 98304,
+            "total_call_stack_bound": "not proven"
+          },
+          "checks": 2,
+          "extra_field_calls": {
+            "mul": 640,
+            "add": 1024,
+            "sub": 0
+          },
+          "modeled_fault_coverage": {
+            "additive_wire_deviations": 2,
+            "locations": 2304,
+            "conditions": "trusted checker arithmetic, stored weights and control flow; nonzero erroneous transform result",
+            "physical_fault_injection": "not evaluated"
+          },
+          "exact_certificate": {
+            "status": "passed",
+            "record": "docs/prior_certificate.json",
+            "sha256": "48268702d362b578fac07cd960bc7ae379a8ccbd3015c11bb0030da4c94d84c1",
+            "modeled_locations": 2304,
+            "checked_pairs": 2653056,
+            "failure_counts": {
+              "zero_first_responses": 0,
+              "zero_second_responses": 0,
+              "zero_determinants": 0
+            },
+            "row_identities": "direct evaluation and network pullback passed",
+            "propagation_identity": "all unit wires matched the production network",
+            "coefficients_sha256": "9281c37271baa76755a5873797b948142bc3ae8c45865df69326589a892a58df",
+            "network_sha256": "0353ec99eca78da433f92b5e6b756bd4b3f01187f8f1c502df98f4c241e6b861"
+          }
+        },
+        "our": {
+          "cycles": null,
+          "stack_bytes": null,
+          "compact_correctness": "pending",
+          "arm_image": {
+            "text": 16136,
+            "data": 0,
+            "bss": 17096
+          },
+          "flash_bytes": 16136,
+          "static_ram_bytes": 17096,
+          "stack_static_analysis": {
+            "largest_individual_frame": {
+              "function": "src/sign.c:7:12:sign_core",
+              "bytes": 82376,
+              "kind": "static"
+            },
+            "reserved_bytes": 98304,
+            "total_call_stack_bound": "not proven"
+          },
+          "checks": 2,
+          "extra_field_calls": {
+            "mul": 768,
+            "add": 1024,
+            "sub": 0
+          },
+          "modeled_fault_coverage": {
+            "additive_wire_deviations": 2,
+            "locations": 2304,
+            "conditions": "trusted checker arithmetic, stored weights and control flow; nonzero erroneous transform result",
+            "physical_fault_injection": "not evaluated"
+          },
+          "exact_certificate": {
+            "status": "passed",
+            "record": "docs/our_certificate.json",
+            "sha256": "f33852bbb9b469d34dc5684cccf35e35b5617854a8c50a49c76426f9e452e6ea",
+            "modeled_locations": 2304,
+            "checked_pairs": 2653056,
+            "failure_counts": {
+              "zero_first_responses": 0,
+              "zero_second_responses": 0,
+              "duplicate_normalized_responses": 0,
+              "zero_determinants": 0
+            },
+            "row_identities": "direct evaluation and network pullback passed",
+            "propagation_identity": "all unit wires matched the production network",
+            "coefficients_sha256": "dc167f43461e2c9c079bb79ded94a5b6a3af39062ea1de36b64f71ce01f9b2ec",
+            "network_sha256": "0353ec99eca78da433f92b5e6b756bd4b3f01187f8f1c502df98f4c241e6b861"
+          }
+        }
+      },
+      "flash_method": "linked benchmark ELF text+data; excludes layout padding",
+      "static_ram_method": "linked benchmark ELF data+bss; excludes stack",
+      "inverse_protection": "none in any variant",
+      "physical_fault_injection": "not evaluated"
+    },
+    "NUCLEO-F446RE": {
+      "schema_version": 2,
+      "status": "pending",
+      "physical_board": false,
+      "metadata": {
+        "nucleo_model": "NUCLEO-F446RE",
+        "mcu": "STM32F446RET6",
+        "core_revision": null,
+        "clock_hz": 16000000,
+        "clock_status": "configured nominal HSI; hardware pending",
+        "flash_capacity_bytes": 524288,
+        "ram_capacity_bytes": 131072,
+        "fpu_configuration": "FPU disabled, soft ABI",
+        "compiler": "arm-none-eabi-gcc (15:10.3-2021.07-4) 10.3.1 20210621 (release)",
+        "compiler_flags": [
+          "-mcpu=cortex-m4",
+          "-mthumb",
+          "-mfloat-abi=soft",
+          "-std=c11",
+          "-O2",
+          "-ffreestanding",
+          "-fno-builtin",
+          "-fdata-sections",
+          "-ffunction-sections",
+          "-Wall",
+          "-Wextra",
+          "-Wpedantic",
+          "-Wconversion",
+          "-Wshadow",
+          "-Iinclude",
+          "-Isrc",
+          "-Itest",
+          "-Ihardware",
+          "-Iplatform/cortexm4",
+          "-I/home/ishan/code/DiscreteGaussianSampler/build/physical/NUCLEO-F446RE",
+          "-fstack-usage",
+          "-isystem",
+          "/home/ishan/code/DiscreteGaussianSampler/build/toolchain/root/usr/include/newlib"
+        ],
+        "linker_script": "linker.ld",
+        "linker_sha256": "2681c1206f13b720d2057055aa1edf2c54955e71a47c19f892d4555dda837181",
+        "startup_file": "boot.c",
+        "startup_sha256": "bfeeb67ef2e7183b2331f887360d41f18a7a36883b0a54e34979b359cdc3adef",
+        "startup_assembly_sha256": "186acadb10d54524935ef792e154121a4fb7f95d635882dc1a2129657320f198",
+        "build_manifest_sha256": "5680484ae0b154f8d6ae313bf7c5aff10cfb2d033c51843397b0a8cca15d72d2",
+        "firmware_commit": "fc00bf72304584179699040a840aae39e54c1d37",
+        "firmware_worktree_dirty": true,
+        "benchmark_source_sha256": "e0fd924f8a96af2fdebe0d72125745de4c62650868dbc3c8c57a05f475db6132",
+        "benchmark_file": "hardware/bench.c",
+        "plan_sha256": "16392f0442a0ce787910ea3f1cad709ebd1455308fe9f1f9c7c317d020ee91b1",
+        "input_schedule": {
+          "samples_per_operation": 101,
+          "timer_calibration_pairs": 101,
+          "sample_counts": {
+            "ntt_forward": 101,
+            "ntt_inverse": 101,
+            "pointwise": 101,
+            "keygen": 101,
+            "sign": 101,
+            "verify": 101
+          },
+          "message": "Cortex M4 portable baseline",
+          "context": "arm",
+          "ntt_input_a": "((i+1)*(i+17)) mod q",
+          "ntt_input_b": "((3*i+2)*(7*i+5)) mod q",
+          "keygen_seed": "bytes 0..31, with seed[0]=sample index",
+          "signing_key_seed": "bytes 0..31",
+          "sign_randomness": "32 zero bytes, with rnd[0]=sample index",
+          "verify_signature": "last signing sample, rnd[0]=100",
+          "stack": "total high water, each timed forward/keygen/sign/verify invocation",
+          "interrupt_policy": "PRIMASK=1, SysTick off, polling UART"
+        },
+        "sample_counts": {
+          "ntt_forward": 101,
+          "ntt_inverse": 101,
+          "pointwise": 101,
+          "keygen": 101,
+          "sign": 101,
+          "verify": 101
+        },
+        "calibration_pairs": 101,
+        "stack_kind": "total_high_water",
+        "stack_reserve_bytes": 98304,
+        "stack_measurement_method": "frameless watermark helpers; stack top minus deepest changed word; all samples",
+        "timer_calibration_method": "minimum of complete DWT read-pair distribution; raw counts retained",
+        "interrupt_policy": "PRIMASK=1, SysTick off, polling UART",
+        "intervals_below_counter_wrap_confirmed": null,
+        "st_link_method": null,
+        "serial_method": null,
+        "serial_baud": 115200
+      },
+      "manifest_sha256": "fba0474a04b4862221e51a3385b6bc9748412187f49a2ec3c45f6b55dd588d65",
+      "comparison_sha256": "079c79fa6b61d906cedf1a320d370fd2fd3e3429a0c7df73dfcf7c13cfe744bc",
+      "variants": {
+        "baseline": {
+          "cycles": null,
+          "stack_bytes": null,
+          "compact_correctness": "pending",
+          "arm_image": {
+            "text": 12812,
+            "data": 0,
+            "bss": 17096
+          },
+          "flash_bytes": 12812,
+          "static_ram_bytes": 17096,
+          "stack_static_analysis": {
+            "largest_individual_frame": {
+              "function": "src/sign.c:7:12:sign_core",
+              "bytes": 82376,
+              "kind": "static"
+            },
+            "reserved_bytes": 98304,
+            "total_call_stack_bound": "not proven"
+          },
+          "checks": 0,
+          "extra_field_calls": {
+            "mul": 0,
+            "add": 0,
+            "sub": 0
+          },
+          "modeled_fault_coverage": {
+            "additive_wire_deviations": 0,
+            "locations": null,
+            "conditions": "trusted checker arithmetic, stored weights and control flow; nonzero erroneous transform result",
+            "physical_fault_injection": "not evaluated"
+          },
+          "exact_certificate": {
+            "status": "not applicable"
+          }
+        },
+        "prior": {
+          "cycles": null,
+          "stack_bytes": null,
+          "compact_correctness": "pending",
+          "arm_image": {
+            "text": 15644,
+            "data": 0,
+            "bss": 17096
+          },
+          "flash_bytes": 15644,
+          "static_ram_bytes": 17096,
+          "stack_static_analysis": {
+            "largest_individual_frame": {
+              "function": "src/sign.c:7:12:sign_core",
+              "bytes": 82376,
+              "kind": "static"
+            },
+            "reserved_bytes": 98304,
+            "total_call_stack_bound": "not proven"
+          },
+          "checks": 2,
+          "extra_field_calls": {
+            "mul": 640,
+            "add": 1024,
+            "sub": 0
+          },
+          "modeled_fault_coverage": {
+            "additive_wire_deviations": 2,
+            "locations": 2304,
+            "conditions": "trusted checker arithmetic, stored weights and control flow; nonzero erroneous transform result",
+            "physical_fault_injection": "not evaluated"
+          },
+          "exact_certificate": {
+            "status": "passed",
+            "record": "docs/prior_certificate.json",
+            "sha256": "48268702d362b578fac07cd960bc7ae379a8ccbd3015c11bb0030da4c94d84c1",
+            "modeled_locations": 2304,
+            "checked_pairs": 2653056,
+            "failure_counts": {
+              "zero_first_responses": 0,
+              "zero_second_responses": 0,
+              "zero_determinants": 0
+            },
+            "row_identities": "direct evaluation and network pullback passed",
+            "propagation_identity": "all unit wires matched the production network",
+            "coefficients_sha256": "9281c37271baa76755a5873797b948142bc3ae8c45865df69326589a892a58df",
+            "network_sha256": "0353ec99eca78da433f92b5e6b756bd4b3f01187f8f1c502df98f4c241e6b861"
+          }
+        },
+        "our": {
+          "cycles": null,
+          "stack_bytes": null,
+          "compact_correctness": "pending",
+          "arm_image": {
+            "text": 16136,
+            "data": 0,
+            "bss": 17096
+          },
+          "flash_bytes": 16136,
+          "static_ram_bytes": 17096,
+          "stack_static_analysis": {
+            "largest_individual_frame": {
+              "function": "src/sign.c:7:12:sign_core",
+              "bytes": 82376,
+              "kind": "static"
+            },
+            "reserved_bytes": 98304,
+            "total_call_stack_bound": "not proven"
+          },
+          "checks": 2,
+          "extra_field_calls": {
+            "mul": 768,
+            "add": 1024,
+            "sub": 0
+          },
+          "modeled_fault_coverage": {
+            "additive_wire_deviations": 2,
+            "locations": 2304,
+            "conditions": "trusted checker arithmetic, stored weights and control flow; nonzero erroneous transform result",
+            "physical_fault_injection": "not evaluated"
+          },
+          "exact_certificate": {
+            "status": "passed",
+            "record": "docs/our_certificate.json",
+            "sha256": "f33852bbb9b469d34dc5684cccf35e35b5617854a8c50a49c76426f9e452e6ea",
+            "modeled_locations": 2304,
+            "checked_pairs": 2653056,
+            "failure_counts": {
+              "zero_first_responses": 0,
+              "zero_second_responses": 0,
+              "duplicate_normalized_responses": 0,
+              "zero_determinants": 0
+            },
+            "row_identities": "direct evaluation and network pullback passed",
+            "propagation_identity": "all unit wires matched the production network",
+            "coefficients_sha256": "dc167f43461e2c9c079bb79ded94a5b6a3af39062ea1de36b64f71ce01f9b2ec",
+            "network_sha256": "0353ec99eca78da433f92b5e6b756bd4b3f01187f8f1c502df98f4c241e6b861"
+          }
+        }
+      },
+      "flash_method": "linked benchmark ELF text+data; excludes layout padding",
+      "static_ram_method": "linked benchmark ELF data+bss; excludes stack",
+      "inverse_protection": "none in any variant",
+      "physical_fault_injection": "not evaluated"
+    }
+  },
+  "openocd_version": "Open On-Chip Debugger 0.11.0"
+}

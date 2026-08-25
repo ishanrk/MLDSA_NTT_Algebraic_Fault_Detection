@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from report import OPS, ROOT, STACK_OPS, observations, statistics_for, summarize
+from report import OPS, ROOT, STACK_OPS, observations, parse_observations, statistics_for, summarize
 
 
 class ReportTests(unittest.TestCase):
@@ -54,6 +54,28 @@ class ReportTests(unittest.TestCase):
     def test_pending_template_cannot_publish(self):
         with self.assertRaisesRegex(ValueError, 'still pending'):
             summarize(ROOT / 'hardware/run.template.json', ROOT / 'bench/comparison.json')
+
+    def test_full_calibration_raw_values_and_stack_samples(self):
+        rows = [{'op': 'overhead', 'sample': i, 'cycles': value}
+                for i, value in enumerate((7, 9, 8))]
+        rows += [{'op': op, 'sample': i, 'cycles': value, 'raw_cycles': value + 7}
+                 for op in OPS for i, value in enumerate((30, 10, 20))]
+        rows += [{'op': op, 'sample': i, 'stack_bytes': value}
+                 for op in STACK_OPS for i, value in enumerate((64, 128, 96))]
+        rows += [{'event': 'transcript', 'shake256': 'a' * 64}]
+        encode = lambda values: [json.dumps(row) for row in values]
+        data = parse_observations(encode(rows), self.counts, 3)
+        self.assertEqual(data['timer_overhead_statistics']['samples'], 3)
+        self.assertEqual(data['stack_bytes']['sign'], 128)
+        self.assertEqual(data['stack_statistics']['sign']['samples'], 3)
+        bad = [dict(row) for row in rows]
+        bad[3]['cycles'] += 1
+        with self.assertRaisesRegex(ValueError, 'timer correction'):
+            parse_observations(encode(bad), self.counts, 3)
+        for index in (0, 3, len(rows) - 2, len(rows) - 1):
+            with self.subTest(missing=index):
+                with self.assertRaises(ValueError):
+                    parse_observations(encode(rows[:index] + rows[index + 1:]), self.counts, 3)
 
 
 if __name__ == '__main__':

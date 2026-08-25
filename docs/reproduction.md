@@ -98,6 +98,6 @@ This converts already collected raw results into both output formats and perform
 
 ## Physical board stage
 
-Exact Nucleo model, MCU, clock/startup/linker layout, ST-Link access and serial transport must be identified before adding and flashing the board target. A connected physical board is required to fill cycle, flash, static RAM and stack fields. Mathematical pair certificates and physical fault injection remain distinct forms of evidence.
+The [physical-stage software guide](../hardware/README.md) provides selectable F411RE/F446RE reference targets and a board-independent gate: `python3 hardware/offline.py`. It generates [offline tables](cortexm4_offline.md) with actual linked image sizes and explicit pending cycle/stack fields. Exact board selection and access are required before flashing and collecting physical observations. Mathematical pair certificates and physical fault injection remain distinct forms of evidence.
 
 On WSL, a Windows-connected ST-Link must be made accessible to Linux. Microsoft's [USB connection guide](https://learn.microsoft.com/en-us/windows/wsl/connect-usb) documents discovery with `usbipd list`, administrator sharing with `usbipd bind --busid BUSID` and attachment with `usbipd attach --wsl --busid BUSID`. Use the board's actual bus ID. Check `lsusb` and its serial device after attachment. The pre hardware pipeline works without this connection.
