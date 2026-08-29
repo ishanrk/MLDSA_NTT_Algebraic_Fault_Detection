@@ -1,0 +1,11 @@
+% Modular function calls per forward transform
+% Source: bench/thesis.json; physical status: pending
+\begin{tabular}{llllll}
+\hline
+Variant & Total mul & Total add & Total sub & Extra mul & Extra add \\
+\hline
+Baseline & 1024 & 1024 & 1024 & 0 & 0 \\
+Abdelmonem two checks & 1664 & 2048 & 1024 & 640 & 1024 \\
+Our deterministic two checks & 1792 & 2048 & 1024 & 768 & 1024 \\
+\hline
+\end{tabular}

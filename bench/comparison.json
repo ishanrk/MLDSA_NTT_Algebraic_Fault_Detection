@@ -195,7 +195,7 @@
   "physical_flash_ram_stack": "pending",
   "schema_version": 1,
   "source_sha256": {
-    "Makefile": "7ea8f9d9adfda86848c083a670bdd54ea5635e01a9b4ee822b418fd6df4d524d",
+    "Makefile": "c923415c73e7e7a479bc003d12e0cc0762617498c2f80ebb1e208275cd178811",
     "include/mldsa44.h": "cbac6a37ecdeb981a2797727967c8040ed486bb7bf497731ef94f24a4db81cc6",
     "include/mldsa_checker.h": "ce56e9f35c71cae1182a5c6b71854b97faf2d6ffcf439e05038c77f26b2b5b3c",
     "include/mldsa_poly.h": "f2d92e9f73a353ae184093e9e47b51d784d6024d3e64e862e46d6a3dad591d0f",
@@ -247,8 +247,9 @@
     "test/test_smoke.py": "0d11208c96e9a8bb611850a29379ef301d08e6c637ad129fa31ca5ffc303fcf4",
     "test/test_verify.py": "00b636e8e813e080a87057808789f6140cd581fd133a3b79d812c9a756516936",
     "tools/check_model.py": "3610ad8820204db8eca0fb4704e6b6281e1530aa54c4e9a9413fc6e041a9969e",
-    "tools/compare.py": "5f50b4ebe24ec800a9aadfa5ef1c9174403fde90bcf9f9b5d42bf872ec65ea0a",
+    "tools/compare.py": "51e3d18c80b77f686157c00b7d99a69013b2be84289142a989c576ac995b0b67",
     "tools/fetch_nist.py": "5770391b69dfb6737f5b71a511c4066ad4239a6d91d22ffaa095627f871aea79",
+    "tools/final_regression.py": "187251e991ae454c7cba30e731726ba5fed6e9610b4dcd854affa6cacf48dab4",
     "tools/gen_arm_vectors.py": "4a5eae85b2db15045c4700982780a0f28e64961381b61da39865667cd1dec73c",
     "tools/gen_keccak.py": "f9e3b971e174e105fb7740361ad245dd1f57944868a7cc614ed0caf7af9c2c8f",
     "tools/gen_our_checker.py": "dfc935cdec46b3f4fdb92b7848339477b530a8a56ea7d721532b2a8d02b64737",
@@ -256,10 +257,13 @@
     "tools/gen_zetas.py": "ac04de985d8d57c64268be68a0c285a62cdce11fc7b0aafadc7ff2f876cf0102",
     "tools/measure_checkers.py": "49e43a0e22f013a0f25dca834d20c38668bb67e1dc39f119113920e419ccf443",
     "tools/measure_prior.py": "b3d7734ce2335c99864723ac459348577422f36b92bdf22c414b56c2f46371e8",
+    "tools/nist_manifest.json": "51bb81261576cda5d8329c93caa26292f48b9ee01faada10660541781b6cc4d3",
     "tools/ntt_network.py": "252f7f7c6df6a7405f9da379cefb8bf51d030edd6ad800d4ecfb5d1f2e35a97a",
     "tools/render_comparison.py": "d34e4660f890074bc2f8d6716ae4009e6c90ccbffd7fe3df3b2fb1ab4ccb3366",
+    "tools/render_thesis.py": "f4f92469b4db3e7500de3331ebf21a94dea11ea6a20b9de416634aca2476e4bb",
     "tools/run_mps2.py": "cc052195d4c88ce9836c030db579e42a2dd4b5323d28b61231f1d7a10c326952",
     "tools/summarize_bench.py": "a0f6bfbb67bd9323d351e5dd74f5ffc81f9837100034c984f6d2f0b6107bfe99",
+    "tools/test_thesis.py": "8fce9df859c8cde580c63638b8465c87e23d09f28311df00095fbbe4d777bd50",
     "verify/arithmetic.c": "ca9f73312499930a27920e71f1b7f78202b262c59352cadd8da574a592fe7b85",
     "verify/butterfly.c": "5e24ae3a9ccc8086969e39852258ccbe7b96622851e804051a69122bce8c82bb",
     "verify/checker_memory.c": "28feb12a214dac9ed2dab2942c43f81f483d81b35a9026002696f76aa793d5fa",
@@ -271,69 +275,1800 @@
     "verify/source_views.py": "43c275abf620b1e0c79e815efcc6f4a3350f8f78b4938fa79516ab547ec36a06"
   },
   "stages": {
-    "gcc": {
+    "nist_fetch": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "tools/fetch_nist.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.067,
+      "log": "build/thesis/nist_fetch.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "table_controls": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "tools/test_thesis.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.066,
+      "log": "build/thesis/table_controls.log",
+      "log_sha256": "869ea8047d0ae89dddb808470175fa3bdce5d6007a92e195f2d7e7e762e1f49f",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_host": {
       "status": "passed",
       "command": [
         "make",
         "-B",
+        "test",
         "baseline",
         "prior",
         "our",
+        "build/libmldsa.so",
+        "build/libmldsa_prior.so",
+        "build/libmldsa_our.so",
         "CC=gcc",
         "OPT=-O2",
         "SAN="
       ],
-      "seconds": 1.548,
-      "log": "build/comparison/gcc.log",
-      "log_sha256": "9220de833dede22c085bccf203a86c169e517b12c9d890a3d510eadfc9e4ceb8"
+      "exit_code": 0,
+      "seconds": 5.55,
+      "log": "build/thesis/gcc_host.log",
+      "log_sha256": "a51e8edd0d7bd3844a890994b2b7051cc2bb53e75b238d426db339c9b9d7c806",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
     },
-    "clang": {
+    "gcc_model": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "tools/check_model.py",
+        "build/libmldsa.so"
+      ],
+      "exit_code": 0,
+      "seconds": 0.119,
+      "log": "build/thesis/gcc_model.log",
+      "log_sha256": "5068cdfb0406954dfc434be88c9222266abc5ff28b328d3ef05be483df71873c",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_sample": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_sample.py",
+        "build/libmldsa.so"
+      ],
+      "exit_code": 0,
+      "seconds": 0.033,
+      "log": "build/thesis/gcc_sample.log",
+      "log_sha256": "feccb5e11706f2d2c616d6a44089b23dbdce493610ba85dc337d132d22064c3f",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_shake": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_shake.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.033,
+      "log": "build/thesis/gcc_shake.log",
+      "log_sha256": "dddf86e06571821849d1ec5012f8254be62ef7fd4b667505934273645e5ce5bf",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_baseline_keygen": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_keygen.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.034,
+      "log": "build/thesis/gcc_baseline_keygen.log",
+      "log_sha256": "2579c864cea0f4e9e93052fdfab9c2ed4ee3621b7fc8da9aa1a1b8dadf6baa0f",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_baseline_sign": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_sign.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.116,
+      "log": "build/thesis/gcc_baseline_sign.log",
+      "log_sha256": "b86da45b3f5643a8ed95f5c75aa0bc0ebc680725ba31d88506dfd2f5b7b9258e",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_baseline_verify": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_verify.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.034,
+      "log": "build/thesis/gcc_baseline_verify.log",
+      "log_sha256": "3849ec6a636404599d18808c878b1620d635aace5808d5176e30670891f560fa",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_baseline_prehash": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_prehash.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.12,
+      "log": "build/thesis/gcc_baseline_prehash.log",
+      "log_sha256": "de6b12ec11d05d6429f59ca4688065591a0dcc8e83ce997bad1f7517f215ab42",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_prior_keygen": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_keygen.py",
+        "build/libmldsa_prior.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.033,
+      "log": "build/thesis/gcc_prior_keygen.log",
+      "log_sha256": "2579c864cea0f4e9e93052fdfab9c2ed4ee3621b7fc8da9aa1a1b8dadf6baa0f",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_prior_sign": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_sign.py",
+        "build/libmldsa_prior.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.119,
+      "log": "build/thesis/gcc_prior_sign.log",
+      "log_sha256": "b86da45b3f5643a8ed95f5c75aa0bc0ebc680725ba31d88506dfd2f5b7b9258e",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_prior_verify": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_verify.py",
+        "build/libmldsa_prior.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.034,
+      "log": "build/thesis/gcc_prior_verify.log",
+      "log_sha256": "3849ec6a636404599d18808c878b1620d635aace5808d5176e30670891f560fa",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_prior_prehash": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_prehash.py",
+        "build/libmldsa_prior.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.119,
+      "log": "build/thesis/gcc_prior_prehash.log",
+      "log_sha256": "de6b12ec11d05d6429f59ca4688065591a0dcc8e83ce997bad1f7517f215ab42",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_prior_negative_build": {
+      "status": "passed",
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wconversion",
+        "-Wshadow",
+        "-Iinclude",
+        "-Isrc",
+        "-fno-omit-frame-pointer",
+        "-O2",
+        "-DMLDSA_PRIOR_CHECKER",
+        "test/test_negative.c",
+        "src/poly.c",
+        "src/ntt.c",
+        "src/prior.c",
+        "src/our.c",
+        "src/shake.c",
+        "src/round.c",
+        "src/encode.c",
+        "src/sample.c",
+        "src/vector.c",
+        "src/keygen.c",
+        "src/sign.c",
+        "src/verify.c",
+        "src/message.c",
+        "-o",
+        "/home/ishan/code/DiscreteGaussianSampler/build/thesis/gcc-negative-prior"
+      ],
+      "exit_code": 0,
+      "seconds": 0.525,
+      "log": "build/thesis/gcc_prior_negative_build.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_prior_negative": {
+      "status": "passed",
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/thesis/gcc-negative-prior"
+      ],
+      "exit_code": 0,
+      "seconds": 0.118,
+      "log": "build/thesis/gcc_prior_negative.log",
+      "log_sha256": "118dd656a2fa81feb91cceacdf96717d3eae2dcf687bf73ce389204b93aa9913",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_our_keygen": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_keygen.py",
+        "build/libmldsa_our.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.032,
+      "log": "build/thesis/gcc_our_keygen.log",
+      "log_sha256": "2579c864cea0f4e9e93052fdfab9c2ed4ee3621b7fc8da9aa1a1b8dadf6baa0f",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_our_sign": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_sign.py",
+        "build/libmldsa_our.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.118,
+      "log": "build/thesis/gcc_our_sign.log",
+      "log_sha256": "b86da45b3f5643a8ed95f5c75aa0bc0ebc680725ba31d88506dfd2f5b7b9258e",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_our_verify": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_verify.py",
+        "build/libmldsa_our.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.066,
+      "log": "build/thesis/gcc_our_verify.log",
+      "log_sha256": "3849ec6a636404599d18808c878b1620d635aace5808d5176e30670891f560fa",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_our_prehash": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_prehash.py",
+        "build/libmldsa_our.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.12,
+      "log": "build/thesis/gcc_our_prehash.log",
+      "log_sha256": "de6b12ec11d05d6429f59ca4688065591a0dcc8e83ce997bad1f7517f215ab42",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_our_negative_build": {
+      "status": "passed",
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wconversion",
+        "-Wshadow",
+        "-Iinclude",
+        "-Isrc",
+        "-fno-omit-frame-pointer",
+        "-O2",
+        "-DMLDSA_OUR_CHECKER",
+        "test/test_negative.c",
+        "src/poly.c",
+        "src/ntt.c",
+        "src/prior.c",
+        "src/our.c",
+        "src/shake.c",
+        "src/round.c",
+        "src/encode.c",
+        "src/sample.c",
+        "src/vector.c",
+        "src/keygen.c",
+        "src/sign.c",
+        "src/verify.c",
+        "src/message.c",
+        "-o",
+        "/home/ishan/code/DiscreteGaussianSampler/build/thesis/gcc-negative-our"
+      ],
+      "exit_code": 0,
+      "seconds": 0.585,
+      "log": "build/thesis/gcc_our_negative_build.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "gcc_our_negative": {
+      "status": "passed",
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/thesis/gcc-negative-our"
+      ],
+      "exit_code": 0,
+      "seconds": 0.169,
+      "log": "build/thesis/gcc_our_negative.log",
+      "log_sha256": "118dd656a2fa81feb91cceacdf96717d3eae2dcf687bf73ce389204b93aa9913",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "differential_baseline": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_differential.py",
+        "build/libmldsa.so"
+      ],
+      "exit_code": 0,
+      "seconds": 1.679,
+      "log": "build/thesis/differential_baseline.log",
+      "log_sha256": "75aefaa17c2aaf3cfc9234c74e58dc0422f408cca16fc8a79069ce5dbb29ce82",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "PYTHONPATH": "/home/ishan/code/DiscreteGaussianSampler/build/oracle"
+      }
+    },
+    "differential_prior": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_differential.py",
+        "build/libmldsa_prior.so"
+      ],
+      "exit_code": 0,
+      "seconds": 1.946,
+      "log": "build/thesis/differential_prior.log",
+      "log_sha256": "75aefaa17c2aaf3cfc9234c74e58dc0422f408cca16fc8a79069ce5dbb29ce82",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "PYTHONPATH": "/home/ishan/code/DiscreteGaussianSampler/build/oracle"
+      }
+    },
+    "differential_our": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_differential.py",
+        "build/libmldsa_our.so"
+      ],
+      "exit_code": 0,
+      "seconds": 1.638,
+      "log": "build/thesis/differential_our.log",
+      "log_sha256": "75aefaa17c2aaf3cfc9234c74e58dc0422f408cca16fc8a79069ce5dbb29ce82",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "PYTHONPATH": "/home/ishan/code/DiscreteGaussianSampler/build/oracle"
+      }
+    },
+    "clang_host": {
       "status": "passed",
       "command": [
         "make",
         "-B",
+        "test",
         "baseline",
         "prior",
         "our",
+        "build/libmldsa.so",
+        "build/libmldsa_prior.so",
+        "build/libmldsa_our.so",
         "CC=clang",
         "OPT=-O2",
         "SAN="
       ],
-      "seconds": 1.966,
-      "log": "build/comparison/clang.log",
-      "log_sha256": "71c9379d45cf3e446e371a73a1b04a35129dd8dc8adc0f778bcffaf42b0ad065"
+      "exit_code": 0,
+      "seconds": 7.055,
+      "log": "build/thesis/clang_host.log",
+      "log_sha256": "5ce20961a99b96e9008f07992b612bc7f65e5f1d0f0b1327af4bfa7e75a989ca",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
     },
-    "asan": {
+    "clang_model": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "tools/check_model.py",
+        "build/libmldsa.so"
+      ],
+      "exit_code": 0,
+      "seconds": 0.12,
+      "log": "build/thesis/clang_model.log",
+      "log_sha256": "5068cdfb0406954dfc434be88c9222266abc5ff28b328d3ef05be483df71873c",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "clang_sample": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_sample.py",
+        "build/libmldsa.so"
+      ],
+      "exit_code": 0,
+      "seconds": 0.033,
+      "log": "build/thesis/clang_sample.log",
+      "log_sha256": "feccb5e11706f2d2c616d6a44089b23dbdce493610ba85dc337d132d22064c3f",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "clang_shake": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_shake.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.033,
+      "log": "build/thesis/clang_shake.log",
+      "log_sha256": "dddf86e06571821849d1ec5012f8254be62ef7fd4b667505934273645e5ce5bf",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "clang_baseline_keygen": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_keygen.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.033,
+      "log": "build/thesis/clang_baseline_keygen.log",
+      "log_sha256": "2579c864cea0f4e9e93052fdfab9c2ed4ee3621b7fc8da9aa1a1b8dadf6baa0f",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "clang_baseline_sign": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_sign.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.119,
+      "log": "build/thesis/clang_baseline_sign.log",
+      "log_sha256": "b86da45b3f5643a8ed95f5c75aa0bc0ebc680725ba31d88506dfd2f5b7b9258e",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "clang_baseline_verify": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_verify.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.033,
+      "log": "build/thesis/clang_baseline_verify.log",
+      "log_sha256": "3849ec6a636404599d18808c878b1620d635aace5808d5176e30670891f560fa",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "clang_baseline_prehash": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_prehash.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.065,
+      "log": "build/thesis/clang_baseline_prehash.log",
+      "log_sha256": "de6b12ec11d05d6429f59ca4688065591a0dcc8e83ce997bad1f7517f215ab42",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "clang_prior_keygen": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_keygen.py",
+        "build/libmldsa_prior.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.033,
+      "log": "build/thesis/clang_prior_keygen.log",
+      "log_sha256": "2579c864cea0f4e9e93052fdfab9c2ed4ee3621b7fc8da9aa1a1b8dadf6baa0f",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "clang_prior_sign": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_sign.py",
+        "build/libmldsa_prior.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.065,
+      "log": "build/thesis/clang_prior_sign.log",
+      "log_sha256": "b86da45b3f5643a8ed95f5c75aa0bc0ebc680725ba31d88506dfd2f5b7b9258e",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "clang_prior_verify": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_verify.py",
+        "build/libmldsa_prior.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.033,
+      "log": "build/thesis/clang_prior_verify.log",
+      "log_sha256": "3849ec6a636404599d18808c878b1620d635aace5808d5176e30670891f560fa",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "clang_prior_prehash": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_prehash.py",
+        "build/libmldsa_prior.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.065,
+      "log": "build/thesis/clang_prior_prehash.log",
+      "log_sha256": "de6b12ec11d05d6429f59ca4688065591a0dcc8e83ce997bad1f7517f215ab42",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "clang_prior_negative_build": {
+      "status": "passed",
+      "command": [
+        "clang",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wconversion",
+        "-Wshadow",
+        "-Iinclude",
+        "-Isrc",
+        "-fno-omit-frame-pointer",
+        "-O2",
+        "-DMLDSA_PRIOR_CHECKER",
+        "test/test_negative.c",
+        "src/poly.c",
+        "src/ntt.c",
+        "src/prior.c",
+        "src/our.c",
+        "src/shake.c",
+        "src/round.c",
+        "src/encode.c",
+        "src/sample.c",
+        "src/vector.c",
+        "src/keygen.c",
+        "src/sign.c",
+        "src/verify.c",
+        "src/message.c",
+        "-o",
+        "/home/ishan/code/DiscreteGaussianSampler/build/thesis/clang-negative-prior"
+      ],
+      "exit_code": 0,
+      "seconds": 0.741,
+      "log": "build/thesis/clang_prior_negative_build.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "clang_prior_negative": {
+      "status": "passed",
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/thesis/clang-negative-prior"
+      ],
+      "exit_code": 0,
+      "seconds": 0.066,
+      "log": "build/thesis/clang_prior_negative.log",
+      "log_sha256": "118dd656a2fa81feb91cceacdf96717d3eae2dcf687bf73ce389204b93aa9913",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "clang_our_keygen": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_keygen.py",
+        "build/libmldsa_our.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.033,
+      "log": "build/thesis/clang_our_keygen.log",
+      "log_sha256": "2579c864cea0f4e9e93052fdfab9c2ed4ee3621b7fc8da9aa1a1b8dadf6baa0f",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "clang_our_sign": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_sign.py",
+        "build/libmldsa_our.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.066,
+      "log": "build/thesis/clang_our_sign.log",
+      "log_sha256": "b86da45b3f5643a8ed95f5c75aa0bc0ebc680725ba31d88506dfd2f5b7b9258e",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "clang_our_verify": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_verify.py",
+        "build/libmldsa_our.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.033,
+      "log": "build/thesis/clang_our_verify.log",
+      "log_sha256": "3849ec6a636404599d18808c878b1620d635aace5808d5176e30670891f560fa",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "clang_our_prehash": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_prehash.py",
+        "build/libmldsa_our.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.067,
+      "log": "build/thesis/clang_our_prehash.log",
+      "log_sha256": "de6b12ec11d05d6429f59ca4688065591a0dcc8e83ce997bad1f7517f215ab42",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "clang_our_negative_build": {
+      "status": "passed",
+      "command": [
+        "clang",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wconversion",
+        "-Wshadow",
+        "-Iinclude",
+        "-Isrc",
+        "-fno-omit-frame-pointer",
+        "-O2",
+        "-DMLDSA_OUR_CHECKER",
+        "test/test_negative.c",
+        "src/poly.c",
+        "src/ntt.c",
+        "src/prior.c",
+        "src/our.c",
+        "src/shake.c",
+        "src/round.c",
+        "src/encode.c",
+        "src/sample.c",
+        "src/vector.c",
+        "src/keygen.c",
+        "src/sign.c",
+        "src/verify.c",
+        "src/message.c",
+        "-o",
+        "/home/ishan/code/DiscreteGaussianSampler/build/thesis/clang-negative-our"
+      ],
+      "exit_code": 0,
+      "seconds": 0.677,
+      "log": "build/thesis/clang_our_negative_build.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "clang_our_negative": {
+      "status": "passed",
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/thesis/clang-negative-our"
+      ],
+      "exit_code": 0,
+      "seconds": 0.067,
+      "log": "build/thesis/clang_our_negative.log",
+      "log_sha256": "118dd656a2fa81feb91cceacdf96717d3eae2dcf687bf73ce389204b93aa9913",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "asan_host": {
       "status": "passed",
       "command": [
         "make",
         "-B",
+        "test",
         "baseline",
         "prior",
         "our",
+        "build/libmldsa.so",
+        "build/libmldsa_prior.so",
+        "build/libmldsa_our.so",
         "CC=gcc",
         "OPT=-O1 -g",
         "SAN=-fsanitize=address"
       ],
-      "seconds": 1.806,
-      "log": "build/comparison/asan.log",
-      "log_sha256": "ba4c3cf0f230863966df03eefbbcf2a5d64bdd32283b13f7d673ecacf848b185"
+      "exit_code": 0,
+      "seconds": 6.841,
+      "log": "build/thesis/asan_host.log",
+      "log_sha256": "5ecf392a1e33ea08b4dd22e7d2318f6063c9fb97a4e84598e475cfa9adc555f3",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "ASAN_OPTIONS": "detect_leaks=1:abort_on_error=1"
+      }
     },
-    "ubsan": {
+    "asan_model": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "tools/check_model.py",
+        "build/libmldsa.so"
+      ],
+      "exit_code": 0,
+      "seconds": 0.168,
+      "log": "build/thesis/asan_model.log",
+      "log_sha256": "5068cdfb0406954dfc434be88c9222266abc5ff28b328d3ef05be483df71873c",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "LD_PRELOAD": "/usr/lib/gcc/x86_64-linux-gnu/11/libasan.so",
+        "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1"
+      }
+    },
+    "asan_sample": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_sample.py",
+        "build/libmldsa.so"
+      ],
+      "exit_code": 0,
+      "seconds": 0.066,
+      "log": "build/thesis/asan_sample.log",
+      "log_sha256": "feccb5e11706f2d2c616d6a44089b23dbdce493610ba85dc337d132d22064c3f",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "LD_PRELOAD": "/usr/lib/gcc/x86_64-linux-gnu/11/libasan.so",
+        "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1"
+      }
+    },
+    "asan_shake": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_shake.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.066,
+      "log": "build/thesis/asan_shake.log",
+      "log_sha256": "dddf86e06571821849d1ec5012f8254be62ef7fd4b667505934273645e5ce5bf",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "LD_PRELOAD": "/usr/lib/gcc/x86_64-linux-gnu/11/libasan.so",
+        "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1"
+      }
+    },
+    "asan_baseline_keygen": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_keygen.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.067,
+      "log": "build/thesis/asan_baseline_keygen.log",
+      "log_sha256": "2579c864cea0f4e9e93052fdfab9c2ed4ee3621b7fc8da9aa1a1b8dadf6baa0f",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "LD_PRELOAD": "/usr/lib/gcc/x86_64-linux-gnu/11/libasan.so",
+        "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1"
+      }
+    },
+    "asan_baseline_sign": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_sign.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.171,
+      "log": "build/thesis/asan_baseline_sign.log",
+      "log_sha256": "b86da45b3f5643a8ed95f5c75aa0bc0ebc680725ba31d88506dfd2f5b7b9258e",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "LD_PRELOAD": "/usr/lib/gcc/x86_64-linux-gnu/11/libasan.so",
+        "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1"
+      }
+    },
+    "asan_baseline_verify": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_verify.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.066,
+      "log": "build/thesis/asan_baseline_verify.log",
+      "log_sha256": "3849ec6a636404599d18808c878b1620d635aace5808d5176e30670891f560fa",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "LD_PRELOAD": "/usr/lib/gcc/x86_64-linux-gnu/11/libasan.so",
+        "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1"
+      }
+    },
+    "asan_baseline_prehash": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_prehash.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.171,
+      "log": "build/thesis/asan_baseline_prehash.log",
+      "log_sha256": "de6b12ec11d05d6429f59ca4688065591a0dcc8e83ce997bad1f7517f215ab42",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "LD_PRELOAD": "/usr/lib/gcc/x86_64-linux-gnu/11/libasan.so",
+        "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1"
+      }
+    },
+    "asan_prior_keygen": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_keygen.py",
+        "build/libmldsa_prior.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.066,
+      "log": "build/thesis/asan_prior_keygen.log",
+      "log_sha256": "2579c864cea0f4e9e93052fdfab9c2ed4ee3621b7fc8da9aa1a1b8dadf6baa0f",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "LD_PRELOAD": "/usr/lib/gcc/x86_64-linux-gnu/11/libasan.so",
+        "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1"
+      }
+    },
+    "asan_prior_sign": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_sign.py",
+        "build/libmldsa_prior.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.172,
+      "log": "build/thesis/asan_prior_sign.log",
+      "log_sha256": "b86da45b3f5643a8ed95f5c75aa0bc0ebc680725ba31d88506dfd2f5b7b9258e",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "LD_PRELOAD": "/usr/lib/gcc/x86_64-linux-gnu/11/libasan.so",
+        "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1"
+      }
+    },
+    "asan_prior_verify": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_verify.py",
+        "build/libmldsa_prior.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.068,
+      "log": "build/thesis/asan_prior_verify.log",
+      "log_sha256": "3849ec6a636404599d18808c878b1620d635aace5808d5176e30670891f560fa",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "LD_PRELOAD": "/usr/lib/gcc/x86_64-linux-gnu/11/libasan.so",
+        "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1"
+      }
+    },
+    "asan_prior_prehash": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_prehash.py",
+        "build/libmldsa_prior.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.226,
+      "log": "build/thesis/asan_prior_prehash.log",
+      "log_sha256": "de6b12ec11d05d6429f59ca4688065591a0dcc8e83ce997bad1f7517f215ab42",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "LD_PRELOAD": "/usr/lib/gcc/x86_64-linux-gnu/11/libasan.so",
+        "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1"
+      }
+    },
+    "asan_prior_negative_build": {
+      "status": "passed",
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wconversion",
+        "-Wshadow",
+        "-Iinclude",
+        "-Isrc",
+        "-fno-omit-frame-pointer",
+        "-O1",
+        "-g",
+        "-fsanitize=address",
+        "-DMLDSA_PRIOR_CHECKER",
+        "test/test_negative.c",
+        "src/poly.c",
+        "src/ntt.c",
+        "src/prior.c",
+        "src/our.c",
+        "src/shake.c",
+        "src/round.c",
+        "src/encode.c",
+        "src/sample.c",
+        "src/vector.c",
+        "src/keygen.c",
+        "src/sign.c",
+        "src/verify.c",
+        "src/message.c",
+        "-o",
+        "/home/ishan/code/DiscreteGaussianSampler/build/thesis/asan-negative-prior"
+      ],
+      "exit_code": 0,
+      "seconds": 0.742,
+      "log": "build/thesis/asan_prior_negative_build.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "asan_prior_negative": {
+      "status": "passed",
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/thesis/asan-negative-prior"
+      ],
+      "exit_code": 0,
+      "seconds": 0.274,
+      "log": "build/thesis/asan_prior_negative.log",
+      "log_sha256": "118dd656a2fa81feb91cceacdf96717d3eae2dcf687bf73ce389204b93aa9913",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "ASAN_OPTIONS": "detect_leaks=1:abort_on_error=1"
+      }
+    },
+    "asan_our_keygen": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_keygen.py",
+        "build/libmldsa_our.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.066,
+      "log": "build/thesis/asan_our_keygen.log",
+      "log_sha256": "2579c864cea0f4e9e93052fdfab9c2ed4ee3621b7fc8da9aa1a1b8dadf6baa0f",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "LD_PRELOAD": "/usr/lib/gcc/x86_64-linux-gnu/11/libasan.so",
+        "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1"
+      }
+    },
+    "asan_our_sign": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_sign.py",
+        "build/libmldsa_our.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.167,
+      "log": "build/thesis/asan_our_sign.log",
+      "log_sha256": "b86da45b3f5643a8ed95f5c75aa0bc0ebc680725ba31d88506dfd2f5b7b9258e",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "LD_PRELOAD": "/usr/lib/gcc/x86_64-linux-gnu/11/libasan.so",
+        "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1"
+      }
+    },
+    "asan_our_verify": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_verify.py",
+        "build/libmldsa_our.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.065,
+      "log": "build/thesis/asan_our_verify.log",
+      "log_sha256": "3849ec6a636404599d18808c878b1620d635aace5808d5176e30670891f560fa",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "LD_PRELOAD": "/usr/lib/gcc/x86_64-linux-gnu/11/libasan.so",
+        "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1"
+      }
+    },
+    "asan_our_prehash": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_prehash.py",
+        "build/libmldsa_our.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.17,
+      "log": "build/thesis/asan_our_prehash.log",
+      "log_sha256": "de6b12ec11d05d6429f59ca4688065591a0dcc8e83ce997bad1f7517f215ab42",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "LD_PRELOAD": "/usr/lib/gcc/x86_64-linux-gnu/11/libasan.so",
+        "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1"
+      }
+    },
+    "asan_our_negative_build": {
+      "status": "passed",
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wconversion",
+        "-Wshadow",
+        "-Iinclude",
+        "-Isrc",
+        "-fno-omit-frame-pointer",
+        "-O1",
+        "-g",
+        "-fsanitize=address",
+        "-DMLDSA_OUR_CHECKER",
+        "test/test_negative.c",
+        "src/poly.c",
+        "src/ntt.c",
+        "src/prior.c",
+        "src/our.c",
+        "src/shake.c",
+        "src/round.c",
+        "src/encode.c",
+        "src/sample.c",
+        "src/vector.c",
+        "src/keygen.c",
+        "src/sign.c",
+        "src/verify.c",
+        "src/message.c",
+        "-o",
+        "/home/ishan/code/DiscreteGaussianSampler/build/thesis/asan-negative-our"
+      ],
+      "exit_code": 0,
+      "seconds": 0.676,
+      "log": "build/thesis/asan_our_negative_build.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "asan_our_negative": {
+      "status": "passed",
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/thesis/asan-negative-our"
+      ],
+      "exit_code": 0,
+      "seconds": 0.272,
+      "log": "build/thesis/asan_our_negative.log",
+      "log_sha256": "118dd656a2fa81feb91cceacdf96717d3eae2dcf687bf73ce389204b93aa9913",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1",
+        "ASAN_OPTIONS": "detect_leaks=1:abort_on_error=1"
+      }
+    },
+    "ubsan_host": {
       "status": "passed",
       "command": [
         "make",
         "-B",
+        "test",
         "baseline",
         "prior",
         "our",
+        "build/libmldsa.so",
+        "build/libmldsa_prior.so",
+        "build/libmldsa_our.so",
         "CC=gcc",
         "OPT=-O1 -g",
         "SAN=-fsanitize=undefined -fno-sanitize-recover=all"
       ],
-      "seconds": 2.063,
-      "log": "build/comparison/ubsan.log",
-      "log_sha256": "61742c923bab057bb961aa4f766a2509b4a2a302f39762eed2c5a4c80a737d62"
+      "exit_code": 0,
+      "seconds": 8.095,
+      "log": "build/thesis/ubsan_host.log",
+      "log_sha256": "fc65f967b712e85a88f42da29f6dd8c47d9cc0424005adaadfe10b49d44ff99b",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_model": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "tools/check_model.py",
+        "build/libmldsa.so"
+      ],
+      "exit_code": 0,
+      "seconds": 0.119,
+      "log": "build/thesis/ubsan_model.log",
+      "log_sha256": "5068cdfb0406954dfc434be88c9222266abc5ff28b328d3ef05be483df71873c",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_sample": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_sample.py",
+        "build/libmldsa.so"
+      ],
+      "exit_code": 0,
+      "seconds": 0.033,
+      "log": "build/thesis/ubsan_sample.log",
+      "log_sha256": "feccb5e11706f2d2c616d6a44089b23dbdce493610ba85dc337d132d22064c3f",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_shake": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_shake.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.066,
+      "log": "build/thesis/ubsan_shake.log",
+      "log_sha256": "dddf86e06571821849d1ec5012f8254be62ef7fd4b667505934273645e5ce5bf",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_baseline_keygen": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_keygen.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.067,
+      "log": "build/thesis/ubsan_baseline_keygen.log",
+      "log_sha256": "2579c864cea0f4e9e93052fdfab9c2ed4ee3621b7fc8da9aa1a1b8dadf6baa0f",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_baseline_sign": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_sign.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.169,
+      "log": "build/thesis/ubsan_baseline_sign.log",
+      "log_sha256": "b86da45b3f5643a8ed95f5c75aa0bc0ebc680725ba31d88506dfd2f5b7b9258e",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_baseline_verify": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_verify.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.066,
+      "log": "build/thesis/ubsan_baseline_verify.log",
+      "log_sha256": "3849ec6a636404599d18808c878b1620d635aace5808d5176e30670891f560fa",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_baseline_prehash": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_prehash.py",
+        "build/libmldsa.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.169,
+      "log": "build/thesis/ubsan_baseline_prehash.log",
+      "log_sha256": "de6b12ec11d05d6429f59ca4688065591a0dcc8e83ce997bad1f7517f215ab42",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_prior_keygen": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_keygen.py",
+        "build/libmldsa_prior.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.066,
+      "log": "build/thesis/ubsan_prior_keygen.log",
+      "log_sha256": "2579c864cea0f4e9e93052fdfab9c2ed4ee3621b7fc8da9aa1a1b8dadf6baa0f",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_prior_sign": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_sign.py",
+        "build/libmldsa_prior.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.17,
+      "log": "build/thesis/ubsan_prior_sign.log",
+      "log_sha256": "b86da45b3f5643a8ed95f5c75aa0bc0ebc680725ba31d88506dfd2f5b7b9258e",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_prior_verify": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_verify.py",
+        "build/libmldsa_prior.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.067,
+      "log": "build/thesis/ubsan_prior_verify.log",
+      "log_sha256": "3849ec6a636404599d18808c878b1620d635aace5808d5176e30670891f560fa",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_prior_prehash": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_prehash.py",
+        "build/libmldsa_prior.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.17,
+      "log": "build/thesis/ubsan_prior_prehash.log",
+      "log_sha256": "de6b12ec11d05d6429f59ca4688065591a0dcc8e83ce997bad1f7517f215ab42",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_prior_negative_build": {
+      "status": "passed",
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wconversion",
+        "-Wshadow",
+        "-Iinclude",
+        "-Isrc",
+        "-fno-omit-frame-pointer",
+        "-O1",
+        "-g",
+        "-fsanitize=undefined",
+        "-fno-sanitize-recover=all",
+        "-DMLDSA_PRIOR_CHECKER",
+        "test/test_negative.c",
+        "src/poly.c",
+        "src/ntt.c",
+        "src/prior.c",
+        "src/our.c",
+        "src/shake.c",
+        "src/round.c",
+        "src/encode.c",
+        "src/sample.c",
+        "src/vector.c",
+        "src/keygen.c",
+        "src/sign.c",
+        "src/verify.c",
+        "src/message.c",
+        "-o",
+        "/home/ishan/code/DiscreteGaussianSampler/build/thesis/ubsan-negative-prior"
+      ],
+      "exit_code": 0,
+      "seconds": 0.744,
+      "log": "build/thesis/ubsan_prior_negative_build.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_prior_negative": {
+      "status": "passed",
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/thesis/ubsan-negative-prior"
+      ],
+      "exit_code": 0,
+      "seconds": 0.279,
+      "log": "build/thesis/ubsan_prior_negative.log",
+      "log_sha256": "118dd656a2fa81feb91cceacdf96717d3eae2dcf687bf73ce389204b93aa9913",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_our_keygen": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_keygen.py",
+        "build/libmldsa_our.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.065,
+      "log": "build/thesis/ubsan_our_keygen.log",
+      "log_sha256": "2579c864cea0f4e9e93052fdfab9c2ed4ee3621b7fc8da9aa1a1b8dadf6baa0f",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_our_sign": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_sign.py",
+        "build/libmldsa_our.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.169,
+      "log": "build/thesis/ubsan_our_sign.log",
+      "log_sha256": "b86da45b3f5643a8ed95f5c75aa0bc0ebc680725ba31d88506dfd2f5b7b9258e",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_our_verify": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_verify.py",
+        "build/libmldsa_our.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.066,
+      "log": "build/thesis/ubsan_our_verify.log",
+      "log_sha256": "3849ec6a636404599d18808c878b1620d635aace5808d5176e30670891f560fa",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_our_prehash": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "test/test_prehash.py",
+        "build/libmldsa_our.so",
+        "build/nist"
+      ],
+      "exit_code": 0,
+      "seconds": 0.116,
+      "log": "build/thesis/ubsan_our_prehash.log",
+      "log_sha256": "de6b12ec11d05d6429f59ca4688065591a0dcc8e83ce997bad1f7517f215ab42",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_our_negative_build": {
+      "status": "passed",
+      "command": [
+        "gcc",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wconversion",
+        "-Wshadow",
+        "-Iinclude",
+        "-Isrc",
+        "-fno-omit-frame-pointer",
+        "-O1",
+        "-g",
+        "-fsanitize=undefined",
+        "-fno-sanitize-recover=all",
+        "-DMLDSA_OUR_CHECKER",
+        "test/test_negative.c",
+        "src/poly.c",
+        "src/ntt.c",
+        "src/prior.c",
+        "src/our.c",
+        "src/shake.c",
+        "src/round.c",
+        "src/encode.c",
+        "src/sample.c",
+        "src/vector.c",
+        "src/keygen.c",
+        "src/sign.c",
+        "src/verify.c",
+        "src/message.c",
+        "-o",
+        "/home/ishan/code/DiscreteGaussianSampler/build/thesis/ubsan-negative-our"
+      ],
+      "exit_code": 0,
+      "seconds": 0.622,
+      "log": "build/thesis/ubsan_our_negative_build.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "ubsan_our_negative": {
+      "status": "passed",
+      "command": [
+        "/home/ishan/code/DiscreteGaussianSampler/build/thesis/ubsan-negative-our"
+      ],
+      "exit_code": 0,
+      "seconds": 0.278,
+      "log": "build/thesis/ubsan_our_negative.log",
+      "log_sha256": "118dd656a2fa81feb91cceacdf96717d3eae2dcf687bf73ce389204b93aa9913",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "constants_zetas": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "tools/gen_zetas.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.033,
+      "log": "build/thesis/constants_zetas.log",
+      "log_sha256": "d630b3b82525fe6d4df8f89945d925ead7b3c3816c19a13e1f9c82aa3c826555",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    "constants_keccak": {
+      "status": "passed",
+      "command": [
+        "/usr/bin/python3",
+        "tools/gen_keccak.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.033,
+      "log": "build/thesis/constants_keccak.log",
+      "log_sha256": "740f285d3ab47547003336e89fa203fbf78d8a09981a07b7574a32b8ef339eff",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
     },
     "certificate_prior": {
       "status": "passed",
@@ -342,9 +2077,15 @@
         "tools/gen_prior_checker.py",
         "--check"
       ],
-      "seconds": 5.245,
-      "log": "build/comparison/certificate_prior.log",
-      "log_sha256": "8037d9eb71db0ed7033673ed74d4750a05cf77eb318774959fb55d46d456bad6"
+      "exit_code": 0,
+      "seconds": 5.668,
+      "log": "build/thesis/certificate_prior.log",
+      "log_sha256": "8037d9eb71db0ed7033673ed74d4750a05cf77eb318774959fb55d46d456bad6",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
     },
     "certificate_our": {
       "status": "passed",
@@ -353,9 +2094,15 @@
         "tools/gen_our_checker.py",
         "--check"
       ],
-      "seconds": 6.164,
-      "log": "build/comparison/certificate_our.log",
-      "log_sha256": "12b635e427ca77e6b8e715d0981f23d3a6565fbcf355669f3046d2c7aee5df54"
+      "exit_code": 0,
+      "seconds": 6.245,
+      "log": "build/thesis/certificate_our.log",
+      "log_sha256": "40f7ce7b912701f106cb2b61e7b5926a3cdbdf247247d6a92e1ddbd506f6e3e9",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
     },
     "formal_arithmetic": {
       "status": "passed",
@@ -365,9 +2112,15 @@
         "--group",
         "arithmetic"
       ],
-      "seconds": 64.168,
-      "log": "build/comparison/formal_arithmetic.log",
-      "log_sha256": "e1076d26fc100106440e4368df78b36ea8b25aec5ee85408d19cdd816fcb3d46"
+      "exit_code": 0,
+      "seconds": 68.224,
+      "log": "build/thesis/formal_arithmetic.log",
+      "log_sha256": "3d930130896b0817b8eef829faa1eac9224703963cb96e19605067fb4bfe9365",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
     },
     "formal_checkers": {
       "status": "passed",
@@ -377,9 +2130,15 @@
         "--group",
         "checkers"
       ],
-      "seconds": 21.439,
-      "log": "build/comparison/formal_checkers.log",
-      "log_sha256": "633239e7097b6d9e9a7e2a7b2a222c845fe7d0fa136f20f259e7c46907f553a3"
+      "exit_code": 0,
+      "seconds": 23.509,
+      "log": "build/thesis/formal_checkers.log",
+      "log_sha256": "7ec6c0ef9f04f2eb687c983abe47c2bbf3cd9cbd352e2992166bc6f011a6244f",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
     },
     "counter": {
       "status": "passed",
@@ -391,9 +2150,15 @@
         "OPT=-O2",
         "SAN="
       ],
-      "seconds": 0.22,
-      "log": "build/comparison/counter.log",
-      "log_sha256": "3dc62abf6742e1cb317b2cf2cda91893f91a0d299d9627bda13d1a9d5cedbfb0"
+      "exit_code": 0,
+      "seconds": 0.278,
+      "log": "build/thesis/counter.log",
+      "log_sha256": "89d591ebcbece43460e43ca17973101412b89031e1b2a8294661173e90b00300",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
     },
     "arm": {
       "status": "passed",
@@ -412,9 +2177,15 @@
         "ARM_INC=-isystem /home/ishan/code/DiscreteGaussianSampler/build/toolchain/root/usr/include/newlib",
         "ARM_LIB=-L/home/ishan/code/DiscreteGaussianSampler/build/toolchain/root/usr/lib/arm-none-eabi/newlib/thumb/v7e-m/nofp"
       ],
-      "seconds": 4.107,
-      "log": "build/comparison/arm.log",
-      "log_sha256": "89924a8e7de18565d9dc8e9eb2b3ef4a522b7127369ac4284024dbd61486a19f"
+      "exit_code": 0,
+      "seconds": 4.768,
+      "log": "build/thesis/arm.log",
+      "log_sha256": "894c48ca5aa2a9cac92250fddb81ffe79219ac2e339bc06786709733c47445cd",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
     },
     "qemu_baseline": {
       "status": "passed",
@@ -422,9 +2193,15 @@
         "/usr/bin/python3",
         "tools/run_mps2.py"
       ],
-      "seconds": 0.168,
-      "log": "build/comparison/qemu_baseline.log",
-      "log_sha256": "d812ac93b155509057c936dc4199c3d0e0f934231c418dc4d586a8457d26aaa5"
+      "exit_code": 0,
+      "seconds": 0.224,
+      "log": "build/thesis/qemu_baseline.log",
+      "log_sha256": "d812ac93b155509057c936dc4199c3d0e0f934231c418dc4d586a8457d26aaa5",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
     },
     "qemu_prior": {
       "status": "passed",
@@ -433,9 +2210,15 @@
         "tools/run_mps2.py",
         "--prior"
       ],
-      "seconds": 0.166,
-      "log": "build/comparison/qemu_prior.log",
-      "log_sha256": "1d6aefb7d2e0924e4d4b61e131088b7725acb0b75e30ce06d8d093180e4248c5"
+      "exit_code": 0,
+      "seconds": 0.173,
+      "log": "build/thesis/qemu_prior.log",
+      "log_sha256": "1d6aefb7d2e0924e4d4b61e131088b7725acb0b75e30ce06d8d093180e4248c5",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
     },
     "qemu_our": {
       "status": "passed",
@@ -444,9 +2227,15 @@
         "tools/run_mps2.py",
         "--our"
       ],
+      "exit_code": 0,
       "seconds": 0.168,
-      "log": "build/comparison/qemu_our.log",
-      "log_sha256": "bd12ae485b329d09c4212dde6f4ccb7f48c4f3086698019a298e2fbba3c0bae1"
+      "log": "build/thesis/qemu_our.log",
+      "log_sha256": "bd12ae485b329d09c4212dde6f4ccb7f48c4f3086698019a298e2fbba3c0bae1",
+      "test_environment": {
+        "PYTHONOPTIMIZE": "0",
+        "PYTHONHASHSEED": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
     }
   },
   "host_compilers": {
@@ -458,7 +2247,7 @@
   "formal": {
     "arithmetic": {
       "record": "verify/results_arithmetic.json",
-      "sha256": "d4a77395685184d5396adec0c4394bbaf33fb84d20ed5d7caf8dfa2163deafab",
+      "sha256": "d7e0df638fe3e46e9596a57bda593a48f8da90bfc0ea9d85b55392dc0883a898",
       "cbmc": "6.10.0 (cbmc-6.10.0)",
       "solver": "Z3 version 4.8.12 - 64 bit",
       "model": "32 bit little endian portable C with i386 preprocessing",
@@ -484,11 +2273,11 @@
         "pointwise_memory"
       ],
       "unwinding_assertions": "passed",
-      "seconds": 64.118
+      "seconds": 68.158
     },
     "checkers": {
       "record": "verify/results_checkers.json",
-      "sha256": "87ea35235aeb4101bd1afa6aecc02bbb69523705bdbaa2bc114c5445e110ece1",
+      "sha256": "44fb3daf32733cc06503a9943594b69cf0cb45385a7b1d1a112c004b7288530a",
       "cbmc": "6.10.0 (cbmc-6.10.0)",
       "solver": "Z3 version 4.8.12 - 64 bit",
       "model": "32 bit little endian portable C with i386 preprocessing",
@@ -505,7 +2294,7 @@
         "our_memory"
       ],
       "unwinding_assertions": "passed",
-      "seconds": 21.362
+      "seconds": 23.461
     },
     "scope": "Portable C component proofs and compositional reasoning; no automatically checked global NTT or ML DSA refinement",
     "documentation": "docs/verification.md"

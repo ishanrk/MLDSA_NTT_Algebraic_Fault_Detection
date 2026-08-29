@@ -167,3 +167,7 @@ clean:
 .PHONY: comparison
 comparison:
 	python3 tools/compare.py
+
+.PHONY: thesis
+thesis:
+	python3 tools/final_regression.py

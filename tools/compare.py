@@ -20,6 +20,8 @@ def digest(path):
 
 def sources():
     paths = [Path('Makefile')]
+    if (ROOT / 'tools/nist_manifest.json').exists():
+        paths.append(Path('tools/nist_manifest.json'))
     for folder in ('src', 'include', 'platform', 'test', 'verify', 'tools'):
         paths += [p.relative_to(ROOT) for p in (ROOT / folder).rglob('*')
                   if p.is_file() and p.suffix in ('.c', '.h', '.inc', '.ld', '.py')]
@@ -65,6 +67,52 @@ def certificate(variant):
             'network_sha256': data['network_sha256']}
 
 
+def collect_result(stages, snapshot):
+    data = collect()
+    data.update(schema_version=1, purpose='pre hardware research comparison',
+                source_sha256=snapshot, stages=stages,
+                host_compilers={cc: subprocess.check_output([cc, '--version'], text=True)
+                                .splitlines()[0] for cc in ('gcc', 'clang')})
+    data['arm_cflags'] = subprocess.check_output(
+        ['make', '-s', '--eval=print-arm-flags:;@printf "%s\\n" "$(ARM_CFLAGS)"',
+         'print-arm-flags'], cwd=ROOT, text=True).strip()
+    data['link_flags'] = '-nostartfiles -nostdlib -Wl,--gc-sections -lc -lgcc'
+    data['formal'] = {group: proof_record(group) for group in ('arithmetic', 'checkers')}
+    data['formal']['scope'] = ('Portable C component proofs and compositional reasoning; '
+                               'no automatically checked global NTT or ML DSA refinement')
+    data['formal']['documentation'] = 'docs/verification.md'
+    for variant, row in data['variants'].items():
+        row['exact_certificate'] = (certificate(variant) if variant != 'baseline'
+                                    else {'status': 'not applicable'})
+        row['formal'] = {
+            'status': 'focused component proofs passed',
+            'common_jobs': len(data['formal']['arithmetic']['jobs_passed']),
+            'checker_jobs': sum(job.startswith(variant + '_') for job in
+                                data['formal']['checkers']['jobs_passed']),
+            'scope_document': 'docs/verification.md',
+        }
+        row['modeled_fault_coverage'] = {
+            'additive_wire_deviations': 0 if variant == 'baseline' else 2,
+            'locations': None if variant == 'baseline' else
+                         row['exact_certificate']['modeled_locations'],
+            'conditions': 'trusted checker arithmetic, stored weights and control flow; '
+                          'nonzero erroneous transform result',
+            'physical_fault_injection': 'not evaluated',
+        }
+        row['physical'] = {'status': 'pending', 'board': None, 'clock_hz': None,
+                           'cycles': None, 'flash_bytes': None, 'static_ram_bytes': None,
+                           'stack_bytes': None}
+        row['qemu']['record_sha256'] = digest(row['qemu']['record'])
+    return data
+
+
+def publish(data):
+    dst = ROOT / 'bench/comparison.json'
+    dst.parent.mkdir(exist_ok=True)
+    dst.write_text(json.dumps(data, indent=2) + '\n')
+    render(data, ROOT / 'docs/comparison.md', ROOT / 'bench/comparison.tex')
+
+
 def main():
     logs = ROOT / 'build/comparison'
     logs.mkdir(parents=True, exist_ok=True)
@@ -106,47 +154,9 @@ def main():
         stage(f'qemu_{variant}', [python, 'tools/run_mps2.py'] +
               ([] if variant == 'baseline' else ['--' + variant]))
 
-    data = collect()
-    data.update(schema_version=1, purpose='pre hardware research comparison',
-                source_sha256=snapshot, stages=stages,
-                host_compilers={cc: subprocess.check_output([cc, '--version'], text=True)
-                                .splitlines()[0] for cc in ('gcc', 'clang')})
-    data['arm_cflags'] = subprocess.check_output(
-        ['make', '-s', '--eval=print-arm-flags:;@printf "%s\\n" "$(ARM_CFLAGS)"',
-         'print-arm-flags'], cwd=ROOT, text=True).strip()
-    data['link_flags'] = '-nostartfiles -nostdlib -Wl,--gc-sections -lc -lgcc'
-    data['formal'] = {group: proof_record(group) for group in ('arithmetic', 'checkers')}
-    data['formal']['scope'] = ('Portable C component proofs and compositional reasoning; '
-                               'no automatically checked global NTT or ML DSA refinement')
-    data['formal']['documentation'] = 'docs/verification.md'
-    for variant, row in data['variants'].items():
-        row['exact_certificate'] = (certificate(variant) if variant != 'baseline'
-                                    else {'status': 'not applicable'})
-        row['formal'] = {
-            'status': 'focused component proofs passed',
-            'common_jobs': len(data['formal']['arithmetic']['jobs_passed']),
-            'checker_jobs': sum(job.startswith(variant + '_') for job in
-                                data['formal']['checkers']['jobs_passed']),
-            'scope_document': 'docs/verification.md',
-        }
-        row['modeled_fault_coverage'] = {
-            'additive_wire_deviations': 0 if variant == 'baseline' else 2,
-            'locations': None if variant == 'baseline' else
-                         row['exact_certificate']['modeled_locations'],
-            'conditions': 'trusted checker arithmetic, stored weights and control flow; '
-                          'nonzero erroneous transform result',
-            'physical_fault_injection': 'not evaluated',
-        }
-        row['physical'] = {'status': 'pending', 'board': None, 'clock_hz': None,
-                           'cycles': None, 'flash_bytes': None, 'static_ram_bytes': None,
-                           'stack_bytes': None}
-        row['qemu']['record_sha256'] = digest(row['qemu']['record'])
     if snapshot != sources():
         raise RuntimeError('Sources changed during comparison; rerun with stable sources')
-    dst = ROOT / 'bench/comparison.json'
-    dst.parent.mkdir(exist_ok=True)
-    dst.write_text(json.dumps(data, indent=2) + '\n')
-    render(data, ROOT / 'docs/comparison.md', ROOT / 'bench/comparison.tex')
+    publish(collect_result(stages, snapshot))
     print('wrote bench/comparison.json, docs/comparison.md and bench/comparison.tex')
 
 

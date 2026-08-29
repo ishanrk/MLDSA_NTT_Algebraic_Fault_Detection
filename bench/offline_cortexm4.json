@@ -4,7 +4,7 @@
   "physical_board": false,
   "physical_measurements": "pending",
   "source_sha256": {
-    "Makefile": "7ea8f9d9adfda86848c083a670bdd54ea5635e01a9b4ee822b418fd6df4d524d",
+    "Makefile": "c923415c73e7e7a479bc003d12e0cc0762617498c2f80ebb1e208275cd178811",
     "hardware/acquire.py": "ad8cabd02fdd4a39a1a58e12e14d8817e67acd8cf518ac0156eab1a6c6970374",
     "hardware/bench.c": "e0fd924f8a96af2fdebe0d72125745de4c62650868dbc3c8c57a05f475db6132",
     "hardware/boot.c": "bfeeb67ef2e7183b2331f887360d41f18a7a36883b0a54e34979b359cdc3adef",
@@ -82,7 +82,7 @@
         "/usr/bin/python3",
         "hardware/test_report.py"
       ],
-      "log_sha256": "6299c61ecefc2c6e262ba2dccd92b35e4ade4e41b723fe2eac602dbd7b324b98",
+      "log_sha256": "464e0ee629edf74de09ef21e4232fbcedc26588ff7cc23c470f47fe2da88c255",
       "status": "passed"
     },
     "test_protocol": {
@@ -90,7 +90,7 @@
         "/usr/bin/python3",
         "hardware/test_protocol.py"
       ],
-      "log_sha256": "cbe4b84d897ac017db0552ccb3a31855ff0fb172bc344c967c4c4c92eb19e624",
+      "log_sha256": "6f283ee6225d2cef4c0127d95456a6f954c45141c92b97dd89016cb1c630e8f4",
       "status": "passed"
     },
     "openocd_config": {
@@ -200,7 +200,7 @@
         "/usr/bin/python3",
         "hardware/test_integration.py"
       ],
-      "log_sha256": "dbcee2493e82c9d70993edc92e9edbd26f98478a47bd894dad4013d157174839",
+      "log_sha256": "c6f6baf53939d9c27de60fb48fb1ad9b0bab75790dea6d67ec3850f4ee6403ac",
       "status": "passed"
     },
     "core_compile": {
@@ -303,8 +303,8 @@
         "startup_file": "boot.c",
         "startup_sha256": "bfeeb67ef2e7183b2331f887360d41f18a7a36883b0a54e34979b359cdc3adef",
         "startup_assembly_sha256": "186acadb10d54524935ef792e154121a4fb7f95d635882dc1a2129657320f198",
-        "build_manifest_sha256": "6f5d3c6531a5d9d76cee6a257040fb577b376257c2a81ea5813753755c22279b",
-        "firmware_commit": "fc00bf72304584179699040a840aae39e54c1d37",
+        "build_manifest_sha256": "86d3485b33dcb95f5fe77c9c1b95806d5dec3fe40c24ab2ccd0c3d8f8d6f5d60",
+        "firmware_commit": "861fe053098145543b924907cf0f1ef9e03bb788",
         "firmware_worktree_dirty": true,
         "benchmark_source_sha256": "e0fd924f8a96af2fdebe0d72125745de4c62650868dbc3c8c57a05f475db6132",
         "benchmark_file": "hardware/bench.c",
@@ -350,8 +350,8 @@
         "serial_method": null,
         "serial_baud": 115200
       },
-      "manifest_sha256": "9e492a21b3deb591f8a6c62fa767d41136c40d9840a29b2590bcbaa44fda76a9",
-      "comparison_sha256": "079c79fa6b61d906cedf1a320d370fd2fd3e3429a0c7df73dfcf7c13cfe744bc",
+      "manifest_sha256": "46ad4a58fe022f8c1570a90248ecafe1a3700e4462f4591a5222ca96c092335f",
+      "comparison_sha256": "77a3efbb7b282656360bec8a2477189c5f8f8252d128e22dbc8fb16417a58642",
       "variants": {
         "baseline": {
           "cycles": null,
@@ -538,8 +538,8 @@
         "startup_file": "boot.c",
         "startup_sha256": "bfeeb67ef2e7183b2331f887360d41f18a7a36883b0a54e34979b359cdc3adef",
         "startup_assembly_sha256": "186acadb10d54524935ef792e154121a4fb7f95d635882dc1a2129657320f198",
-        "build_manifest_sha256": "5680484ae0b154f8d6ae313bf7c5aff10cfb2d033c51843397b0a8cca15d72d2",
-        "firmware_commit": "fc00bf72304584179699040a840aae39e54c1d37",
+        "build_manifest_sha256": "8c8bcc74134b9dacccb64fa9629d094f81b03a9e1aadfdeb33da2fcb4ae0b090",
+        "firmware_commit": "861fe053098145543b924907cf0f1ef9e03bb788",
         "firmware_worktree_dirty": true,
         "benchmark_source_sha256": "e0fd924f8a96af2fdebe0d72125745de4c62650868dbc3c8c57a05f475db6132",
         "benchmark_file": "hardware/bench.c",
@@ -585,8 +585,8 @@
         "serial_method": null,
         "serial_baud": 115200
       },
-      "manifest_sha256": "fba0474a04b4862221e51a3385b6bc9748412187f49a2ec3c45f6b55dd588d65",
-      "comparison_sha256": "079c79fa6b61d906cedf1a320d370fd2fd3e3429a0c7df73dfcf7c13cfe744bc",
+      "manifest_sha256": "550f531a798ae9151a19019fbc7e932390e48c59e15cb9ee806e32c171237379",
+      "comparison_sha256": "77a3efbb7b282656360bec8a2477189c5f8f8252d128e22dbc8fb16417a58642",
       "variants": {
         "baseline": {
           "cycles": null,
