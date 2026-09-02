@@ -101,3 +101,7 @@ This converts already collected raw results into both output formats and perform
 The [physical-stage software guide](../hardware/README.md) provides selectable F411RE/F446RE reference targets and a board-independent gate: `python3 hardware/offline.py`. It generates [offline tables](cortexm4_offline.md) with actual linked image sizes and explicit pending cycle/stack fields. Exact board selection and access are required before flashing and collecting physical observations. Mathematical pair certificates and physical fault injection remain distinct forms of evidence.
 
 On WSL, a Windows-connected ST-Link must be made accessible to Linux. Microsoft's [USB connection guide](https://learn.microsoft.com/en-us/windows/wsl/connect-usb) documents discovery with `usbipd list`, administrator sharing with `usbipd bind --busid BUSID` and attachment with `usbipd attach --wsl --busid BUSID`. Use the board's actual bus ID. Check `lsusb` and its serial device after attachment. The pre hardware pipeline works without this connection.
+
+## Final thesis milestone
+
+Use [thesis_reproduction.md](thesis_reproduction.md) for `make thesis`, the one comprehensive final run, physical capture validation and LaTeX inclusion. It produces [thesis_results.md](thesis_results.md) from [bench/thesis.json](../bench/thesis.json). The [methodology](implementation_methodology.md) and [threat model](threat_model.md) describe implementation, formal scope and coverage. Physical measurements and their acquisition remain pending until a completed actual-board run is supplied.

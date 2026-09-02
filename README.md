@@ -24,6 +24,16 @@ For a quick host check:
 make baseline prior our
 ```
 
+## Thesis artifact
+
+The [thesis results](docs/thesis_results.md) and [LaTeX fragments](bench/thesis/tables.tex) are generated from [one frozen raw dataset](bench/thesis.json). The final comprehensive host regression covers all supported official vectors for all three variants under GCC, Clang, ASan and UBSan, both exact certificates, focused CBMC proofs and compact QEMU execution. Physical cycles, stack and board smoke tests remain pending; linked reference-image sizes are available.
+
+```sh
+make thesis
+```
+
+This is the full regression command, intended for a final milestone rather than routine edits. [Final reproduction](docs/thesis_reproduction.md) records dependencies, scope and physical-capture import. [Implementation methodology](docs/implementation_methodology.md) supplies methods text; the [threat model](docs/threat_model.md) states the additive boundary-wire guarantee and trusted components. Physical cost measurements do not establish general physical fault resistance.
+
 ## Implementation and evidence
 
 The shared scheme supports seeded key generation, pure signing and verification with contexts, and HashML DSA from caller-supplied digests. Callers supply key seeds and signing randomness and must check return statuses. Select a scheme variant with `make build/libmldsa.so`, `make build/libmldsa_prior.so` or `make build/libmldsa_our.so`; signing and verification use the same implementation.
@@ -32,4 +42,4 @@ Official NIST ACVP vectors validate SHAKE, key generation, pure/prehash signing 
 
 The [reproduction guide](docs/reproduction.md) gives individual generation, certificate, proof, cross compilation and QEMU commands. It also explains tool overrides and how to regenerate thesis tables from the same raw data.
 
-The larger historical validation suite remains available through `make test model shake sample keygen sign verify prehash`. `make vectors` downloads pinned NIST ACVP data into ignored `build/nist`. Those larger suites are separate from the focused comparison pipeline.
+The larger individual validation targets remain available through `make test model shake sample keygen sign verify prehash`. `make vectors` downloads pinned NIST ACVP data into ignored `build/nist`. `make thesis` includes the comprehensive final run; the focused `make comparison` remains available for compact reproduction.

@@ -163,3 +163,7 @@ python3 tools/run_mps2.py --our
 The existing Cortex M4 toolchain overrides apply. GCC 11.4.0, Clang 14.0.0, ASan, UBSan, and all three QEMU 6.2.0 `mps2-an386` compact suites passed. ARM GCC was 10.3.1. Both exhaustive certificates matched the checked in data and had zero failure counts. The new `make baseline` target runs the existing compact baseline entry point on the host; it adds no crypto or test vector changes. The old 10000 pair campaign and unrelated suites were not repeated.
 
 The [milestone record](../verify/milestone.json) identifies normal test logs, certificates, and unchanged benchmark ELF digests. No production bug was found. No production fix, checksum constant change, or benchmark relevant C change was made, so the previous operation counts and matched ARM image sizes still describe the same implementation. Physical measurements remain deferred.
+
+## Final thesis run
+
+The [final thesis record](../bench/thesis.json) embeds a fresh run of both proof groups alongside the comprehensive host regression and exact certificates. [Generated thesis tables](thesis_results.md) report every job and its recorded runtime. The formal scope and assumptions above still apply; no global proof or hardware-driver verification was added. This later milestone includes the existing larger C suites once per compiler/sanitizer mode. No crypto implementation or benchmark C was changed.
