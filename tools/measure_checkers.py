@@ -62,9 +62,6 @@ def collect():
 
 def main():
     data = collect()
-    dst = ROOT / 'bench/checker_costs.json'
-    dst.parent.mkdir(exist_ok=True)
-    dst.write_text(json.dumps(data, indent=2) + '\n')
     print(json.dumps(data, indent=2))
 
 

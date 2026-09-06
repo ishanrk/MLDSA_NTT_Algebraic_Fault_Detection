@@ -1,32 +1,47 @@
-# Reproduce the research artifact
+# Reproduction
 
-Run from the repository root. No physical board is needed. All evidence is for the portable C implementation and the QEMU Cortex M4 path; physical performance and physical fault injection are unmeasured.
+Run commands from the repository root.
 
 ## Tools
 
-Use Python 3.10 or later, Make, GCC, Clang, ARM GNU GCC/binutils with Newlib, `qemu-system-arm`, CBMC 6 and Z3 on `PATH`. No third party Python package is required. Recorded tool versions and full commands are in [comparison.json](../bench/comparison.json) and the [formal records](verification.md). The current evidence uses CBMC 6.10.0 with Z3 4.8.12; other versions require rerunning the checks.
+The host code needs Make, GCC or Clang, and Python 3.10+. ARM builds need GNU Arm GCC/binutils and Newlib. QEMU must provide the `mps2-an386` machine; instruction benchmarks additionally need TCG plugin support and Matplotlib. Formal checks use CBMC 6 and Z3. The comprehensive differential suite uses `pqcrypto==1.0.0` as a test oracle, installed into ignored `build/oracle` when needed.
 
-If `cbmc` selects an older installation, set `CBMC` to the version 6 executable. The runner rejects version 5. CBMC uses a 32 bit model; hosts without 32 bit preprocessing headers need the small header extraction described in [verification.md](verification.md#reproduction). The proof runner limits each job to 45 seconds and fails on timeouts and unwinding failures.
+Recorded versions, flags, input/source digests and commands are in [comparison.json](../bench/comparison.json), [QEMU results](../bench/qemu_benchmark.json) and the [formal records](verification.md). Physical Cortex M4 cycles and stack high water are unmeasured.
 
-## One comparison command
+## Correctness and certificates
+
+```sh
+make baseline prior our
+python3 tools/gen_prior_checker.py --check
+python3 tools/gen_our_checker.py --check
+```
+
+The correctness suites exercise selected NTT vectors, inverse round trips, deterministic scheme operations, malformed-message/signature rejection and modeled single/pair faults. `--check` reconstructs coefficients and every pair determinant and requires byte identity with the C tables and certificate JSON. The full official-vector targets are `make keygen sign verify prehash shake`; `make vectors` fetches pinned NIST data into `build/nist`.
+
+## QEMU measurements and graphs
+
+```sh
+make qemu-benchmark
+python3 tools/plot_benchmarks.py
+```
+
+The benchmark builds baseline, prior and our variants at both `-O2` and `-O3 -flto`, runs the correctness images, and records 101 observations of each operation with calibrated guest-instruction counts. It checks the fixed assembly control and matching complete key/signature transcripts. [Method](qemu_benchmark.md), [statistics](qemu_results.md), [raw observations](../bench/qemu_benchmark.json). The second command redraws PNG/SVG graphs and updates README tables from the saved data.
+
+## Focused comparison and formal checks
 
 ```sh
 make comparison
+python3 verify/run.py --group arithmetic
+python3 verify/run.py --group checkers
 ```
 
-The pipeline force rebuilds the compact host suites with GCC, Clang, ASan and UBSan; regenerates and checks both coefficient sets and exact certificates; runs the focused CBMC groups; counts actual modular calls; rebuilds the six matched ARM correctness/benchmark images; and runs the three compact QEMU suites. It runs no large random campaign or generic compiler test suite. A failed stage stops publication of new comparison files. Logs go to ignored `build/comparison` and `build/verify`.
+`make comparison` runs the focused GCC/Clang/sanitizer suites, both certificates, formal groups, field-operation counters, six matched ARM images and three QEMU correctness runs. It generates [Markdown](comparison.md), [JSON](../bench/comparison.json) and [LaTeX](../bench/comparison.tex). A failed command stops publication. Use `python3 tools/render_comparison.py bench/comparison.json` to redraw tables without rerunning experiments.
 
-Outputs:
+Set `CBMC` if the default executable is not version 6. The 32-bit proof frontend may need the headers described in [verification.md](verification.md#reproduction). Every proof enables unwinding assertions and has a 45-second job limit. The exact scope and preconditions are documented there.
 
-- [bench/comparison.json](../bench/comparison.json): schema version, source digests, tool versions, commands, log digests, operation/storage counts, ARM ELF digests and sizes, exact certificates, formal scope/status, QEMU status and explicit pending physical fields.
-- [docs/comparison.md](comparison.md): generated comparison and interpretation.
-- [bench/comparison.tex](../bench/comparison.tex): the same rows as plain LaTeX `tabular` environments, ready to include or wrap in thesis table environments.
+## Tool overrides
 
-Operation and size numbers must be changed by rebuilding, not editing a table. Runtimes are real wall times for reproduction, not Cortex M4 cycles. Host shared library size is omitted because all three checker bodies are linked into those libraries; matched ARM benchmark images give the relevant size comparison.
-
-### Tool overrides
-
-The pipeline forwards `ARM_CC`, `ARM_OBJCOPY`, `ARM_SIZE`, `ARM_INC` and `ARM_LIB` to Make. QEMU uses `QEMU` and optional `QEMU_LIBDIR`. CBMC uses `CBMC` and optional `CBMC_INCLUDES`. For the extracted toolchain present on this WSL host:
+The commands honor `ARM_CC`, `ARM_OBJCOPY`, `ARM_SIZE`, `ARM_INC`, `ARM_LIB`, `QEMU` and `QEMU_LIBDIR`. The instruction benchmark additionally accepts `ARM_NM` and automatically locates tools extracted under `build/toolchain/root`. For other Make targets using that local extraction:
 
 ```sh
 export ARM_CC="$PWD/build/toolchain/root/usr/bin/arm-none-eabi-gcc"
@@ -36,72 +51,12 @@ export ARM_INC="-isystem $PWD/build/toolchain/root/usr/include/newlib"
 export ARM_LIB="-L$PWD/build/toolchain/root/usr/lib/arm-none-eabi/newlib/thumb/v7e-m/nofp"
 export QEMU="$PWD/build/toolchain/root/usr/bin/qemu-system-arm"
 export QEMU_LIBDIR="$PWD/build/toolchain/root/usr/lib/x86_64-linux-gnu"
-export CBMC=/home/ishan/.local/toolchains/cbmc-6.10.0/usr/bin/cbmc
-make comparison
 ```
 
-The extracted binaries and headers are local dependencies, not repository files. On a machine with installed ARM tools, Newlib, QEMU and CBMC 6, use their ordinary `PATH` names and omit these exports. Make accepts these exported ARM overrides or explicit `NAME=value` arguments; the pipeline forwards the selected values to its builds.
+Installed toolchains normally need none of these overrides. Select CBMC with `export CBMC=/path/to/cbmc`; the version-6 executable must match the proof configuration. Dependencies under `build` are not tracked repository files. Avoid `make clean` if they must be retained.
 
-## Individual commands
+## Physical target and thesis tables
 
-### Host build and ML DSA smoke validation
+[Hardware instructions](../hardware/README.md) cover explicit F411RE/F446RE builds, board identification, flashing, serial acquisition, DWT calibration and total stack watermarks. `python3 hardware/offline.py` checks the software path and produces linked image sizes without a board. Its synthetic counter controls supply no physical timing observations. WSL USB access follows [Microsoft's guide](https://learn.microsoft.com/en-us/windows/wsl/connect-usb).
 
-```sh
-make build/libmldsa.so build/libmldsa_prior.so build/libmldsa_our.so
-make -B baseline prior our CC=gcc
-make -B baseline prior our CC=clang
-make -B baseline prior our CC=gcc OPT='-O1 -g' SAN='-fsanitize=address'
-make -B baseline prior our CC=gcc OPT='-O1 -g' SAN='-fsanitize=undefined -fno-sanitize-recover=all'
-```
-
-The compact entry point checks a SHAKE known answer, selected forward/inverse NTT vectors, deterministic key generation/signing, valid verification and modified message/signature rejection. Protected variants also run their selected C wire injections and failure propagation checks. These are functional tests, not formal proofs or physical injection experiments.
-
-### Generation and exact certificates
-
-```sh
-python3 tools/gen_prior_checker.py
-python3 tools/gen_prior_checker.py --check
-python3 tools/gen_our_checker.py
-python3 tools/gen_our_checker.py --check
-```
-
-Each generator automatically derives its coefficients, verifies row and production network identities and enumerates every distinct modeled wire pair. The `--check` command regenerates everything and requires byte identity with both the checked-in C constants and JSON certificate. It therefore performs both a generation check and an exact certificate, with no need to edit constants. The full pipeline uses these nonmutating checks. To check repeated deterministic generation, run `--check` twice; each run must match the same checked-in bytes.
-
-### Focused CBMC verification
-
-```sh
-python3 verify/run.py --group arithmetic
-python3 verify/run.py --group checkers
-```
-
-Set `CBMC` first if necessary. Result records include every job's command, unwind bound, assumptions' source harness, solver version and wall time. The comparison validates source, proof view and log digests before reporting proof success. Read [verification.md](verification.md) for preconditions, contracts and compositional scope; these jobs do not formally verify all ML DSA or SHAKE.
-
-### ARM cross compilation and QEMU compact tests
-
-```sh
-make arm-mps2 arm-mps2-prior arm-mps2-our
-make arm-mps2-bench arm-mps2-prior-bench arm-mps2-our-bench
-python3 tools/run_mps2.py
-python3 tools/run_mps2.py --prior
-python3 tools/run_mps2.py --our
-```
-
-The correctness and benchmark images have separate entry points. The matched benchmark images contain no test injection hooks and are used for the size comparison. QEMU correctness records describe `mps2-an386`, not a Nucleo board. Emulator time or emulated DWT output must not populate physical cycle fields.
-
-### Regenerate tables without rerunning experiments
-
-```sh
-python3 tools/render_comparison.py bench/comparison.json
-```
-
-This converts already collected raw results into both output formats and performs no measurements. The older `tools/measure_checkers.py` command is a cost-only collector for existing builds; `make comparison` is the complete authoritative pipeline.
-
-## Physical board stage
-
-The [physical-stage software guide](../hardware/README.md) provides selectable F411RE/F446RE reference targets and a board-independent gate: `python3 hardware/offline.py`. It generates [offline tables](cortexm4_offline.md) with actual linked image sizes and explicit pending cycle/stack fields. Exact board selection and access are required before flashing and collecting physical observations. Mathematical pair certificates and physical fault injection remain distinct forms of evidence.
-
-On WSL, a Windows-connected ST-Link must be made accessible to Linux. Microsoft's [USB connection guide](https://learn.microsoft.com/en-us/windows/wsl/connect-usb) documents discovery with `usbipd list`, administrator sharing with `usbipd bind --busid BUSID` and attachment with `usbipd attach --wsl --busid BUSID`. Use the board's actual bus ID. Check `lsusb` and its serial device after attachment. The pre hardware pipeline works without this connection.
-
-## Final thesis milestone
-
-Use [thesis_reproduction.md](thesis_reproduction.md) for `make thesis`, the one comprehensive final run, physical capture validation and LaTeX inclusion. It produces [thesis_results.md](thesis_results.md) from [bench/thesis.json](../bench/thesis.json). The [methodology](implementation_methodology.md) and [threat model](threat_model.md) describe implementation, formal scope and coverage. Physical measurements and their acquisition remain pending until a completed actual-board run is supplied.
+`make thesis` runs the comprehensive regression and regenerates the [thesis tables](thesis_results.md). [Thesis reproduction](thesis_reproduction.md) explains capture import and LaTeX inclusion. Historical result records retain the names and source digests of their original runs; current commands and filenames are documented here.

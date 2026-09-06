@@ -1,6 +1,6 @@
 # Constant time audit
 
-This stage has not established constant time behavior. The locations below need review before using keys against a side channel adversary. The portable C result is compiler- and target-dependent.
+Constant time behavior has not been established. The locations below need review before using keys against a side channel adversary. The portable C result is compiler- and target-dependent.
 
 ## Public control flow
 

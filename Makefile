@@ -171,3 +171,7 @@ comparison:
 .PHONY: thesis
 thesis:
 	python3 tools/final_regression.py
+
+.PHONY: qemu-benchmark
+qemu-benchmark:
+	python3 tools/qemu_benchmark.py

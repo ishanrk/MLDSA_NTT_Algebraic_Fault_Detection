@@ -6,7 +6,7 @@ Available regression: **passed**, 97 stages, 177.555 seconds wall time. Physical
 
 Run started `2026-10-03T15:51:59.190837+00:00`; source base `861fe053098145543b924907cf0f1ef9e03bb788`. Source digests identify the tested tree, including uncommitted artifact tooling at collection.
 
-The physical milestone is incomplete while cycles, stack and physical smoke tests are pending. Linked flash is ELF text + data; static RAM is ELF data + BSS. Reference builds do not identify the attached board. Baseline physical overhead also stays pending until measured.
+The physical milestone is incomplete while cycles, stack and physical correctness tests are pending. Linked flash is ELF text + data; static RAM is ELF data + BSS. Reference builds do not identify the attached board. Baseline physical overhead also stays pending until measured.
 
 ## Baseline: physical cycle statistics
 

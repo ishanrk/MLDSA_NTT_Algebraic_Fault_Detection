@@ -45,7 +45,7 @@ def validate(data):
         for variant in LABELS:
             row = physical['variants'][variant]
             if row['compact_correctness'] != 'passed' or set(row['cycles']) != set(OPS):
-                raise ValueError('missing measured operation or physical smoke result')
+                raise ValueError('missing measured operation or physical correctness result')
             for operation in OPS:
                 stats = row['cycles'][operation]
                 if stats['samples'] != physical['metadata']['sample_counts'][operation]:
@@ -145,7 +145,7 @@ def render(data, folder, markdown):
           'Regression and proof wall times are host reproduction times, not performance measurements.', '',
           f"Run started `{data['started_utc']}`; source base `{data['base_git_commit']}`. "
           'Source digests identify the tested tree, including uncommitted artifact tooling at collection.', '',
-          'The physical milestone is incomplete while cycles, stack and physical smoke tests are pending. '
+          'The physical milestone is incomplete while cycles, stack and physical correctness tests are pending. '
           'Linked flash is ELF text + data; static RAM is ELF data + BSS. Reference builds do not identify '
           'the attached board. Baseline physical overhead also stays pending until measured.', '']
     includes = ['% Generated from bench/thesis.json; requires only standard LaTeX tabular.',

@@ -1,23 +1,21 @@
 # Focused implementation verification
 
-This stage uses CBMC 6.10.0 and Z3 4.8.12 (the QF_AUFBV backend) for portable C implementation properties. It uses a 32 bit little endian integer and pointer model with i386 preprocessing, whose fixed width types and `unsigned` widths match this crypto core's Cortex M4 C types. It does not verify ARM machine code, startup code, ABI behavior, SHAKE, or the full ML DSA standard. No production C or generated crypto constants were changed.
+The proofs use CBMC 6.10.0 and Z3 4.8.12 (the QF_AUFBV backend) for portable C implementation properties. It uses a 32 bit little endian integer and pointer model with i386 preprocessing, whose fixed width types and `unsigned` widths match this crypto core's Cortex M4 C types. It does not verify ARM machine code, startup code, ABI behavior, SHAKE, or the full ML DSA standard. The production arithmetic and generated checksum constants are the subjects of the proofs.
 
 The proof harnesses are in [verify/](../verify). The [arithmetic record](../verify/results_arithmetic.json) and [checker record](../verify/results_checkers.json) contain full commands, results, per job wall times, unwind bounds, tool versions, and SHA256 digests of production sources, harnesses, and generated proof views. Raw solver logs are in ignored `build/verify` and are identified by digest in the records. Passing a proof refers to all input values admitted by its documented preconditions, rather than random samples.
 
 ## Reproduction
 
-The normal `cbmc` wrapper on this host selects version 5.12. The proofs explicitly use the installed 6.10.0 executable:
+Use CBMC 6 and Z3 on the executable path, or select CBMC explicitly:
 
 ```sh
-CBMC=/home/ishan/.local/toolchains/cbmc-6.10.0/usr/bin/cbmc \
-  python3 verify/run.py --group arithmetic
-CBMC=/home/ishan/.local/toolchains/cbmc-6.10.0/usr/bin/cbmc \
-  python3 verify/run.py --group checkers
+CBMC=/path/to/cbmc python3 verify/run.py --group arithmetic
+CBMC=/path/to/cbmc python3 verify/run.py --group checkers
 ```
 
-On another machine set `CBMC` to its version 6 executable. The runner rejects the older wrapper. `z3` must be on `PATH`. The version is pinned in the recorded evidence; a different version requires a new verification run.
+The records identify CBMC 6.10.0 and Z3 4.8.12. Other versions require a new run. The runner rejects CBMC 5.
 
-This host lacks 32 bit libc development headers. Only the preprocessing headers were extracted locally; no system packages were installed:
+On hosts without 32-bit libc development headers, install them or extract the preprocessing headers locally:
 
 ```sh
 mkdir -p build/verify/headers
@@ -92,7 +90,7 @@ All explicit assumptions are either documented caller ranges or established comp
 5. Replacement arithmetic results and baseline NTT output coefficients are canonical. Arithmetic range is proved on the production scalar functions and propagated through full loop safety. Replacements are side effect free. Layer and checksum replacements additionally check the exact operands.
 6. The harnesses construct valid full sized, live, disjoint objects. The baseline NTT and checker jobs follow their documented nonoverlap contract. The pointwise safety job covers disjoint objects; permitted in place pointwise aliasing is outside its scope. Null, dangling, and too short pointers violate the valid object contract. There is no assumed arbitrary pointer validity predicate hiding such cases.
 
-There are no assumptions about selected input vectors, zero coefficients, small fault magnitudes, successful checker return codes, or already equal checksum values. No assumption is added merely to avoid a timeout. CBMC, Z3, their frontend/library models, the source view extractor, and the exact arithmetic certificate generators are trusted tools. No physical hardware behavior is an assumption or a result of this stage.
+There are no assumptions about selected input vectors, zero coefficients, small fault magnitudes, successful checker return codes, or already equal checksum values. No assumption is added merely to avoid a timeout. CBMC, Z3, their frontend/library models, the source view extractor, and the exact arithmetic certificate generators are trusted tools. Physical hardware behavior is outside these proofs.
 
 The arithmetic, layer, and NTT memory jobs passed, with no individual job exceeding the recorded per job limit and no timeouts. The current count and summed per job wall times are in the [arithmetic record](../verify/results_arithmetic.json); they are not overall stage elapsed time or hardware cycles.
 
@@ -137,15 +135,15 @@ When the baseline produces the mathematical result `r=T*p`, the concrete certifi
 
 The no fault acceptance result therefore combines CBMC implementation lemmas with the exact network/row certificate. There is no end to end CBMC job containing the complete numerical NTT and both complete numerical checksum computations. The layer schedule and the assembly of the component lemmas are inspected reasoning, rather than an automatically checked global refinement proof. An independently machine checked assembly of that global proof remains outside this result.
 
-The general two fault determinant theorem and the greedy construction theorem are not CBMC targets. The unchanged exact generators certify the concrete coefficient conditions for all 2304 locations and 2653056 pairs for each checker. Mathematical field properties and those certificates are part of the compositional argument. This stage does not verify the generator algorithms themselves, inverse transform functional equivalence or round trips, polynomial ring multiplication end to end, ML DSA key/signature logic, SHAKE, constant time behavior, physical faults, or ARM machine instructions.
+The general two fault determinant theorem and the greedy construction theorem are not CBMC targets. The unchanged exact generators certify the concrete coefficient conditions for all 2304 locations and 2653056 pairs for each checker. Mathematical field properties and those certificates are part of the compositional argument. The proofs do not cover the generator algorithms themselves, inverse transform functional equivalence or round trips, polynomial ring multiplication end to end, ML DSA key/signature logic, SHAKE, constant time behavior, physical faults, or ARM machine instructions.
 
-## Evidence checks and milestone tests
+## Validation records
 
 The checker proof jobs passed under the recorded unwind bounds with no timeouts or failed unwinding assertions. Current counts and summed per job wall times are in the [checker record](../verify/results_checkers.json) and the [generated comparison](comparison.md). Reproduction updates the JSON evidence without requiring hand edits to timing statements.
 
 Two [negative controls](../verify/negative_controls.json) introduced deliberate mistakes only in temporary proof views: replacing our input beta weight with our output first weight, and loading a forward layer's low wire as its high input. Both produced the expected assertion counterexample and CBMC exit status 10. To reproduce a control, copy its named view into `build/verify/negative`, apply the recorded textual substitution, execute its saved command, and remove that temporary view. The original generated views and production files stay intact.
 
-The directly relevant normal milestone commands were
+The corresponding correctness commands are
 
 ```sh
 make -B baseline prior our CC=gcc
@@ -160,10 +158,6 @@ python3 tools/run_mps2.py --prior
 python3 tools/run_mps2.py --our
 ```
 
-The existing Cortex M4 toolchain overrides apply. GCC 11.4.0, Clang 14.0.0, ASan, UBSan, and all three QEMU 6.2.0 `mps2-an386` compact suites passed. ARM GCC was 10.3.1. Both exhaustive certificates matched the checked in data and had zero failure counts. The new `make baseline` target runs the existing compact baseline entry point on the host; it adds no crypto or test vector changes. The old 10000 pair campaign and unrelated suites were not repeated.
+GCC, Clang, ASan, UBSan and the three QEMU correctness suites passed in the recorded runs. Both exact certificates matched the checked-in coefficient data and had zero failures. The [comprehensive regression record](../bench/thesis.json) also embeds both formal groups; [generated tables](thesis_results.md) report every job and runtime.
 
-The [milestone record](../verify/milestone.json) identifies normal test logs, certificates, and unchanged benchmark ELF digests. No production bug was found. No production fix, checksum constant change, or benchmark relevant C change was made, so the previous operation counts and matched ARM image sizes still describe the same implementation. Physical measurements remain deferred.
-
-## Final thesis run
-
-The [final thesis record](../bench/thesis.json) embeds a fresh run of both proof groups alongside the comprehensive host regression and exact certificates. [Generated thesis tables](thesis_results.md) report every job and its recorded runtime. The formal scope and assumptions above still apply; no global proof or hardware-driver verification was added. This later milestone includes the existing larger C suites once per compiler/sanitizer mode. No crypto implementation or benchmark C was changed.
+These records describe portable C component proofs with inspected composition. They do not add a global refinement proof or formal verification of the hardware drivers. Physical DWT/stack measurements remain unmeasured.

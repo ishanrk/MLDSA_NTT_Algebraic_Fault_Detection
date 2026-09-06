@@ -1,6 +1,6 @@
 # Abdelmonem two checksum NTT checker
 
-This implements the Dilithium construction in Abdelmonem, Holzbaur, Raddum, and Zeh, [ePrint 2025/170](https://eprint.iacr.org/2025/170.pdf), Sections 3.1–3.3 and 4.1–4.2. The implementation and generator were written from the equations, without using supplementary implementation code. The preflight HEAD was `94d0263c35d0948f100b14e91f4f83a65d66ca95`; the compact host and QEMU suites passed there.
+This implements the Dilithium construction in Abdelmonem, Holzbaur, Raddum, and Zeh, [ePrint 2025/170](https://eprint.iacr.org/2025/170.pdf), Sections 3.1–3.3 and 4.1–4.2. The implementation and generator were written from the equations, without using supplementary implementation code.
 
 ## Network and representation
 
@@ -53,7 +53,7 @@ python3 tools/gen_prior_checker.py --check
 
 The generator uses exact integer arithmetic modulo `q`. It checks the primitive root, all unit propagation vectors, both row identities by direct evaluation and a separate graph pullback, both response coordinates at every boundary, and every pair determinant `A_r*B_s-A_s*B_r`. The checked in [certificate](prior_certificate.json) records the counts and SHA256 digest. The coefficient digest concatenates full `b`, `a`, `beta`, and `alpha` rows as little endian 32 bit words. The network digest covers ordered butterfly triples for all eight layers.
 
-This run certified all 2653056 pairs with zero zero determinants, zero zero first responses, and zero zero second responses. A generation run took 7.73 seconds on this host; runtime is not part of the deterministic certificate.
+The certificate checks all 2653056 pairs. Every first response, second response and pair determinant is nonzero. Runtime is excluded from the deterministic certificate.
 
 ## Scope
 
@@ -73,17 +73,17 @@ The test-only `MLDSA_TEST_FAULTS` build inserts a hook immediately after the inp
 
 ```sh
 make prior build/libmldsa.so build/libmldsa_prior.so
-python3 test/test_smoke.py build/libmldsa.so build/nist
-python3 test/test_smoke.py build/libmldsa_prior.so build/nist
+python3 test/test_known_answers.py build/libmldsa.so build/nist
+python3 test/test_known_answers.py build/libmldsa_prior.so build/nist
 ```
 
 The checker suite compares eight no-fault polynomials with the baseline: zero, `X`, all `q-1`, alternating `0`/`q-1`, and four successive fixed pseudorandom polynomials. It also checks inverse round trips and 36 arithmetic boundary pairs. Its 36 single injections cover first/middle/last wire regions at input, early, middle, late, and final boundaries with magnitudes `1`, `17`, and `q-1`.
 
 Ten location pairs, each with three magnitudes, give 30 two-fault cases. They include adjacent locations, far apart locations, equal layers, adjacent layers, and input/final or early/late combinations. The second magnitude is calculated to cancel the first checksum exactly using an independent evaluation formula. The test confirms that cancellation, confirms a nonzero NTT result error, and requires rejection by the second checksum. These are 66 runtime NTT injections, not an attempt to replace the exhaustive certificate. Three additional scheme-level injections require key generation, signing, and verification to propagate a transform error.
 
-The shared compact entry point also checks the NIST SHAKE case, official key generation digest, fixed host signature digest, valid verification, and modified-message/signature rejection. The Python official smoke test compares complete key and signature bytes for keyGen `tcId 1` and sigGen `tcId 1`, then checks sigVer cases `3` (valid) and `1` (invalid), from the existing pinned NIST data.
+The shared compact entry point also checks the NIST SHAKE case, official key generation digest, fixed host signature digest, valid verification, and modified-message/signature rejection. The Python official known-answer test compares complete key and signature bytes for keyGen `tcId 1` and sigGen `tcId 1`, then checks sigVer cases `3` (valid) and `1` (invalid), from the existing pinned NIST data.
 
-GCC 11.4.0 debug and optimized builds, Clang 14.0.0, AddressSanitizer, and UndefinedBehaviorSanitizer passed the targeted checker suite. Both baseline and protected libraries passed official smoke vectors; the Clang protected library also passed them. The historical 10000-pair campaign and unrelated suites were not rerun. Valgrind was not needed.
+GCC 11.4.0 debug and optimized builds, Clang 14.0.0, AddressSanitizer, and UndefinedBehaviorSanitizer passed the targeted checker suite. Both baseline and protected libraries passed official known-answer vectors; the Clang protected library also passed them.
 
 To repeat the sanitizer and alternate-compiler checks, force rebuilding this small target when changing flags:
 
@@ -100,14 +100,14 @@ make -B prior CC=gcc OPT='-O1 -g' SAN='-fsanitize=undefined -fno-sanitize-recove
 make arm-mps2 arm-mps2-prior arm-mps2-bench arm-mps2-prior-bench build/count_prior
 python3 tools/run_mps2.py
 python3 tools/run_mps2.py --prior
-python3 tools/measure_prior.py
+python3 tools/measure_checkers.py
 ```
 
-Use the toolchain overrides in [cortexm4.md](cortexm4.md) when the compiler and QEMU are outside `PATH`. `tools/measure_prior.py` accepts `ARM_CC` and `ARM_SIZE` for the same reason.
+Use the toolchain overrides in [cortexm4.md](cortexm4.md) when the compiler and QEMU are outside `PATH`. `tools/measure_checkers.py` accepts `ARM_CC` and `ARM_SIZE` for the same reason.
 
 Both compact QEMU suites passed with `arm-none-eabi-gcc` 10.3.1, Cortex M4 Thumb soft ABI, and QEMU 6.2.0 `mps2-an386`. The protected firmware runs the same targeted C tests as the host, including the single/pair injections and scheme error propagation. No thousands-case ARM campaign was run.
 
-The [generated costs](prior_costs.md) come from [raw JSON](../bench/prior_costs.json). A host counter intercepts the actual addition, subtraction, and multiplication functions while preserving their original bodies. For one protected forward transform there are 640 additional modular multiplications, 1024 additional modular additions, and no additional modular subtractions. The 256 input beta products, 256 output a products, and 128 nonunity output alpha products explain the multiplication count. Four 256-term checksum accumulations explain the addition count. Stored constants occupy 2560 bytes for 640 coefficients; the 384 unity coefficients are implicit.
+The [generated comparison](comparison.md) come from [raw JSON](../bench/comparison.json). A host counter intercepts the actual addition, subtraction, and multiplication functions while preserving their original bodies. For one protected forward transform there are 640 additional modular multiplications, 1024 additional modular additions, and no additional modular subtractions. The 256 input beta products, 256 output a products, and 128 nonunity output alpha products explain the multiplication count. Four 256-term checksum accumulations explain the addition count. Stored constants occupy 2560 bytes for 640 coefficients; the 384 unity coefficients are implicit.
 
 The matched benchmark ELF images contain no test injection code. The protected image adds 2832 text bytes, including readonly constants, with no `.data` or BSS increase. These are emulator-layout link sizes, not physical flash/RAM observations. Both benchmark images exit on the unavailable QEMU DWT counter without producing cycle or stack data. Real Cortex M4 performance and physical memory measurements remain pending.
 

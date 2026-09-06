@@ -1,6 +1,6 @@
 # Arithmetic core
 
-This stage follows [FIPS 204](https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.204.pdf), Sections 2.4.1, 2.5, 4, 7.5, and 7.6. The [NIST potential updates sheet](https://csrc.nist.gov/files/pubs/fips/204/final/docs/fips-204-potential-updates.xlsx), updated July 31, 2026, corrects the evaluation point notation in Sections 2.5 and 7.5: the NTT evaluates a polynomial once at each `zeta^(2*BitRev8(i)+1)`. Its Appendix A note concerns Montgomery reduction, which this stage does not use.
+The arithmetic follows [FIPS 204](https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.204.pdf), Sections 2.4.1, 2.5, 4, 7.5, and 7.6. The [NIST potential updates sheet](https://csrc.nist.gov/files/pubs/fips/204/final/docs/fips-204-potential-updates.xlsx), updated July 31, 2026, corrects the evaluation point notation in Sections 2.5 and 7.5: the NTT evaluates a polynomial once at each `zeta^(2*BitRev8(i)+1)`. Its Appendix A note concerns Montgomery reduction, which this implementation does not use.
 
 ## Representation
 

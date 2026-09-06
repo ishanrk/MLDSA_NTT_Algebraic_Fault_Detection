@@ -1,6 +1,6 @@
 # Implementation and experimental methodology
 
-This document describes the implementation represented by the raw repository evidence. It supplies text for the thesis methods chapter; it does not replace the mathematical proof. Generated numerical results belong in [thesis_results.md](thesis_results.md) and [bench/thesis](../bench/thesis), rather than in manually maintained copies of this document. Physical measurements remain pending in the current artifact.
+The portable C implementation has three selectable forward NTT variants, shared scheme operations and separate coefficient generation, certificate and experiment tools. Numerical results are generated from raw records in [thesis_results.md](thesis_results.md) and [qemu_results.md](qemu_results.md). Physical DWT/stack measurements remain unmeasured.
 
 ## Independent ML DSA implementation
 
@@ -48,7 +48,7 @@ Checksum accumulation correctness combines zero initialization, an arbitrary-ind
 
 ## Cortex M4 and benchmark method
 
-The portable Cortex M4 cross build uses Thumb and the soft float ABI. QEMU `mps2-an386` runs the compact deterministic correctness suites. It validates emulator execution and selected test injections; emulator wall time supplies no physical cycle estimate.
+The portable Cortex M4 cross build uses Thumb and the soft float ABI. QEMU `mps2-an386` runs the compact deterministic correctness suites. It validates emulator execution and selected test injections. A separate [TCG plugin benchmark](qemu_benchmark.md) counts guest instructions in matched optimized builds; those counts are not physical cycles.
 
 The separate physical firmware has explicit NUCLEO-F411RE and NUCLEO-F446RE reference profiles, independent startup/linker/UART code, a nominal HSI clock configuration and polling serial output. Profiles do not identify a connected board. The acquisition tool checks target registers and identity, flashes all three compact images, requires their recorded expected outputs, then acquires benchmarks. Exact board/core, compiler, flags, ELF/source digests, clock register observations, ST-Link method and serial method are captured with the run. See [hardware/README.md](../hardware/README.md) and [ST's board manual](https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf).
 

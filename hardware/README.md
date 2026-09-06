@@ -1,6 +1,6 @@
 # Cortex M4 physical-stage software
 
-The offline portion of Prompt 8 is implemented for two **explicit reference selections**, `NUCLEO-F411RE` and `NUCLEO-F446RE`. Their six compact/benchmark images can be cross compiled without a board. This does not identify the user's board or establish that the firmware boots on it. Physical identification, flashing, UART correctness, DWT observations and measured stack high water remain pending.
+The STM32F4 firmware has two reference targets, `NUCLEO-F411RE` and `NUCLEO-F446RE`. Their six compact/benchmark images can be cross compiled without a board. Select the profile matching the actual board before flashing. Physical identification, flashing, UART correctness, DWT observations and measured stack high water remain pending.
 
 [Generated offline tables](../docs/cortexm4_offline.md) and [raw results](../bench/offline_cortexm4.json) report compiled image sizes and software checks. Physical cycle and stack fields stay `pending`. The portable crypto, checker mathematics and generated coefficients are unchanged.
 
