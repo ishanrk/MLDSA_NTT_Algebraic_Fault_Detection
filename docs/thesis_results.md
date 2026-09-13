@@ -187,7 +187,7 @@ Current method: `dc167f43461e2c9c079bb79ded94a5b6a3af39062ea1de36b64f71ce01f9b2e
 
 The prior generator verifies distinct normalized ratios internally and enumerates every determinant, but does not store a separate duplicate ratio counter; the table preserves that distinction. Both certificates have zero recorded failures.
 
-These are exact checks of concrete finite field coefficient conditions. They do not formally verify the generator or prove the general construction theorem. CBMC verifies portable C components under the [documented contracts and assumptions](verification.md), with inspected composition rather than an automatically checked global ML DSA or NTT refinement.
+These are exact checks of concrete finite field coefficient conditions. They do not formally verify the generator or prove the general construction theorem. CBMC verifies portable C components under the [documented contracts and assumptions](reproduction.md#focused-comparison-and-formal-checks), with inspected composition rather than an automatically checked global ML DSA or NTT refinement.
 
 The NIST scope is ML DSA 44 external pure and prehash interfaces; byte-aligned SHAKE; other parameter sets, internal interfaces and bit-oriented SHAKE are unsupported. Keygen, pure signing, verification and prehash vectors run for all three variants in each of the four host modes. SHAKE, arithmetic and sampling use shared baseline code; protected compact tests check checksum behavior. The existing test of 10000 pairs executes once per compiler/sanitizer mode with the recorded seed. The existing pqcrypto differential suite of 200 cases executes once per variant with GCC.
 

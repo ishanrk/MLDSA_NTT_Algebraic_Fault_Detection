@@ -2,7 +2,7 @@
 
 The STM32F4 firmware has two reference targets, `NUCLEO-F411RE` and `NUCLEO-F446RE`. Their six compact/benchmark images can be cross compiled without a board. Select the profile matching the actual board before flashing. Physical identification, flashing, UART correctness, DWT observations and measured stack high water remain pending.
 
-[Generated offline tables](../docs/cortexm4_offline.md) and [raw results](../bench/offline_cortexm4.json) report compiled image sizes and software checks. Physical cycle and stack fields stay `pending`. The portable crypto, checker mathematics and generated coefficients are unchanged.
+[Raw results](../bench/offline_cortexm4.json) and [LaTeX tables](../bench/offline_cortexm4.tex) report compiled image sizes and software checks. Physical cycle and stack fields stay `pending`. The portable crypto, checker mathematics and generated coefficients are unchanged.
 
 ## Reference configuration
 
@@ -20,7 +20,7 @@ Requirements: Python 3, GCC, Clang, ARM GCC/binutils/Newlib, QEMU and OpenOCD. U
 python3 hardware/offline.py
 ```
 
-This command builds both profiles; runs parser, serial handshake and report integrity controls; executes the actual benchmark code with clearly labeled synthetic timers/stack controls under GCC, Clang, ASan and UBSan; compares every variant's complete key/signature transcript; and checks the ARM watermark/unavailable DWT helpers under QEMU. Synthetic numbers remain in ignored `build/hardware-offline` and are never published as physical observations. It generates JSON, Markdown and LaTeX offline tables without rerunning generic test campaigns.
+This command builds both profiles; runs parser, serial handshake and report integrity controls; executes the actual benchmark code with clearly labeled synthetic timers/stack controls under GCC, Clang, ASan and UBSan; compares every variant's complete key/signature transcript; and checks the ARM watermark/unavailable DWT helpers under QEMU. Synthetic numbers remain in ignored `build/hardware-offline` and are never published as physical observations. It generates JSON and LaTeX offline tables without rerunning generic test campaigns.
 
 OpenOCD 0.11.0 was extracted locally into ignored `build/hardware-tools/root`. For that installation:
 

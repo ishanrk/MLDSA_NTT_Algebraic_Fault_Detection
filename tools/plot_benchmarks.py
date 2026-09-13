@@ -122,7 +122,7 @@ def main():
               f"Each protected NTT adds `{costs['prior']['extra_field_calls']['mul']}` field multiplications "
               f"for Abdelmonem et al. and `{costs['our']['extra_field_calls']['mul']}` for my checker. "
               f"Both add `{costs['our']['extra_field_calls']['add']}` field additions. "
-              '[Operation and storage counts](docs/comparison.md).', '',
+              '[Operation and storage counts](bench/comparison.json).', '',
               '[Raw observations](bench/qemu_benchmark.json), [all statistics](docs/qemu_results.md) and '
               '[CSV](bench/qemu_benchmark.csv). Python generates these tables and graphs from the raw record.', '']
     readme = ROOT / 'README.md'

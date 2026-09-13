@@ -61,7 +61,7 @@ The claim concerns at most two additive field deviations at distinct modeled for
 
 ## C interface and selection
 
-`mldsa_ntt_forward_prior(r,a)` snapshots both expected input checks, calls the original forward NTT once, and compares both output checks. It returns 0 on acceptance and -1 on a mismatch. Both arguments use the existing canonical polynomial/NTT types. On failure the caller must discard the output. The checksum computations reduce every term and accumulation through the existing arithmetic functions; the bounds in [arithmetic.md](arithmetic.md) apply without widening the representation.
+`mldsa_ntt_forward_prior(r,a)` snapshots both expected input checks, calls the original forward NTT once, and compares both output checks. It returns 0 on acceptance and -1 on a mismatch. Both arguments use the existing canonical polynomial/NTT types. On failure the caller must discard the output. Every operand and accumulator stays in `[0,q)`, with unreduced products held in `uint64_t` by [the arithmetic implementation](../src/poly.c).
 
 Define `MLDSA_PRIOR_CHECKER` to select this function at the existing ML DSA forward transform call sites through the small internal `mldsa44_ntt` helper. The default build remains baseline. `make build/libmldsa_prior.so` builds the protected library separately. The signing algorithm and verification equations are unchanged; a transform mismatch returns an error before its result is used. `mldsa44_keygen` now returns an `int` status, 0 on success and -1 on invalid pointers or a checker mismatch, so its caller can also handle detected faults. Callers must check that status and discard key/signature output on failure.
 
@@ -103,11 +103,11 @@ python3 tools/run_mps2.py --prior
 python3 tools/measure_checkers.py
 ```
 
-Use the toolchain overrides in [cortexm4.md](cortexm4.md) when the compiler and QEMU are outside `PATH`. `tools/measure_checkers.py` accepts `ARM_CC` and `ARM_SIZE` for the same reason.
+Use the toolchain overrides in [reproduction.md](reproduction.md#tool-overrides) when the compiler and QEMU are outside `PATH`. `tools/measure_checkers.py` accepts `ARM_CC` and `ARM_SIZE` for the same reason.
 
 Both compact QEMU suites passed with `arm-none-eabi-gcc` 10.3.1, Cortex M4 Thumb soft ABI, and QEMU 6.2.0 `mps2-an386`. The protected firmware runs the same targeted C tests as the host, including the single/pair injections and scheme error propagation. No thousands case ARM campaign was run.
 
-The [generated comparison](comparison.md) come from [raw JSON](../bench/comparison.json). A host counter intercepts the actual addition, subtraction, and multiplication functions while preserving their original bodies. For one protected forward transform there are 640 additional modular multiplications, 1024 additional modular additions, and no additional modular subtractions. The 256 input beta products, 256 output a products, and 128 nonunity output alpha products explain the multiplication count. Four 256 term checksum accumulations explain the addition count. Stored constants occupy 2560 bytes for 640 coefficients; the 384 unity coefficients are implicit.
+The [comparison data](../bench/comparison.json) and [LaTeX tables](../bench/comparison.tex) report measured function counts. A host counter intercepts the actual addition, subtraction, and multiplication functions while preserving their original bodies. For one protected forward transform there are 640 additional modular multiplications, 1024 additional modular additions, and no additional modular subtractions. The 256 input beta products, 256 output a products, and 128 nonunity output alpha products explain the multiplication count. Four 256 term checksum accumulations explain the addition count. Stored constants occupy 2560 bytes for 640 coefficients; the 384 unity coefficients are implicit.
 
 The matched benchmark ELF images contain no test injection code. The protected image adds 2832 text bytes, including readonly constants, with no `.data` or BSS increase. These are emulator layout link sizes, not physical flash/RAM observations. Both benchmark images exit on the unavailable QEMU DWT counter without producing cycle or stack data. Real Cortex M4 performance and physical memory measurements remain pending.
 

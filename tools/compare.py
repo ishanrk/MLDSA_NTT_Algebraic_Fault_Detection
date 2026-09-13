@@ -80,7 +80,7 @@ def collect_result(stages, snapshot):
     data['formal'] = {group: proof_record(group) for group in ('arithmetic', 'checkers')}
     data['formal']['scope'] = ('Portable C component proofs and compositional reasoning; '
                                'no automatically checked global NTT or ML DSA refinement')
-    data['formal']['documentation'] = 'docs/verification.md'
+    data['formal']['documentation'] = 'docs/reproduction.md'
     for variant, row in data['variants'].items():
         row['exact_certificate'] = (certificate(variant) if variant != 'baseline'
                                     else {'status': 'not applicable'})
@@ -89,7 +89,7 @@ def collect_result(stages, snapshot):
             'common_jobs': len(data['formal']['arithmetic']['jobs_passed']),
             'checker_jobs': sum(job.startswith(variant + '_') for job in
                                 data['formal']['checkers']['jobs_passed']),
-            'scope_document': 'docs/verification.md',
+            'scope_document': 'docs/reproduction.md',
         }
         row['modeled_fault_coverage'] = {
             'additive_wire_deviations': 0 if variant == 'baseline' else 2,
@@ -110,7 +110,7 @@ def publish(data):
     dst = ROOT / 'bench/comparison.json'
     dst.parent.mkdir(exist_ok=True)
     dst.write_text(json.dumps(data, indent=2) + '\n')
-    render(data, ROOT / 'docs/comparison.md', ROOT / 'bench/comparison.tex')
+    render(data, None, ROOT / 'bench/comparison.tex')
 
 
 def main():
@@ -157,7 +157,7 @@ def main():
     if snapshot != sources():
         raise RuntimeError('Sources changed during comparison; rerun with stable sources')
     publish(collect_result(stages, snapshot))
-    print('wrote bench/comparison.json, docs/comparison.md and bench/comparison.tex')
+    print('wrote bench/comparison.json and bench/comparison.tex')
 
 
 if __name__ == '__main__':

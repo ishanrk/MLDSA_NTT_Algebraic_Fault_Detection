@@ -70,7 +70,7 @@ The generator verifies both row identities by direct evaluation and graph pullba
 
 Define `MLDSA_OUR_CHECKER` to select this function through the existing internal `mldsa44_ntt` helper. Define `MLDSA_PRIOR_CHECKER` for the published defense, or neither for baseline. Selecting both is a compile error. Key generation, signing, and verification share their original algorithms and propagate a transform failure through their existing status returns.
 
-The implementation uses three full 256 coefficient tables, including any zero or unity entries. The first input row is implicit ones. Every product and sum uses the existing canonical modular arithmetic, so the established [arithmetic bounds](arithmetic.md) apply. The reduction, division, and timing concerns in [ct.md](ct.md) also apply; this checker has no constant time claim.
+The implementation uses three full 256 coefficient tables, including any zero or unity entries. The first input row is implicit ones. Every operand and accumulator stays in `[0,q)`, with unreduced products held in `uint64_t` by [the arithmetic implementation](../src/poly.c). Modular reduction uses C division. This checker has no constant time claim.
 
 ```sh
 make our prior build/libmldsa.so build/libmldsa_prior.so build/libmldsa_our.so
@@ -99,8 +99,8 @@ make build/count_checkers arm-mps2-bench arm-mps2-prior-bench arm-mps2-our-bench
 python3 tools/measure_checkers.py
 ```
 
-The [comparison table](comparison.md) and [raw measurements](../bench/comparison.json) include all three variants. Per forward transform the prior checker adds 640 modular products and 1024 additions; the current implementation adds 768 products and 1024 additions. There are no additional subtractions. The three weighted rows of the current method account for the products and 3072 constant bytes. The four accumulated checksum rows account for the additions.
+The [LaTeX comparison](../bench/comparison.tex) and [raw measurements](../bench/comparison.json) include all three variants. Per forward transform the prior checker adds 640 modular products and 1024 additions; the current implementation adds 768 products and 1024 additions. There are no additional subtractions. The three weighted rows of the current method account for the products and 3072 constant bytes. The four accumulated checksum rows account for the additions.
 
 Matched benchmark images have ARM text sizes 11248, 14080, and 14576 bytes for baseline, prior, and the current checker. Readonly tables are included in text. All have zero `.data` and 14876 bytes BSS. The current checker adds 3328 linked text bytes over baseline, or 496 over prior. Test injection code is absent from these images. All three benchmark counter availability paths report `DWT UNAVAILABLE` under this QEMU target and emit no observations.
 
-The [current checker QEMU record](../test/qemu-mps2-an386-our.json) contains compact correctness results with the toolchain and emulator versions. These are functional validation and emulator layout sizes. Real DWT cycles and measured stack remain pending; [physical stage software](../hardware/README.md) supplies reference targets and linked size reporting. [Focused formal verification](verification.md) is available with its documented component scope.
+The [current checker QEMU record](../test/qemu-mps2-an386-our.json) contains compact correctness results with the toolchain and emulator versions. These are functional validation and emulator layout sizes. Real DWT cycles and measured stack remain pending; [physical stage software](../hardware/README.md) supplies reference targets and linked size reporting. [Focused formal verification](reproduction.md#focused-comparison-and-formal-checks) is available with its documented component scope.

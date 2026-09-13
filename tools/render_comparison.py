@@ -77,7 +77,7 @@ def render(data, markdown, tex):
         f"Linker: `{data['linker']}`. Text includes readonly tables and vectors. "
         'All variants use the same benchmark harness without injection hooks. These '
         'sizes describe the emulator layout, not measured Nucleo flash or RAM.', '',
-        'CBMC counts refer to [focused component proofs](verification.md), with shared '
+        'CBMC counts refer to [focused component proofs](../docs/reproduction.md#focused-comparison-and-formal-checks), with shared '
         'arithmetic/layer/loop proofs counted once per applicable variant. There is no '
         'automatically checked global transform or ML DSA refinement. No fault acceptance '
         'uses compositional reasoning and exact row certificates. The general determinant '
@@ -90,6 +90,8 @@ def render(data, markdown, tex):
         'overhead percentages, flash, RAM and stack measurements are pending.', '',
     ]
     for path, content in ((markdown, '\n'.join(md)), (tex, '\n'.join(lt) + '\n')):
+        if path is None:
+            continue
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content)
 
@@ -97,7 +99,7 @@ def render(data, markdown, tex):
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('raw', nargs='?', type=Path, default=ROOT / 'bench/comparison.json')
-    p.add_argument('--markdown', type=Path, default=ROOT / 'docs/comparison.md')
+    p.add_argument('--markdown', type=Path, help='optional Markdown output path')
     p.add_argument('--latex', type=Path, default=ROOT / 'bench/comparison.tex')
     args = p.parse_args()
     render(json.loads(args.raw.read_text()), args.markdown, args.latex)

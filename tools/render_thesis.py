@@ -176,7 +176,7 @@ def render(data, folder, markdown):
            'distinction. Both certificates have zero recorded failures.', '',
            'These are exact checks of concrete finite field coefficient conditions. They do not formally '
            'verify the generator or prove the general construction theorem. CBMC verifies portable C '
-           'components under the [documented contracts and assumptions](verification.md), with inspected '
+           'components under the [documented contracts and assumptions](reproduction.md#focused-comparison-and-formal-checks), with inspected '
            'composition rather than an automatically checked global ML DSA or NTT refinement.', '',
            'The NIST scope is ' + data['nist']['scope'] + '. Keygen, pure signing, verification and prehash '
            'vectors run for all three variants in each of the four host modes. SHAKE, arithmetic and '
