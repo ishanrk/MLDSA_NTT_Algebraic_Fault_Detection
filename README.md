@@ -1,10 +1,15 @@
 # Algebraic fault detection for the ML-DSA NTT
 
-This is my honors thesis for my Bachelor's degree. It studies algebraic fault detection for the Number Theoretic Transform (NTT), a linear transform used to accelerate polynomial multiplication in lattice based post quantum schemes such as ML-DSA and ML-KEM. A corrupted intermediate value can produce an incorrect transformed polynomial. The goal is to detect every nonzero output error caused by at most two additive deviations at the modeled NTT wires.
+This is my honors thesis for my Bachelor's degree. It makes an improvement on algebraic fault detection for the Number Theoretic Transform (NTT), a linear transform used to accelerate polynomial multiplication in lattice based post quantum schemes such as ML-DSA and ML-KEM. A corrupted intermediate value can produce an incorrect transformed polynomial and can lead to key recovery when done many times intentionally. The goal of my thesis is to detect every nonzero output error caused by at most two additive faults at the modeled NTT wires.
 
-I independently implemented ML-DSA-44 from [NIST FIPS 204, Module Lattice Based Digital Signature Standard](https://csrc.nist.gov/pubs/fips/204/final), including key generation, signing, verification, message formatting, polynomial arithmetic and SHAKE. I implemented the two fault checksum construction of [Abdelmonem et al.](https://eprint.iacr.org/2025/170) and my deterministic intermediate boundary construction inside the same implementation. My construction reduces the sufficient field size bound by a factor of $\Theta(\sqrt n)$; the present C checker uses more field multiplications than Abdelmonem et al. ML-KEM motivates the broader problem, but its different NTT is not implemented or certified here.
+I independently implemented ML-DSA-44 from [NIST FIPS 204, Module Lattice Based Digital Signature Standard](https://csrc.nist.gov/pubs/fips/204/final), including keygen, signing, verification, polynomial arithmetic and SHAKE. I then implemented the two fault detection construction of [Abdelmonem et al.](https://eprint.iacr.org/2025/170) and my improved deterministic construction inside the same implementation. My construction reduces the finite field size needed for fault deteection by a factor of $\Theta(\sqrt n)$. The present C implemenation uses more field multiplications than Abdelmonem et al, however it offers more robust fault detection as well.
 
-The code builds as portable C and for ARM Cortex M4. The recorded benchmarks count ARM instructions on QEMU's `mps2-an386` Cortex M4 model. Reference firmware targets are `NUCLEO-F411RE` with `STM32F411RE` and `NUCLEO-F446RE` with `STM32F446RE`; physical cycle and stack measurements are pending. Baseline, Abdelmonem et al. and the current method use the same cryptographic code, with different forward NTT wrappers. Validation includes official NIST vectors, malformed input tests, exact algebraic certificates and focused CBMC proofs. [Implementation methodology](docs/implementation_methodology.md). This project has no FIPS validation claim.
+The code in this repository builds ML-DSA and the fault detections schemes in portable C and for ARM Cortex-M4. The recorded benchmarks count ARM instructions on QEMU's `mps2-an386` Cortex M4 model for both schemes to find the overhead for each. Reference firmware targets are `NUCLEO-F411RE` with `STM32F411RE` and `NUCLEO-F446RE` with `STM32F446RE`. Baseline, Abdelmonem et al. and the current method use the same cryptographic code, with different forward NTT wrappers. 
+
+Validation includes official NIST vectors, malformed input tests, and CBMC proofs (which is ongoing). Test vectors can be found here (https://csrc.nist.gov/projects/post-quantum-cryptography/pqc-archive)
+<img width="585" height="709" alt="image" src="https://github.com/user-attachments/assets/63c9ca3b-aac5-48e2-85ec-355fa1660bfc" />
+**Chip on which I am benchmakring**
+**NOTE**: The scheme essentially involves using Vandermode's identity to reduce the Abdelmonem et al brute force-ish construction to one that finds checksum vectors more efficiently. **This is still being written up for IACR publication, so do not use without prior permission.**
 
 ## NTT fault analysis
 
@@ -12,7 +17,7 @@ ML-DSA uses polynomial multiplication over the ring `Z_q[X]/(X^n+1)`, with `n=25
 
 Prasanna Ravi, Bolin Yang, Shivam Bhasin, Fan Zhang and Anupam Chattopadhyay demonstrated attacks involving NTT twiddle corruption in [Fiddling the Twiddle Constants: Fault Injection Analysis of the Number Theoretic Transform](https://eprint.iacr.org/2022/824). Such physical faults can affect many wires. The algebraic model used here concerns additive deviations at data wires, with trusted twiddles, checker arithmetic and control flow.
 
-For a transform of length `n=2^h`, every array slot at each of the `h+1` layer boundaries is a modeled location. There are `M=n(h+1)` locations. A unit deviation at location `r` propagates to output vector `v_r`; a fault of magnitude `delta` adds `delta*v_r` to the output. The protection covers the forward NTT. Inverse transforms, SHAKE and faults in the checker are outside this model. [Fault model](docs/threat_model.md).
+For a transform of length `n=2^h`, every array slot at each of the `h+1` layer boundaries is a modeled location. There are `M=n(h+1)` locations. A unit deviation at location `r` propagates to output vector `v_r`; a fault of magnitude `delta` adds `delta*v_r` to the output. The protection covers the forward NTT. Inverse transforms, SHAKE and faults in the checker are outside this model.
 
 ## Algebraic checks
 
@@ -36,7 +41,7 @@ $$
 
 A nonzero fault is detected whenever `A_r` is nonzero at every modeled location. Sven Bauer, Fabrizio De Santis, Kristjane Koleci and Anita Aghaie developed a single fault defense using polynomial evaluation and interpolation in [A Fault Resistant NTT by Polynomial Evaluation and Interpolation](https://eprint.iacr.org/2024/788).
 
-Mohamed Abdelmonem, Lukas Holzbaur, Håvard Raddum and Alexander Zeh generalized the checksum conditions in [Efficient Error Detection Methods for the Number Theoretic Transforms in Lattice Based Algorithms](https://eprint.iacr.org/2025/170). Their paper gives single fault checks for Kyber, Dilithium and Falcon, and a two fault construction for Dilithium. For the completely split transform used by Dilithium and ML-DSA, the first input checksum can be the ordinary coefficient sum. This repository derives its output row from the production NTT order.
+Mohamed Abdelmonem, Lukas Holzbaur, Håvard Raddum and Alexander Zeh generalized the checksum conditions in [Efficient Error Detection Methods for the Number Theoretic Transforms in Lattice Based Algorithms](https://eprint.iacr.org/2025/170). Their paper gives single fault checks for ML-KEM, ML-DSA and Falcon, and a two fault construction for ML-DSA. Interestingly, their approach does not work for ML-KEM as the size of the finite field required by their scheme is much larger than the field uses by ML-KEM. Our approach aims to remedy that with construction of a more field size efficient scheme.
 
 ### Two faults
 
@@ -83,14 +88,14 @@ K(k)=2^{k+1}+2^{h-k+1}-3,
 \qquad D(k)=K(k)M-\frac{K(k)(K(k)+1)}{2}.
 $$
 
-At a balanced boundary `k=floor(h/2)`,
+At the boundary `k=floor(h/2)`,
 
 $$
 K(k)=\Theta(\sqrt n),
 \qquad D(k)=\Theta(n^{3/2}\log n).
 $$
 
-The sufficient threshold improves by a factor $\Theta(\sqrt n)$. These are construction guarantees. Both execution wrappers still add $\Theta(n)$ field operations to a $\Theta(n\log n)$ NTT.
+The sufficient threshold improves by a factor $\Theta(\sqrt n)$, which is a great construction guarantees.
 
 <!-- construction-results:start -->
 
@@ -101,12 +106,10 @@ For `n=256`, `h=8` and `k=4`, the generator verifies `M=2304`, `K=61`, `D=138653
 | Abdelmonem et al. | 1,177,344 |
 | Current method | 138,653 |
 
-The sufficient threshold is **8.49 times smaller**. Both methods certify all **2,653,056** location pairs with zero determinant failures.
+The sufficient threshold is **8.49 times smaller**. Both methods certify all **2,653,056** possible fault location pairs with zero determinant failures.
 
 ![Construction bound at transform length 256](docs/figures/construction_bound.png)
 <!-- construction-results:end -->
-
-The exact certificates verify the checksum row identities, every modeled wire response and every pair determinant. A single fault is covered by the first nonzero response; two faults are covered by the pair condition. Exact cancellation at one wire produces no result error. The certificates establish coverage in this field model, rather than resistance to every physical fault mechanism. [Certificates](docs/comparison.md).
 
 ## Reproduction and C verification
 
@@ -118,11 +121,11 @@ python3 tools/plot_benchmarks.py
 
 The benchmark needs Python with Matplotlib, ARM GCC with Newlib and QEMU with TCG plugin support. [Reproduction commands](docs/reproduction.md) include generators, exact certificates, compiler and sanitizer runs, ARM builds and tool overrides. [Thesis tables](docs/thesis_results.md) are generated from raw repository data.
 
-CBMC with Z3 checks the portable C arithmetic, butterfly and layer updates, memory bounds, representation conversions and checksum accumulation under documented preconditions. All 29 recorded jobs passed with unwinding assertions enabled. The proof scope excludes full ML-DSA, SHAKE and ARM machine code. [Properties and assumptions](docs/verification.md).
+CBMC with Z3 will check the C arithmetic, butterflies,  memory bounds, and checksum accumulation under documented preconditions. For now, the test vectors are passing (https://csrc.nist.gov/projects/post-quantum-cryptography/pqc-archive).
 
 ## ARM Cortex M4 measurements and optimization
 
-I use QEMU to count the ARM instructions required by both checksum constructions and measure their overhead over baseline ML-DSA. All variants use the same inputs and ARM GCC `10.3.1`, at `-O2` and `-O3 -flto`. Compiler optimization and link time optimization reduce instruction counts; the coefficient sum needs no multiplications, and Abdelmonem et al.'s unity weights also need none. Instruction counts are not Cortex M4 cycles. [Benchmark details](docs/qemu_benchmark.md), [Nucleo firmware](hardware/README.md).
+I use QEMU to count the ARM instructions required by both checksum constructions and measure their overhead over baseline ML-DSA. All variants use the same inputs and ARM GCC `10.3.1`, at `-O2` and `-O3 -flto`. Compiler optimization and link time optimization reduce instruction counts; the coefficient sum needs no multiplications, and Abdelmonem et al.'s unity weights also need none. Instruction counts are not Cortex M4 cycles.
 
 <!-- benchmark-results:start -->
 
@@ -133,7 +136,7 @@ Median forward NTT instruction count, `101` samples per build:
 | `-O2` | 96,999 | 149,082 | 155,996 | +4.64% |
 | `-O3 -flto` | 80,139 | 124,927 | 131,576 | +5.32% |
 
-At `-O3 -flto`, my checker uses **15.65% fewer NTT instructions** than its `-O2` build and **5.32% more** than Abdelmonem et al.
+At `-O3 -flto`, my checker uses **15.65% fewer NTT instructions** than its `-O2` build and **5.32% more** than Abdelmonem et al, which is reasonable overhead for reducing your finite field size by around a factor of 8.
 
 ![Forward NTT instruction counts](docs/figures/qemu_ntt.png)
 
@@ -147,7 +150,7 @@ Full ML-DSA-44 overhead at `-O3 -flto`, relative to baseline median instruction 
 
 ![ML-DSA instruction counts](docs/figures/qemu_mldsa.png)
 
-Each protected NTT adds `640` field multiplications for Abdelmonem et al. and `768` for my checker. Both add `1024` field additions. [Operation and storage counts](docs/comparison.md).
+Each protected NTT adds `640` field multiplications for Abdelmonem et al. and `768` for my checker. Both add `1024` field additions, which in and of itself is not a bad overhead count.
 
 [Raw observations](bench/qemu_benchmark.json), [all statistics](docs/qemu_results.md) and [CSV](bench/qemu_benchmark.csv). Python generates these tables and graphs from the raw record.
 <!-- benchmark-results:end -->
