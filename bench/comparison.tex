@@ -6,18 +6,18 @@
 Variant & Checks & Stored coefficients & Total field mul & Total field add & Extra field mul & Extra field add \\
 \hline
 Baseline & 0 & 0 & 1024 & 1024 & 0 & 0 \\
-Prior method & 2 & 640 & 1664 & 2048 & 640 & 1024 \\
+Abdelmonem et al. & 2 & 640 & 1664 & 2048 & 640 & 1024 \\
 Current method & 2 & 768 & 1792 & 2048 & 768 & 1024 \\
 \hline
 \end{tabular}
 
-% Matched ARM emulator images (bytes)
+% ARM emulator image sizes (bytes)
 \begin{tabular}{lrrrr}
 \hline
 Variant & Constant tables & ARM text & ARM data & ARM BSS \\
 \hline
 Baseline & 0 & 11248 & 0 & 14876 \\
-Prior method & 2560 & 14080 & 0 & 14876 \\
+Abdelmonem et al. & 2560 & 14080 & 0 & 14876 \\
 Current method & 3072 & 14576 & 0 & 14876 \\
 \hline
 \end{tabular}
@@ -28,7 +28,7 @@ Current method & 3072 & 14576 & 0 & 14876 \\
 Variant & Exact certificate & Pairs & Certificate failures & CBMC jobs passed & QEMU correctness \\
 \hline
 Baseline & not applicable & N/A & N/A & 19 common + 0 checker & passed \\
-Prior method & passed & 2653056 & 0 & 19 common + 5 checker & passed \\
+Abdelmonem et al. & passed & 2653056 & 0 & 19 common + 5 checker & passed \\
 Current method & passed & 2653056 & 0 & 19 common + 5 checker & passed \\
 \hline
 \end{tabular}
@@ -39,7 +39,7 @@ Current method & passed & 2653056 & 0 & 19 common + 5 checker & passed \\
 Variant & NTT cycles & Keygen cycles & Sign cycles & Verify cycles & Flash bytes & Static RAM bytes & Stack bytes \\
 \hline
 Baseline & pending & pending & pending & pending & pending & pending & pending \\
-Prior method & pending & pending & pending & pending & pending & pending & pending \\
+Abdelmonem et al. & pending & pending & pending & pending & pending & pending & pending \\
 Current method & pending & pending & pending & pending & pending & pending & pending \\
 \hline
 \end{tabular}

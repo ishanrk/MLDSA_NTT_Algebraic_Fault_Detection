@@ -12,7 +12,7 @@ from matplotlib.ticker import MaxNLocator
 
 ROOT = Path(__file__).resolve().parents[1]
 VARIANTS = ('baseline', 'prior', 'our')
-LABELS = ('Baseline', 'Prior method', 'Current method')
+LABELS = ('Baseline', 'Abdelmonem et al.', 'Current method')
 COLORS = ('#77818c', '#3468a4', '#b85a35')
 
 
@@ -43,7 +43,7 @@ def main():
         ax.bar_label(bars, labels=[f'{value:.1f}' for value in values], padding=4, fontsize=10)
     ax.set_xticks(range(3), LABELS)
     ax.set_xlabel('Method')
-    ax.set_ylabel('Guest instructions (thousands)')
+    ax.set_ylabel('Instruction count (thousands)')
     ax.set_title('Forward NTT on QEMU Cortex M4')
     limit = max(config['variants'][variant]['operations']['ntt_forward']['median'] / 1000
                 for config in data['configurations'].values() for variant in VARIANTS)
@@ -58,16 +58,16 @@ def main():
     for ax, (op, title) in zip(axes, (('keygen', 'Key generation'), ('sign', 'Signing'), ('verify', 'Verification'))):
         rows = [data['configurations']['o3_lto']['variants'][variant]['operations'][op] for variant in VARIANTS]
         medians = [row['median'] / 1e6 for row in rows]
-        bars = ax.bar(('Baseline', 'Prior', 'Current'), medians, color=COLORS, width=.6)
+        bars = ax.bar(('Baseline', 'Abdelmonem\net al.', 'Current'), medians, color=COLORS, width=.6)
         ax.bar_label(bars, labels=[f'{value:.2f}' for value in medians], padding=4, fontsize=9)
         ax.set_title(title)
-        ax.set_ylabel('Guest instructions (millions)')
+        ax.set_ylabel('Instruction count (millions)')
         ax.set_xlabel('Method')
         ax.set_ylim(0, max(medians) * 1.18)
         ax.yaxis.set_major_locator(MaxNLocator(4, integer=True))
         ax.grid(axis='y', alpha=.2)
         ax.set_axisbelow(True)
-    figure.suptitle('ML DSA 44 on QEMU: O3 + LTO medians', fontsize=12)
+    figure.suptitle('ML-DSA-44 on QEMU: O3 + LTO medians', fontsize=12)
     save(figure, 'qemu_mldsa')
 
     concrete = next(row for row in data['construction_bounds'] if row['n'] == 256)
@@ -85,7 +85,7 @@ def main():
     save(figure, 'construction_bound')
 
     configs = data['configurations']
-    lines = ['| Build | Baseline | Prior method | Current method | Current vs prior |',
+    lines = ['| Build | Baseline | Abdelmonem et al. | Current method | Current vs Abdelmonem et al. |',
              '| --- | ---: | ---: | ---: | ---: |']
     for name, label in (('o2', '`-O2`'), ('o3_lto', '`-O3 -flto`')):
         rows = configs[name]['variants']
@@ -99,30 +99,32 @@ def main():
                     f"the generator verifies `M={concrete['M']}`, `K={concrete['K']}`, "
                     f"`D={concrete['our']}` and `q={certificate['q']}>D`.", '',
                     '| Method | Sufficient threshold |', '| --- | ---: |',
-                    f"| Prior method | {concrete['prior']:,} |", f"| Current method | {concrete['our']:,} |", '',
+                    f"| Abdelmonem et al. | {concrete['prior']:,} |", f"| Current method | {concrete['our']:,} |", '',
                     f"The sufficient threshold is **{data['construction_bound_ratio_at_256']:.2f} times smaller**. "
                     f"Both methods certify all **{certificate['checked_pairs']:,}** location pairs with zero determinant failures.", '',
                     '![Construction bound at transform length 256](docs/figures/construction_bound.png)', '']
-    block = [f"Forward NTT median guest instruction counts, {data['samples_per_operation']} observations per build and method:", '',
+    first = configs['o2']['variants']['our']['operations']['ntt_forward']['median']
+    optimized = configs['o3_lto']['variants']['our']['operations']['ntt_forward']['median']
+    reduction = 100 * (1 - optimized / first)
+    block = [f"Median forward NTT instruction count, `{data['samples_per_operation']}` samples per build:", '',
              *lines, '',
-             f"At `-O3 -flto`, the current method executes **{abs(delta):.2f}% {direction} instructions** "
-             'than the prior method. Its construction guarantee improves; this implementation has no measured cycle improvement.', '',
+             f"At `-O3 -flto`, my checker uses **{reduction:.2f}% fewer NTT instructions** than its `-O2` build "
+             f"and **{abs(delta):.2f}% {direction}** than Abdelmonem et al.", '',
              '![Forward NTT instruction counts](docs/figures/qemu_ntt.png)', '',
-             '| Method | Instruction reduction from `-O2` to `-O3 -flto` |', '| --- | ---: |']
-    for variant, label in zip(VARIANTS, LABELS):
-        first = configs['o2']['variants'][variant]['operations']['ntt_forward']['median']
-        optimized = configs['o3_lto']['variants'][variant]['operations']['ntt_forward']['median']
-        block.append(f'| {label} | {100 * (1 - optimized / first):.2f}% |')
-    block += ['', 'Key generation, signing and verification medians use the optimized configuration. '
-              'Signing includes its ordinary rejection variability; the linked statistics retain minimum, median, maximum and P95.', '',
-              '![ML DSA instruction counts](docs/figures/qemu_mldsa.png)', '',
-              '| Method | Extra field multiplications | Extra field additions | Constant table bytes |',
-              '| --- | ---: | ---: | ---: |']
-    for variant, label in zip(VARIANTS, LABELS):
-        row = data['costs'][variant]
-        block.append(f"| {label} | {row['extra_field_calls']['mul']} | {row['extra_field_calls']['add']} | {row['constant_bytes']} |")
-    block += ['', '[Raw observations](bench/qemu_benchmark.json), [complete statistics](docs/qemu_results.md) and '
-              '[CSV](bench/qemu_benchmark.csv). Python generates the graphs and tables from the raw record.', '']
+             'Full ML-DSA-44 overhead at `-O3 -flto`, relative to baseline median instruction count:', '',
+             '| Operation | Abdelmonem et al. | Current method |', '| --- | ---: | ---: |']
+    for operation, label in (('keygen', 'Key generation'), ('sign', 'Signing'), ('verify', 'Verification')):
+        rows = configs['o3_lto']['variants']
+        overheads = [rows[v]['operations'][operation]['overhead_percent'] for v in VARIANTS[1:]]
+        block.append(f'| {label} | ' + ' | '.join(f'{value:.2f}%' for value in overheads) + ' |')
+    costs = data['costs']
+    block += ['', '![ML-DSA instruction counts](docs/figures/qemu_mldsa.png)', '',
+              f"Each protected NTT adds `{costs['prior']['extra_field_calls']['mul']}` field multiplications "
+              f"for Abdelmonem et al. and `{costs['our']['extra_field_calls']['mul']}` for my checker. "
+              f"Both add `{costs['our']['extra_field_calls']['add']}` field additions. "
+              '[Operation and storage counts](docs/comparison.md).', '',
+              '[Raw observations](bench/qemu_benchmark.json), [all statistics](docs/qemu_results.md) and '
+              '[CSV](bench/qemu_benchmark.csv). Python generates these tables and graphs from the raw record.', '']
     readme = ROOT / 'README.md'
     text = readme.read_text()
     for name, content in (('construction-results', construction), ('benchmark-results', block)):
@@ -134,12 +136,12 @@ def main():
         text = prefix + start + '\n\n' + '\n'.join(content) + end + suffix
     readme.write_text(text)
     report = ['# QEMU instruction measurements', '',
-              'Generated from [raw observations](../bench/qemu_benchmark.json). Unit: **guest instructions**, '
+              'Generated from [raw observations](../bench/qemu_benchmark.json). Unit: **instruction count**, '
               'after empty marker subtraction. Physical cycles are unmeasured. The plots show medians; '
               'this table retains the complete range and P95.', '',
               f"Compiler: `{data['compiler']}`. Emulator: `{data['qemu']}`. Target: `{data['machine']}`.", '',
               'The 100 iteration assembly control adds exactly 301 instructions in every image. '
-              'Complete key/signature transcripts match all methods and both optimization settings.', '']
+              'Complete key/signature transcripts are identical for all methods and both optimization settings.', '']
     output = io.StringIO()
     writer = csv.writer(output, lineterminator='\n')
     keys = ('samples', 'minimum', 'median', 'maximum', 'p95_nearest_rank', 'overhead_percent', 'change_from_prior_percent')

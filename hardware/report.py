@@ -202,7 +202,7 @@ def summarize(manifest_path, comparison_path=None, pending=False):
 def tables(data):
     cycles, memory, samples = [], [], []
     for variant, row in data['variants'].items():
-        label = {'baseline': 'Baseline', 'prior': 'Prior method', 'our': 'Current method'}[variant]
+        label = {'baseline': 'Baseline', 'prior': 'Abdelmonem et al.', 'our': 'Current method'}[variant]
         values = [label]
         for op in ('ntt_forward', 'sign', 'verify', 'keygen'):
             values += ([row['cycles'][op]['median'], row['cycles'][op]['overhead_percent']]

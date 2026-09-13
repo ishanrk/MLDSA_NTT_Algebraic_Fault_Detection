@@ -19,7 +19,7 @@ The physical milestone is incomplete while cycles, stack and physical correctnes
 | sign | pending | pending | pending | pending | pending |
 | verify | pending | pending | pending | pending | pending |
 
-## Prior method: physical cycle statistics
+## Abdelmonem et al.: physical cycle statistics
 
 | Operation | Samples | Min | Median | Max | P95 |
 | --- | --- | --- | --- | --- | --- |
@@ -51,12 +51,12 @@ The physical milestone is incomplete while cycles, stack and physical correctnes
 | Baseline | keygen | pending |
 | Baseline | sign | pending |
 | Baseline | verify | pending |
-| Prior method | ntt_forward | pending |
-| Prior method | ntt_inverse | pending |
-| Prior method | pointwise | pending |
-| Prior method | keygen | pending |
-| Prior method | sign | pending |
-| Prior method | verify | pending |
+| Abdelmonem et al. | ntt_forward | pending |
+| Abdelmonem et al. | ntt_inverse | pending |
+| Abdelmonem et al. | pointwise | pending |
+| Abdelmonem et al. | keygen | pending |
+| Abdelmonem et al. | sign | pending |
+| Abdelmonem et al. | verify | pending |
 | Current method | ntt_forward | pending |
 | Current method | ntt_inverse | pending |
 | Current method | pointwise | pending |
@@ -69,10 +69,10 @@ The physical milestone is incomplete while cycles, stack and physical correctnes
 | Target | Variant | Linked flash | Static RAM | Keygen stack | Sign stack | Verify stack |
 | --- | --- | --- | --- | --- | --- | --- |
 | `NUCLEO-F411RE` | Baseline | 12812 | 17096 | pending | pending | pending |
-| `NUCLEO-F411RE` | Prior method | 15644 | 17096 | pending | pending | pending |
+| `NUCLEO-F411RE` | Abdelmonem et al. | 15644 | 17096 | pending | pending | pending |
 | `NUCLEO-F411RE` | Current method | 16136 | 17096 | pending | pending | pending |
 | `NUCLEO-F446RE` | Baseline | 12812 | 17096 | pending | pending | pending |
-| `NUCLEO-F446RE` | Prior method | 15644 | 17096 | pending | pending | pending |
+| `NUCLEO-F446RE` | Abdelmonem et al. | 15644 | 17096 | pending | pending | pending |
 | `NUCLEO-F446RE` | Current method | 16136 | 17096 | pending | pending | pending |
 
 ## Modular function calls per forward transform
@@ -80,7 +80,7 @@ The physical milestone is incomplete while cycles, stack and physical correctnes
 | Variant | Total mul | Total add | Total sub | Extra mul | Extra add |
 | --- | --- | --- | --- | --- | --- |
 | Baseline | 1024 | 1024 | 1024 | 0 | 0 |
-| Prior method | 1664 | 2048 | 1024 | 640 | 1024 |
+| Abdelmonem et al. | 1664 | 2048 | 1024 | 640 | 1024 |
 | Current method | 1792 | 2048 | 1024 | 768 | 1024 |
 
 ## Scalar checks and generated coefficient storage
@@ -88,28 +88,28 @@ The physical milestone is incomplete while cycles, stack and physical correctnes
 | Variant | Checks | Stored coefficients | Constant bytes |
 | --- | --- | --- | --- |
 | Baseline | 0 | 0 | 0 |
-| Prior method | 2 | 640 | 2560 |
+| Abdelmonem et al. | 2 | 640 | 2560 |
 | Current method | 2 | 768 | 3072 |
 
 ## Exact modeled network and certificate parameters
 
 | Variant | n | q | h | Locations | Pairs | k | K | D |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prior method | 256 | 8380417 | 8 | 2304 | 2653056 | N/A | N/A | N/A |
+| Abdelmonem et al. | 256 | 8380417 | 8 | 2304 | 2653056 | N/A | N/A | N/A |
 | Current method | 256 | 8380417 | 8 | 2304 | 2653056 | 4 | 61 | 138653 |
 
 ## Exact certificate failure counts
 
 | Variant | Zero first | Zero second | Duplicate ratios | Zero determinants |
 | --- | --- | --- | --- | --- |
-| Prior method | 0 | 0 | not separately recorded | 0 |
+| Abdelmonem et al. | 0 | 0 | not separately recorded | 0 |
 | Current method | 0 | 0 | 0 | 0 |
 
 ## Exact certificate row and propagation identities
 
 | Variant | Row identities | Unit propagation | Intermediate identity |
 | --- | --- | --- | --- |
-| Prior method | direct evaluation and network pullback passed | all unit wires matched the production network | N/A |
+| Abdelmonem et al. | direct evaluation and network pullback passed | all unit wires matched the production network | N/A |
 | Current method | direct evaluation and network pullback passed | all unit wires matched the production network | every intermediate vector propagated to its unit wire output |
 
 ## Focused CBMC properties: arithmetic
@@ -181,7 +181,7 @@ The physical milestone is incomplete while cycles, stack and physical correctnes
 
 ## Certificate coefficient digests
 
-Prior method: `9281c37271baa76755a5873797b948142bc3ae8c45865df69326589a892a58df`.
+Abdelmonem et al.: `9281c37271baa76755a5873797b948142bc3ae8c45865df69326589a892a58df`.
 
 Current method: `dc167f43461e2c9c079bb79ded94a5b6a3af39062ea1de36b64f71ce01f9b2ec`.
 

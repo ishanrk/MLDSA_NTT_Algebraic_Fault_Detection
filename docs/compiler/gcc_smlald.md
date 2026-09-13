@@ -1,6 +1,6 @@
 # GCC SMLALD patch
 
-Author: Ishan Kumthekar. [Patch text](gcc-smlald.patch).
+I wrote this [GCC patch](gcc-smlald.patch) while investigating ARM instruction counts.
 
 The patch adds two ARM peephole patterns for ordinary C that computes two packed signed halfword products and accumulates them into a `64` bit value. The patterns cover the two instruction orders emitted after register allocation. They require little endian integer SIMD support, matching packed inputs, dead extraction temporaries and valid register overlaps.
 
@@ -32,4 +32,4 @@ The recorded compiler experiment reduced the arithmetic sequence from `4` instru
 
 Status: development patch. A public GCC archive reference has not been verified. The linked text preserves the supplied patch; it is not evidence of upstream acceptance.
 
-The ML DSA benchmark uses the toolchain recorded in [the raw measurements](../../bench/qemu_benchmark.json), with canonical `32` bit field coefficients. It does not use this packed `16` bit optimization. Any application to the cryptographic code would require separate implementation and measurement.
+The ML-DSA benchmark uses the toolchain recorded in [the raw measurements](../../bench/qemu_benchmark.json), with canonical `32` bit field coefficients. It does not use this packed `16` bit optimization. Any application to the cryptographic code would require separate implementation and measurement.

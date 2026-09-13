@@ -41,7 +41,7 @@
     "test/our_cases.h": "6fba5f17c3565c84fc9063030612bd6f77dfb1f59afef981774530a47d9a2575",
     "test/prior_cases.c": "fa655f9310d02f4bf3b93c57913f04306d1941109a2f3b15ae124433b5354241",
     "test/prior_cases.h": "6bd03d3253dd75adda0389c51e3c375727844700346d14ed454ae5c61f37a140",
-    "tools/plot_benchmarks.py": "5dc5298806dc4420c3c5cb23f1ac7179057873674e8d64ab34835ffdcf64ad0f",
+    "tools/plot_benchmarks.py": "041fc57ba49e3bd5752130656ddc324d3556895cdb09bdca592e76a1e8ed36c2",
     "tools/qemu_benchmark.py": "21f7759935b3b83a4b1335ab70e57d6c6530afb3cdcbbfe0edea09ad170fc8c7",
     "tools/qemu_counter.c": "9fb569594cb4624854ed6b0d8195c144851e2665b5a1adf967d9f438f662bacb"
   },
@@ -8707,7 +8707,7 @@
       ],
       "log": "build/qemu-benchmark/plugin.log",
       "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "wall_seconds": 0.172,
+      "wall_seconds": 0.208,
       "status": "passed"
     },
     {
@@ -8717,7 +8717,7 @@
       ],
       "log": "build/qemu-benchmark/compiler-version.log",
       "log_sha256": "1fe313a880c339d35f4add6a1c50dddfeb9bc7861d53e2048d09be62605a5580",
-      "wall_seconds": 0.001,
+      "wall_seconds": 0.005,
       "status": "passed"
     },
     {
@@ -8727,7 +8727,7 @@
       ],
       "log": "build/qemu-benchmark/qemu-version.log",
       "log_sha256": "8ff08b5c9c6a45e338a199846bbce04c4bb630b176c96f545ee51a03130565a3",
-      "wall_seconds": 0.009,
+      "wall_seconds": 0.08,
       "status": "passed"
     },
     {
@@ -8781,7 +8781,7 @@
       ],
       "log": "build/qemu-benchmark/o2-baseline-correctness-build.log",
       "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "wall_seconds": 0.621,
+      "wall_seconds": 0.64,
       "status": "passed"
     },
     {
@@ -8798,7 +8798,7 @@
       ],
       "log": "build/qemu-benchmark/o2-baseline-correctness.log",
       "log_sha256": "3725eba14e5241440025d7291be4623f2d7aab6a84293e45cce01a47d94272ac",
-      "wall_seconds": 0.079,
+      "wall_seconds": 0.072,
       "status": "passed"
     },
     {
@@ -8854,7 +8854,7 @@
       ],
       "log": "build/qemu-benchmark/o2-baseline-build.log",
       "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "wall_seconds": 0.609,
+      "wall_seconds": 0.491,
       "status": "passed"
     },
     {
@@ -8864,7 +8864,7 @@
       ],
       "log": "build/qemu-benchmark/o2-baseline-symbols.log",
       "log_sha256": "c38c9d7f78ee4415d6b5f953023ec8e4703eb7144658988f8ef204f26c6f4e83",
-      "wall_seconds": 0.006,
+      "wall_seconds": 0.004,
       "status": "passed"
     },
     {
@@ -8883,7 +8883,7 @@
       ],
       "log": "build/qemu-benchmark/o2-baseline-counts.log",
       "log_sha256": "efa4885c4859cb2d36383d7d1c7b8aa9ee3e5514e4e0b6ff778cec4095352b3c",
-      "wall_seconds": 5.621,
+      "wall_seconds": 4.595,
       "status": "passed"
     },
     {
@@ -8893,7 +8893,7 @@
       ],
       "log": "build/qemu-benchmark/o2-baseline-size.log",
       "log_sha256": "ab416c94186a8a1498b226aad2764a178dfa5757b0eb95b47f5755f9b068cfb2",
-      "wall_seconds": 0.002,
+      "wall_seconds": 0.003,
       "status": "passed"
     },
     {
@@ -8950,7 +8950,7 @@
       ],
       "log": "build/qemu-benchmark/o2-prior-correctness-build.log",
       "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "wall_seconds": 0.764,
+      "wall_seconds": 0.553,
       "status": "passed"
     },
     {
@@ -8967,7 +8967,7 @@
       ],
       "log": "build/qemu-benchmark/o2-prior-correctness.log",
       "log_sha256": "5227ab727a0169b9707c178c69982f58cbc00eb94bbfe6b57e3586d598e3de9f",
-      "wall_seconds": 0.109,
+      "wall_seconds": 0.085,
       "status": "passed"
     },
     {
@@ -9024,7 +9024,7 @@
       ],
       "log": "build/qemu-benchmark/o2-prior-build.log",
       "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "wall_seconds": 0.62,
+      "wall_seconds": 0.494,
       "status": "passed"
     },
     {
@@ -9034,7 +9034,7 @@
       ],
       "log": "build/qemu-benchmark/o2-prior-symbols.log",
       "log_sha256": "96716012f872f7c3f5755e398d393913c1cbaac07c0ffcb5e0dc788e49121e7a",
-      "wall_seconds": 0.002,
+      "wall_seconds": 0.001,
       "status": "passed"
     },
     {
@@ -9053,7 +9053,7 @@
       ],
       "log": "build/qemu-benchmark/o2-prior-counts.log",
       "log_sha256": "369f0a90e60974d463470f45786fa9be7865d6a7aa9f445056f6947db9ef9865",
-      "wall_seconds": 5.93,
+      "wall_seconds": 5.008,
       "status": "passed"
     },
     {
@@ -9120,7 +9120,7 @@
       ],
       "log": "build/qemu-benchmark/o2-our-correctness-build.log",
       "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "wall_seconds": 0.643,
+      "wall_seconds": 0.767,
       "status": "passed"
     },
     {
@@ -9137,7 +9137,7 @@
       ],
       "log": "build/qemu-benchmark/o2-our-correctness.log",
       "log_sha256": "9cfba4b4443a1a3462ec013d7ea376d1101414715e09968c9b5347f608a1d891",
-      "wall_seconds": 0.115,
+      "wall_seconds": 0.09,
       "status": "passed"
     },
     {
@@ -9194,7 +9194,7 @@
       ],
       "log": "build/qemu-benchmark/o2-our-build.log",
       "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "wall_seconds": 0.658,
+      "wall_seconds": 0.698,
       "status": "passed"
     },
     {
@@ -9223,7 +9223,7 @@
       ],
       "log": "build/qemu-benchmark/o2-our-counts.log",
       "log_sha256": "395f66e00970a15e064c572ca28bc2f241357ff5c0a610abbbac2634b6742138",
-      "wall_seconds": 5.925,
+      "wall_seconds": 5.071,
       "status": "passed"
     },
     {
@@ -9288,7 +9288,7 @@
       ],
       "log": "build/qemu-benchmark/o3_lto-baseline-correctness-build.log",
       "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "wall_seconds": 0.849,
+      "wall_seconds": 0.757,
       "status": "passed"
     },
     {
@@ -9305,7 +9305,7 @@
       ],
       "log": "build/qemu-benchmark/o3_lto-baseline-correctness.log",
       "log_sha256": "3725eba14e5241440025d7291be4623f2d7aab6a84293e45cce01a47d94272ac",
-      "wall_seconds": 0.055,
+      "wall_seconds": 0.046,
       "status": "passed"
     },
     {
@@ -9362,7 +9362,7 @@
       ],
       "log": "build/qemu-benchmark/o3_lto-baseline-build.log",
       "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "wall_seconds": 0.967,
+      "wall_seconds": 0.92,
       "status": "passed"
     },
     {
@@ -9372,7 +9372,7 @@
       ],
       "log": "build/qemu-benchmark/o3_lto-baseline-symbols.log",
       "log_sha256": "727a87519509b6c7731f2f85fe992ec03710743c61972b7c71997646854a4b3c",
-      "wall_seconds": 0.002,
+      "wall_seconds": 0.001,
       "status": "passed"
     },
     {
@@ -9391,7 +9391,7 @@
       ],
       "log": "build/qemu-benchmark/o3_lto-baseline-counts.log",
       "log_sha256": "866077c93b82438192e3d8e4c627e885cd14f1c7b5cd372b2fc6eb542bbf6677",
-      "wall_seconds": 3.496,
+      "wall_seconds": 3.058,
       "status": "passed"
     },
     {
@@ -9401,7 +9401,7 @@
       ],
       "log": "build/qemu-benchmark/o3_lto-baseline-size.log",
       "log_sha256": "69122b2eb6f358ebbd0fa36e208e5fce84d9de42a5e3f94d82d7e3a76fc8727e",
-      "wall_seconds": 0.002,
+      "wall_seconds": 0.001,
       "status": "passed"
     },
     {
@@ -9459,7 +9459,7 @@
       ],
       "log": "build/qemu-benchmark/o3_lto-prior-correctness-build.log",
       "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "wall_seconds": 1.14,
+      "wall_seconds": 0.877,
       "status": "passed"
     },
     {
@@ -9476,7 +9476,7 @@
       ],
       "log": "build/qemu-benchmark/o3_lto-prior-correctness.log",
       "log_sha256": "5227ab727a0169b9707c178c69982f58cbc00eb94bbfe6b57e3586d598e3de9f",
-      "wall_seconds": 0.085,
+      "wall_seconds": 0.066,
       "status": "passed"
     },
     {
@@ -9534,7 +9534,7 @@
       ],
       "log": "build/qemu-benchmark/o3_lto-prior-build.log",
       "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "wall_seconds": 0.874,
+      "wall_seconds": 0.817,
       "status": "passed"
     },
     {
@@ -9563,7 +9563,7 @@
       ],
       "log": "build/qemu-benchmark/o3_lto-prior-counts.log",
       "log_sha256": "2e43bb4a2933af9308c248e2f9413a6301e49ab9050cdbfe5d194b3584bca024",
-      "wall_seconds": 3.962,
+      "wall_seconds": 3.484,
       "status": "passed"
     },
     {
@@ -9631,7 +9631,7 @@
       ],
       "log": "build/qemu-benchmark/o3_lto-our-correctness-build.log",
       "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "wall_seconds": 0.909,
+      "wall_seconds": 0.888,
       "status": "passed"
     },
     {
@@ -9648,7 +9648,7 @@
       ],
       "log": "build/qemu-benchmark/o3_lto-our-correctness.log",
       "log_sha256": "9cfba4b4443a1a3462ec013d7ea376d1101414715e09968c9b5347f608a1d891",
-      "wall_seconds": 0.079,
+      "wall_seconds": 0.077,
       "status": "passed"
     },
     {
@@ -9706,7 +9706,7 @@
       ],
       "log": "build/qemu-benchmark/o3_lto-our-build.log",
       "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "wall_seconds": 0.941,
+      "wall_seconds": 0.956,
       "status": "passed"
     },
     {
@@ -9735,7 +9735,7 @@
       ],
       "log": "build/qemu-benchmark/o3_lto-our-counts.log",
       "log_sha256": "b2c7cb240940e9485f1794989a7668707f17f02e18c62f477799e43576549b3e",
-      "wall_seconds": 4.04,
+      "wall_seconds": 3.479,
       "status": "passed"
     },
     {
@@ -9758,8 +9758,8 @@
         "SAN="
       ],
       "log": "build/qemu-benchmark/field-counter-build.log",
-      "log_sha256": "89d591ebcbece43460e43ca17973101412b89031e1b2a8294661173e90b00300",
-      "wall_seconds": 0.261,
+      "log_sha256": "3dc62abf6742e1cb317b2cf2cda91893f91a0d299d9627bda13d1a9d5cedbfb0",
+      "wall_seconds": 0.196,
       "status": "passed"
     },
     {

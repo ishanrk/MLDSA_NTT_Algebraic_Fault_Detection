@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-LABELS = {'baseline': 'Baseline', 'prior': 'Prior method',
+LABELS = {'baseline': 'Baseline', 'prior': 'Abdelmonem et al.',
           'our': 'Current method'}
 
 
@@ -32,7 +32,7 @@ def tables(data):
     return [
         ('Forward NTT operations', ['Variant', 'Checks', 'Stored coefficients',
          'Total field mul', 'Total field add', 'Extra field mul', 'Extra field add'], costs),
-        ('Matched ARM emulator images (bytes)', ['Variant', 'Constant tables',
+        ('ARM emulator image sizes (bytes)', ['Variant', 'Constant tables',
          'ARM text', 'ARM data', 'ARM BSS'], sizes),
         ('Implementation evidence', ['Variant', 'Exact certificate', 'Pairs',
          'Certificate failures', 'CBMC jobs passed', 'QEMU correctness'], evidence),
@@ -71,7 +71,7 @@ def render(data, markdown, tex):
         'table entries; implicit unity weights require no storage. Both defenses have two '
         'scalar equality checks, implemented as four checksum accumulations.', '',
         f'The current checker uses {dm} more field multiplications and '
-        f'{db} more table bytes than the prior checker. Its improvement is the sufficient '
+        f'{db} more table bytes than the Abdelmonem et al. checker. Its improvement is the sufficient '
         'construction field bound; these results make no speedup claim.', '',
         f"ARM compiler: `{data['compiler']}`. Flags: `{data['arm_cflags']}`. "
         f"Linker: `{data['linker']}`. Text includes readonly tables and vectors. "
