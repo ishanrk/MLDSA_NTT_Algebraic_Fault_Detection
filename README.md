@@ -78,7 +78,7 @@ The variables `u_0,...,u_{n-1}` are checksum weights at intermediate boundary `k
 3. Collect those values and choose the smallest value absent from the set.
 4. Derive the final input and output rows. If needed, add a multiple of the first row to make every second response nonzero; pair determinants are preserved.
 
-The generator uses sparse wire propagation, groups constraints by their last coordinate and updates partial response values as coordinates are chosen. The field search takes at most the number of forbidden values plus one membership checks. It does not enumerate all `q` values or use random search. Boundary `k` is used during coefficient generation; execution still has two input/output equalities around one NTT. [Algorithm and complexity](docs/our_checker.md).
+The generator uses sparse wire propagation, groups constraints by their last coordinate and updates partial response values as coordinates are chosen. The field search takes at most the number of forbidden values plus one membership checks. It does not enumerate all `q` values or use random search. Boundary `k` is used during coefficient generation; execution still has two input/output equalities around one NTT. Algorithm and complexity.
 
 ### Construction bound
 
@@ -126,7 +126,7 @@ make qemu-benchmark
 python3 tools/plot_benchmarks.py
 ```
 
-The benchmark needs Python with Matplotlib, ARM GCC with Newlib and QEMU with TCG plugin support. [Reproduction commands](docs/reproduction.md) include generators, exact certificates, compiler and sanitizer runs, ARM builds and tool overrides. [Thesis tables](docs/thesis_results.md) are generated from raw repository data.
+The benchmark needs Python with Matplotlib, ARM GCC with Newlib and QEMU with TCG plugin support. Reproduction commands include generators, exact certificates, compiler and sanitizer runs, ARM builds and tool overrides. [Thesis tables](docs/thesis_results.md) are generated from raw repository data.
 
 CBMC with Z3 will check the C arithmetic, butterflies,  memory bounds, and checksum accumulation under documented preconditions. For now, the test vectors are passing (https://csrc.nist.gov/projects/post-quantum-cryptography/pqc-archive).
 
@@ -166,4 +166,4 @@ Each protected NTT adds `640` field multiplications for Abdelmonem et al. and `7
 
 Interesting note: while optimizing ARM instruction count, I found an opportunity to combine two signed `16` bit products accumulated into a `64` bit value. My ongoing [GCC patch](docs/compiler/gcc-smlald.patch) replaces two `SMLALBB` instructions and two high half extractions with one `SMLALD`. In the Cortex M4 example, the arithmetic sequence decreases from `4` instructions to `1`, and the complete function from `7` to `4`.
 
-This ML-DSA implementation uses `32` bit field coefficients. The benchmark toolchain does not include the patch, so the reported counts contain no improvement from it. [Patch tests](docs/compiler/gcc_smlald.md).
+This ML-DSA implementation uses `32` bit field coefficients. The benchmark toolchain does not include the patch, so the reported counts contain no improvement from it. Patch tests.

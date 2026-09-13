@@ -1,14 +1,11 @@
-# Thesis results from repository evidence
-
-Generated from [bench/thesis.json](../bench/thesis.json) by `python3 tools/render_thesis.py`. Numbers are read from the raw dataset.
-
-Available regression: **passed**, 97 stages, 177.555 seconds wall time. Physical status: **pending**. Regression and proof wall times are host reproduction times, not performance measurements.
-
-Run started `2026-10-03T15:51:59.190837+00:00`; source base `861fe053098145543b924907cf0f1ef9e03bb788`. Source digests identify the tested tree, including uncommitted artifact tooling at collection.
-
-The physical milestone is incomplete while cycles, stack and physical correctness tests are pending. Linked flash is ELF text + data; static RAM is ELF data + BSS. Reference builds do not identify the attached board. Baseline physical overhead also stays pending until measured.
-
-## Baseline: physical cycle statistics
+| Operation | Samples | Min | Median | Max | P95 |
+| --- | --- | --- | --- | --- | --- |
+| ntt_forward | pending | pending | pending | pending | pending |
+| ntt_inverse | pending | pending | pending | pending | pending |
+| pointwise | pending | pending | pending | pending | pending |
+| keygen | pending | pending | pending | pending | pending |
+| sign | pending | pending | pending | pending | pending |
+| verify | pending | pending | pending | pending | pending |
 
 | Operation | Samples | Min | Median | Max | P95 |
 | --- | --- | --- | --- | --- | --- |
@@ -19,8 +16,6 @@ The physical milestone is incomplete while cycles, stack and physical correctnes
 | sign | pending | pending | pending | pending | pending |
 | verify | pending | pending | pending | pending | pending |
 
-## Abdelmonem et al.: physical cycle statistics
-
 | Operation | Samples | Min | Median | Max | P95 |
 | --- | --- | --- | --- | --- | --- |
 | ntt_forward | pending | pending | pending | pending | pending |
@@ -29,19 +24,6 @@ The physical milestone is incomplete while cycles, stack and physical correctnes
 | keygen | pending | pending | pending | pending | pending |
 | sign | pending | pending | pending | pending | pending |
 | verify | pending | pending | pending | pending | pending |
-
-## Current method: physical cycle statistics
-
-| Operation | Samples | Min | Median | Max | P95 |
-| --- | --- | --- | --- | --- | --- |
-| ntt_forward | pending | pending | pending | pending | pending |
-| ntt_inverse | pending | pending | pending | pending | pending |
-| pointwise | pending | pending | pending | pending | pending |
-| keygen | pending | pending | pending | pending | pending |
-| sign | pending | pending | pending | pending | pending |
-| verify | pending | pending | pending | pending | pending |
-
-## Physical cycle overhead relative to baseline median
 
 | Variant | Operation | Overhead (percent) |
 | --- | --- | --- |
@@ -64,8 +46,6 @@ The physical milestone is incomplete while cycles, stack and physical correctnes
 | Current method | sign | pending |
 | Current method | verify | pending |
 
-## Reference target linked memory and physical stack high water (bytes)
-
 | Target | Variant | Linked flash | Static RAM | Keygen stack | Sign stack | Verify stack |
 | --- | --- | --- | --- | --- | --- | --- |
 | `NUCLEO-F411RE` | Baseline | 12812 | 17096 | pending | pending | pending |
@@ -75,15 +55,11 @@ The physical milestone is incomplete while cycles, stack and physical correctnes
 | `NUCLEO-F446RE` | Abdelmonem et al. | 15644 | 17096 | pending | pending | pending |
 | `NUCLEO-F446RE` | Current method | 16136 | 17096 | pending | pending | pending |
 
-## Modular function calls per forward transform
-
 | Variant | Total mul | Total add | Total sub | Extra mul | Extra add |
 | --- | --- | --- | --- | --- | --- |
 | Baseline | 1024 | 1024 | 1024 | 0 | 0 |
 | Abdelmonem et al. | 1664 | 2048 | 1024 | 640 | 1024 |
 | Current method | 1792 | 2048 | 1024 | 768 | 1024 |
-
-## Scalar checks and generated coefficient storage
 
 | Variant | Checks | Stored coefficients | Constant bytes |
 | --- | --- | --- | --- |
@@ -91,28 +67,20 @@ The physical milestone is incomplete while cycles, stack and physical correctnes
 | Abdelmonem et al. | 2 | 640 | 2560 |
 | Current method | 2 | 768 | 3072 |
 
-## Exact modeled network and certificate parameters
-
 | Variant | n | q | h | Locations | Pairs | k | K | D |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Abdelmonem et al. | 256 | 8380417 | 8 | 2304 | 2653056 | N/A | N/A | N/A |
 | Current method | 256 | 8380417 | 8 | 2304 | 2653056 | 4 | 61 | 138653 |
-
-## Exact certificate failure counts
 
 | Variant | Zero first | Zero second | Duplicate ratios | Zero determinants |
 | --- | --- | --- | --- | --- |
 | Abdelmonem et al. | 0 | 0 | not separately recorded | 0 |
 | Current method | 0 | 0 | 0 | 0 |
 
-## Exact certificate row and propagation identities
-
 | Variant | Row identities | Unit propagation | Intermediate identity |
 | --- | --- | --- | --- |
 | Abdelmonem et al. | direct evaluation and network pullback passed | all unit wires matched the production network | N/A |
 | Current method | direct evaluation and network pullback passed | all unit wires matched the production network | every intermediate vector propagated to its unit wire output |
-
-## Focused CBMC properties: arithmetic
 
 | Property | Unwind | Unwinding checks | Result | Seconds |
 | --- | --- | --- | --- | --- |
@@ -136,8 +104,6 @@ The physical milestone is incomplete while cycles, stack and physical correctnes
 | inverse_memory | 257 | enabled; passed | passed | 22.354 |
 | pointwise_memory | 257 | enabled; passed | passed | 1.221 |
 
-## Focused CBMC properties: checkers
-
 | Property | Unwind | Unwinding checks | Result | Seconds |
 | --- | --- | --- | --- | --- |
 | prior_base | 1 | enabled; passed | passed | 0.032 |
@@ -151,14 +117,10 @@ The physical milestone is incomplete while cycles, stack and physical correctnes
 | prior_memory | 257 | enabled; passed | passed | 10.807 |
 | our_memory | 257 | enabled; passed | passed | 11.754 |
 
-## Focused portable C verification summary
-
 | Group | CBMC | Solver | Jobs | Seconds | Result |
 | --- | --- | --- | --- | --- | --- |
 | arithmetic | 6.10.0 (cbmc-6.10.0) | Z3 version 4.8.12 - 64 bit | 19 | 68.158 | passed |
 | checkers | 6.10.0 (cbmc-6.10.0) | Z3 version 4.8.12 - 64 bit | 10 | 23.461 | passed |
-
-## Final comprehensive host regression
 
 | Mode | Polynomial seed | Random pairs | Baseline negatives | Prior negatives | Current negatives | Result |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -166,8 +128,6 @@ The physical milestone is incomplete while cycles, stack and physical correctnes
 | clang | 132164 | 10000 | 479 | 479 | 479 | passed |
 | asan | 132164 | 10000 | 479 | 479 | 479 | passed |
 | ubsan | 132164 | 10000 | 479 | 479 | 479 | passed |
-
-## All supported official vectors per applicable variant and build mode
 
 | Dataset / interface | Cases |
 | --- | --- |
@@ -178,21 +138,3 @@ The physical milestone is incomplete while cycles, stack and physical correctnes
 | ML-DSA-sigGen-FIPS204/preHash | 30 |
 | ML-DSA-sigVer-FIPS204/pure | 15 |
 | ML-DSA-sigVer-FIPS204/preHash | 15 |
-
-## Certificate coefficient digests
-
-Abdelmonem et al.: `9281c37271baa76755a5873797b948142bc3ae8c45865df69326589a892a58df`.
-
-Current method: `dc167f43461e2c9c079bb79ded94a5b6a3af39062ea1de36b64f71ce01f9b2ec`.
-
-The prior generator verifies distinct normalized ratios internally and enumerates every determinant, but does not store a separate duplicate ratio counter; the table preserves that distinction. Both certificates have zero recorded failures.
-
-These are exact checks of concrete finite field coefficient conditions. They do not formally verify the generator or prove the general construction theorem. CBMC verifies portable C components under the [documented contracts and assumptions](reproduction.md#focused-comparison-and-formal-checks), with inspected composition rather than an automatically checked global ML DSA or NTT refinement.
-
-The NIST scope is ML DSA 44 external pure and prehash interfaces; byte-aligned SHAKE; other parameter sets, internal interfaces and bit-oriented SHAKE are unsupported. Keygen, pure signing, verification and prehash vectors run for all three variants in each of the four host modes. SHAKE, arithmetic and sampling use shared baseline code; protected compact tests check checksum behavior. The existing test of 10000 pairs executes once per compiler/sanitizer mode with the recorded seed. The existing pqcrypto differential suite of 200 cases executes once per variant with GCC.
-
-Threat model: at most two additive deviations at modeled forward NTT boundary wires over the finite field, with trusted checker arithmetic, weights and control flow. Physical Cortex M4 cycle/stack observations, when collected, establish cost on those inputs; they do not establish resistance against every physical fault mechanism.
-
-Individual LaTeX fragments are in [bench/thesis](../bench/thesis); `bench/thesis/tables.tex` includes every table. Wrap or resize wide tables in the thesis layout. No additional LaTeX package is required by the generated fragments.
-
-Manual thesis work: integrate the theorem proof and its assumptions; position the result against related work; explain the cost/construction tradeoff; add board observations and physical measurement discussion after capture; write the conclusions and institutional formatting.

@@ -1,15 +1,3 @@
-# QEMU instruction measurements
-
-Generated from [raw observations](../bench/qemu_benchmark.json). Unit: **instruction count**, after empty marker subtraction. Physical cycles are unmeasured. The plots show medians; this table retains the complete range and P95.
-
-Compiler: `arm-none-eabi-gcc (15:10.3-2021.07-4) 10.3.1 20210621 (release)`. Emulator: `QEMU emulator version 6.2.0 (Debian 1:6.2+dfsg-2ubuntu6.31)`. Target: `mps2-an386`.
-
-The 100 iteration assembly control adds exactly 301 instructions in every image. Complete key/signature transcripts are identical for all methods and both optimization settings.
-
-## o2
-
-Flags: `-mcpu=cortex-m4 -mthumb -mfloat-abi=soft -std=c11 -ffreestanding -fno-builtin -fdata-sections -ffunction-sections -Wall -Wextra -Wpedantic -Wconversion -Wshadow -O2`.
-
 | Variant | Operation | Samples | Min | Median | Max | P95 | Overhead vs baseline (%) |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Baseline | `ntt_forward` | 101 | 96999 | 96999 | 96999 | 96999 | 0.0 |
@@ -30,10 +18,6 @@ Flags: `-mcpu=cortex-m4 -mthumb -mfloat-abi=soft -std=c11 -ffreestanding -fno-bu
 | Current method | `keygen` | 101 | 8147366 | 8320454 | 8550753 | 8436029 | 2.9331 |
 | Current method | `sign` | 101 | 12829124 | 26910914 | 87938341 | 69159716 | 7.5874 |
 | Current method | `verify` | 101 | 9412274 | 9412274 | 9412274 | 9412274 | 6.0186 |
-
-## o3_lto
-
-Flags: `-mcpu=cortex-m4 -mthumb -mfloat-abi=soft -std=c11 -ffreestanding -fno-builtin -fdata-sections -ffunction-sections -Wall -Wextra -Wpedantic -Wconversion -Wshadow -O3 -flto`.
 
 | Variant | Operation | Samples | Min | Median | Max | P95 | Overhead vs baseline (%) |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
