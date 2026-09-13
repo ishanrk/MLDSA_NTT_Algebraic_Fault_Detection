@@ -7,8 +7,15 @@ I independently implemented ML-DSA-44 from [NIST FIPS 204, Module Lattice Based 
 The code in this repository builds ML-DSA and the fault detections schemes in portable C and for ARM Cortex-M4. The recorded benchmarks count ARM instructions on QEMU's `mps2-an386` Cortex M4 model for both schemes to find the overhead for each. Reference firmware targets are `NUCLEO-F411RE` with `STM32F411RE` and `NUCLEO-F446RE` with `STM32F446RE`. Baseline, Abdelmonem et al. and the current method use the same cryptographic code, with different forward NTT wrappers. 
 
 Validation includes official NIST vectors, malformed input tests, and CBMC proofs (which is ongoing). Test vectors can be found here (https://csrc.nist.gov/projects/post-quantum-cryptography/pqc-archive)
-<img width="585" height="709" alt="image" src="https://github.com/user-attachments/assets/63c9ca3b-aac5-48e2-85ec-355fa1660bfc" />
-**Chip on which I am benchmakring**
+
+<p align="center">
+  <img width="585" height="709" alt="image" src="https://github.com/user-attachments/assets/63c9ca3b-aac5-48e2-85ec-355fa1660bfc" />
+  <br>
+  <em>Chip on which I am benchmarking</em>
+</p>
+
+
+
 **NOTE**: The scheme essentially involves using Vandermode's identity to reduce the Abdelmonem et al brute force-ish construction to one that finds checksum vectors more efficiently. **This is still being written up for IACR publication, so do not use without prior permission.**
 
 ## NTT fault analysis
