@@ -19,6 +19,7 @@ void mldsa_ntt_forward(mldsa_ntt *r, const mldsa_poly *a)
     unsigned l = 0;
     mldsa_ntt_test_fault(l, r->c);
 #endif
+    // one twiddle per block, in the production wire order
     for (unsigned len = MLDSA_N / 2; len > 0; len /= 2) {
         for (unsigned off = 0; off < MLDSA_N; off += 2 * len) {
             uint32_t z = zetas[++k];

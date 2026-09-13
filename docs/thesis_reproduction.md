@@ -1,6 +1,6 @@
 # Thesis tables and regression
 
-The [thesis dataset](../bench/thesis.json) is a frozen comprehensive regression record. It includes official vectors, arithmetic/NTT/negative tests, both exact certificates, formal jobs, compiler/sanitizer results and ARM/QEMU correctness. Physical correctness, DWT cycles and total stack observations remain unmeasured. The newer instruction-count comparison is recorded separately in [qemu_benchmark.json](../bench/qemu_benchmark.json).
+The [thesis dataset](../bench/thesis.json) is a frozen comprehensive regression record. It includes official vectors, arithmetic/NTT/negative tests, both exact certificates, formal jobs, compiler/sanitizer results and ARM/QEMU correctness. Physical correctness, DWT cycles and total stack observations remain unmeasured. The newer instruction count comparison is recorded separately in [qemu_benchmark.json](../bench/qemu_benchmark.json).
 
 ## Run the comprehensive regression
 
@@ -10,13 +10,13 @@ Configure the tools in [reproduction.md](reproduction.md), including CBMC 6, Z3 
 make thesis
 ```
 
-Each GCC, Clang, ASan and UBSan configuration runs the full C arithmetic/NTT, rounding, encoding and negative suites; three checker correctness suites; shared Python models/SHAKE; and all supported official ML DSA 44 keygen, pure/prehash signing and verification vectors for all three variants. The original 10000-pair C polynomial test runs once per configuration. The existing 200-case pqcrypto differential suite runs once per GCC variant.
+Each GCC, Clang, ASan and UBSan configuration runs the full C arithmetic/NTT, rounding, encoding and negative suites; three checker correctness suites; shared Python models/SHAKE; and all supported official ML DSA 44 keygen, pure/prehash signing and verification vectors for all three variants. The original 10000 pair C polynomial test runs once per configuration. The existing 200 case pqcrypto differential suite runs once per GCC variant.
 
 ASan instruments the standalone C tests and the libraries loaded by Python. Python processes preload the sanitizer runtime and disable leak reporting for interpreter allocations; standalone C processes retain leak detection. UBSan stops on its first finding. Python assertions remain enabled.
 
 The run also checks generated constants, regenerates both exact certificates, executes focused CBMC jobs, rebuilds matched ARM images, runs QEMU correctness suites and validates the physical benchmark tooling with explicit synthetic controls. Those controls supply no physical observations. Failed stages stop publication; logs and partial progress are in `build/thesis`.
 
-Records pin the input data, tool versions, commands and tested source digests. Historical snapshots retain filenames from their original commits. A reporting-only correction to the original dataset has a separately recorded focused validation; it changed no production or benchmark C.
+Records pin the input data, tool versions, commands and tested source digests. Historical snapshots retain filenames from their original commits. A reporting only correction to the original dataset has a separately recorded focused validation; it changed no production or benchmark C.
 
 ## Use the tables
 
@@ -36,10 +36,10 @@ First identify the actual board, build a matching profile, and acquire a complet
 python3 tools/final_regression.py --physical-manifest /absolute/path/to/run/run.json
 ```
 
-The report checks frozen sources/ELFs, target identity, exact correctness output, sample completeness, transcripts and timer-wrap bounds. This command validates existing captures; acquisition is the separate board action. Captures with differing frozen sources cannot be relabeled as current measurements.
+The report checks frozen sources/ELFs, target identity, exact correctness output, sample completeness, transcripts and timer wrap bounds. This command validates existing captures; acquisition is the separate board action. Captures with differing frozen sources cannot be relabeled as current measurements.
 
 ## Writing and history
 
-[Implementation methodology](implementation_methodology.md) describes the C implementation and experiments. [Threat model](threat_model.md) states the additive wire guarantee. The theorem proof, related-work argument, cost/construction interpretation, physical-board discussion and thesis conclusions still belong in the manuscript.
+[Implementation methodology](implementation_methodology.md) describes the C implementation and experiments. [Threat model](threat_model.md) states the additive wire guarantee. The theorem proof, related work argument, cost/construction interpretation, physical board discussion and thesis conclusions still belong in the manuscript.
 
 Obtain the complete repository history with `git log --format=fuller --stat`. Compiler and implementation records are research evidence; neither passing vectors nor measured physical cost establishes general physical fault resistance.

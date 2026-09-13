@@ -16,7 +16,7 @@ python3 tools/gen_prior_checker.py --check
 python3 tools/gen_our_checker.py --check
 ```
 
-The correctness suites exercise selected NTT vectors, inverse round trips, deterministic scheme operations, malformed-message/signature rejection and modeled single/pair faults. `--check` reconstructs coefficients and every pair determinant and requires byte identity with the C tables and certificate JSON. The full official-vector targets are `make keygen sign verify prehash shake`; `make vectors` fetches pinned NIST data into `build/nist`.
+The correctness suites exercise selected NTT vectors, inverse round trips, deterministic scheme operations, malformed message/signature rejection and modeled single/pair faults. `--check` reconstructs coefficients and every pair determinant and requires byte identity with the C tables and certificate JSON. The full official vector targets are `make keygen sign verify prehash shake`; `make vectors` fetches pinned NIST data into `build/nist`.
 
 ## QEMU measurements and graphs
 
@@ -25,7 +25,7 @@ make qemu-benchmark
 python3 tools/plot_benchmarks.py
 ```
 
-The benchmark builds baseline, prior and our variants at both `-O2` and `-O3 -flto`, runs the correctness images, and records 101 observations of each operation with calibrated guest-instruction counts. It checks the fixed assembly control and matching complete key/signature transcripts. [Method](qemu_benchmark.md), [statistics](qemu_results.md), [raw observations](../bench/qemu_benchmark.json). The second command redraws PNG/SVG graphs and updates README tables from the saved data.
+The benchmark builds baseline, prior and current variants at both `-O2` and `-O3 -flto`, runs the correctness images, and records 101 observations of each operation with calibrated guest instruction counts. It checks the fixed assembly control and matching complete key/signature transcripts. [Method](qemu_benchmark.md), [statistics](qemu_results.md), [raw observations](../bench/qemu_benchmark.json). The second command redraws PNG/SVG graphs and updates README tables from the saved data.
 
 ## Focused comparison and formal checks
 
@@ -35,9 +35,9 @@ python3 verify/run.py --group arithmetic
 python3 verify/run.py --group checkers
 ```
 
-`make comparison` runs the focused GCC/Clang/sanitizer suites, both certificates, formal groups, field-operation counters, six matched ARM images and three QEMU correctness runs. It generates [Markdown](comparison.md), [JSON](../bench/comparison.json) and [LaTeX](../bench/comparison.tex). A failed command stops publication. Use `python3 tools/render_comparison.py bench/comparison.json` to redraw tables without rerunning experiments.
+`make comparison` runs the focused GCC/Clang/sanitizer suites, both certificates, formal groups, field operation counters, six matched ARM images and three QEMU correctness runs. It generates [Markdown](comparison.md), [JSON](../bench/comparison.json) and [LaTeX](../bench/comparison.tex). A failed command stops publication. Use `python3 tools/render_comparison.py bench/comparison.json` to redraw tables without rerunning experiments.
 
-Set `CBMC` if the default executable is not version 6. The 32-bit proof frontend may need the headers described in [verification.md](verification.md#reproduction). Every proof enables unwinding assertions and has a 45-second job limit. The exact scope and preconditions are documented there.
+Set `CBMC` if the default executable is not version 6. The 32 bit proof frontend may need the headers described in [verification.md](verification.md#reproduction). Every proof enables unwinding assertions and has a 45 second job limit. The exact scope and preconditions are documented there.
 
 ## Tool overrides
 
@@ -53,7 +53,7 @@ export QEMU="$PWD/build/toolchain/root/usr/bin/qemu-system-arm"
 export QEMU_LIBDIR="$PWD/build/toolchain/root/usr/lib/x86_64-linux-gnu"
 ```
 
-Installed toolchains normally need none of these overrides. Select CBMC with `export CBMC=/path/to/cbmc`; the version-6 executable must match the proof configuration. Dependencies under `build` are not tracked repository files. Avoid `make clean` if they must be retained.
+Installed toolchains normally need none of these overrides. Select CBMC with `export CBMC=/path/to/cbmc`; the version 6 executable must match the proof configuration. Dependencies under `build` are not tracked repository files. Avoid `make clean` if they must be retained.
 
 ## Physical target and thesis tables
 

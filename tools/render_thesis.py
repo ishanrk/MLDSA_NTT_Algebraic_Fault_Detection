@@ -127,7 +127,7 @@ def tables(data):
                           [record['negative_cases'][variant] for variant in LABELS] + ['passed'])
     groups.append(('regression', 'Final comprehensive host regression',
                    ['Mode', 'Polynomial seed', 'Random pairs', 'Baseline negatives',
-                    'Prior negatives', 'Our negatives', 'Result'], regression))
+                    'Prior negatives', 'Current negatives', 'Result'], regression))
     groups.append(('official_vectors', 'All supported official vectors per applicable variant and build mode',
                    ['Dataset / interface', 'Cases'], [[key, value] for key, value in
                      data['nist']['selected_cases'].items() if not key.endswith(('/valid', '/invalid'))]))
@@ -154,7 +154,8 @@ def render(data, folder, markdown):
     for slug, title, headers, rows in groups:
         md += ['## ' + title, '', '| ' + ' | '.join(headers) + ' |',
                '| ' + ' | '.join(['---'] * len(headers)) + ' |']
-        md += ['| ' + ' | '.join(map(str, row)) + ' |' for row in rows]
+        md += ['| ' + ' | '.join('`' + str(value) + '`' if str(value).startswith('NUCLEO-')
+                               else str(value) for value in row) + ' |' for row in rows]
         md.append('')
         tex = ['% ' + title, '% Source: bench/thesis.json; physical status: ' + data['physical']['status'],
                r'\begin{tabular}{' + 'l' * len(headers) + '}', r'\hline',
@@ -171,17 +172,17 @@ def render(data, folder, markdown):
     for variant, cert in data['certificates'].items():
         md += [f"{LABELS[variant]}: `{cert['coefficients_sha256']}`.", '']
     md += ['The prior generator verifies distinct normalized ratios internally and enumerates every '
-           'determinant, but does not store a separate duplicate-ratio counter; the table preserves that '
+           'determinant, but does not store a separate duplicate ratio counter; the table preserves that '
            'distinction. Both certificates have zero recorded failures.', '',
-           'These are exact checks of concrete finite-field coefficient conditions. They do not formally '
+           'These are exact checks of concrete finite field coefficient conditions. They do not formally '
            'verify the generator or prove the general construction theorem. CBMC verifies portable C '
            'components under the [documented contracts and assumptions](verification.md), with inspected '
            'composition rather than an automatically checked global ML DSA or NTT refinement.', '',
            'The NIST scope is ' + data['nist']['scope'] + '. Keygen, pure signing, verification and prehash '
            'vectors run for all three variants in each of the four host modes. SHAKE, arithmetic and '
            'sampling use shared baseline code; protected compact tests check checksum behavior. '
-           'The existing 10000-pair test executes once per compiler/sanitizer mode with the recorded seed. '
-           'The existing 200-case pqcrypto differential suite executes once per variant with GCC.', '',
+           'The existing test of 10000 pairs executes once per compiler/sanitizer mode with the recorded seed. '
+           'The existing pqcrypto differential suite of 200 cases executes once per variant with GCC.', '',
            'Threat model: at most two additive deviations at modeled forward NTT boundary wires over '
            'the finite field, with trusted checker arithmetic, weights and control flow. Physical Cortex M4 '
            'cycle/stack observations, when collected, establish cost on those inputs; they do not establish '
@@ -191,7 +192,7 @@ def render(data, folder, markdown):
            'No additional LaTeX package is required by the generated fragments.', '',
            'Manual thesis work: integrate the theorem proof and its assumptions; position the result '
            'against related work; explain the cost/construction tradeoff; add board observations and '
-           'physical-method discussion after capture; write the conclusions and institutional formatting.', '']
+           'physical measurement discussion after capture; write the conclusions and institutional formatting.', '']
     markdown.parent.mkdir(parents=True, exist_ok=True)
     markdown.write_text('\n'.join(md))
 

@@ -6,6 +6,17 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'build/verify'
 
 
+def without_comments(text):
+    tokens = r'"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'|//[^\n]*|/\*.*?\*/'
+    # leave quoted strings alone when dropping comments
+    def replace(match):
+        token = match.group()
+        if token.startswith(('//', '/*')):
+            return ''.join('\n' if char == '\n' else ' ' for char in token)
+        return token
+    return re.sub(tokens, replace, text, flags=re.S)
+
+
 def write(name, text):
     temporary = OUT / f'{name}.{os.getpid()}.tmp'
     temporary.write_text(text)
@@ -24,7 +35,7 @@ def block(text, start):
 
 def generate():
     OUT.mkdir(parents=True, exist_ok=True)
-    text = (ROOT / 'src/ntt.c').read_text()
+    text = without_comments((ROOT / 'src/ntt.c').read_text())
     guard = 'for (unsigned j = off; j < off + len; j++)'
     for name in ('forward', 'inverse'):
         body, _ = block(text, text.index(f'void mldsa_ntt_{name}('))
@@ -38,7 +49,7 @@ def generate():
         _, end = block(body, start)
         write(f'{name}_layer.inc', body[start:end] + '\n')
     for name in ('prior', 'our'):
-        text = (ROOT / f'src/{name}.c').read_text()
+        text = without_comments((ROOT / f'src/{name}.c').read_text())
         body, _ = block(text, text.index(f'int mldsa_ntt_forward_{name}('))
         guard = 'for (unsigned i = 0; i < MLDSA_N; i++)'
         assert body.count(guard) == 2

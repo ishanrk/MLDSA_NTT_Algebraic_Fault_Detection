@@ -116,7 +116,7 @@ def main():
     tex = ['% Offline compiled reference targets. Physical measurements pending.']
     escape = lambda value: re.sub(r'([&%$#_{}])', r'\\\1', str(value))
     for board, data in results['profiles'].items():
-        md += ['## ' + board, '', 'Configured nominal HSI clock and soft ABI are the same across variants.', '']
+        md += ['## `' + board + '`', '', 'Configured nominal HSI clock and soft ABI are the same across variants.', '']
         for title, headers, rows in tables(data):
             md += ['### ' + title, '', '| ' + ' | '.join(headers) + ' |',
                    '| ' + ' | '.join(['---'] * len(headers)) + ' |']
@@ -134,7 +134,7 @@ def main():
                'and callee frames over every planned input.', '']
     md += ['The actual ML DSA implementation ran under GCC, Clang, ASan and UBSan using explicitly '
            'synthetic timer/stack controls. The complete key/signature transcripts matched all variants. '
-           'QEMU validated the ARM watermark helpers and the unavailable-counter path. '
+           'QEMU validated the ARM watermark helpers and the unavailable counter path. '
            'These checks validate software paths and supply no physical performance observations.', '']
     (ROOT / 'docs/cortexm4_offline.md').write_text('\n'.join(md))
     (ROOT / 'bench/offline_cortexm4.tex').write_text('\n'.join(tex) + '\n')

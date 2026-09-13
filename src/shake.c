@@ -9,6 +9,7 @@ static uint64_t rot(uint64_t x, unsigned n)
     return n == 0U ? x : (x << n) | (x >> (64U - n));
 }
 
+// keccak perm here; citation: https://csrc.nist.gov/pubs/fips/202/final
 static void permute(uint64_t a[25])
 {
     uint64_t b[25], c[5], d[5];

@@ -6,14 +6,17 @@ int mldsa_ntt_forward_our(mldsa_ntt *r, const mldsa_poly *a)
 {
     uint32_t x = 0, y = 0, u = 0, v = 0;
 
+    // get both expected sums before the ntt
     for (unsigned i = 0; i < MLDSA_N; i++) {
         x = mldsa_add(x, a->c[i]);
         y = mldsa_add(y, mldsa_mul(our_beta[i], a->c[i]));
     }
     mldsa_ntt_forward(r, a);
+    // compare the same sums in output coordinates
     for (unsigned i = 0; i < MLDSA_N; i++) {
         u = mldsa_add(u, mldsa_mul(our_a[i], r->c[i]));
         v = mldsa_add(v, mldsa_mul(our_alpha[i], r->c[i]));
     }
+    // either mismatch means discard the output
     return ((x ^ u) | (y ^ v)) ? -1 : 0;
 }

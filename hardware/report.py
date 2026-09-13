@@ -202,12 +202,13 @@ def summarize(manifest_path, comparison_path=None, pending=False):
 def tables(data):
     cycles, memory, samples = [], [], []
     for variant, row in data['variants'].items():
-        values = [variant]
+        label = {'baseline': 'Baseline', 'prior': 'Prior method', 'our': 'Current method'}[variant]
+        values = [label]
         for op in ('ntt_forward', 'sign', 'verify', 'keygen'):
             values += ([row['cycles'][op]['median'], row['cycles'][op]['overhead_percent']]
                        if row['cycles'] else ['pending', 'pending'])
         cycles.append(values)
-        values = [variant, row['flash_bytes'], row['static_ram_bytes']]
+        values = [label, row['flash_bytes'], row['static_ram_bytes']]
         values += ([row['stack_bytes'][op] for op in ('keygen', 'sign', 'verify')]
                    if row['stack_bytes'] else ['pending'] * 3)
         values += [row['extra_field_calls'][key] for key in ('mul', 'add')]
@@ -216,7 +217,7 @@ def tables(data):
         if row['cycles']:
             for op in OPS:
                 stats = row['cycles'][op]
-                samples.append([variant, op] + [stats[key] for key in
+                samples.append([label, op] + [stats[key] for key in
                                ('samples', 'minimum', 'median', 'maximum', 'p95_nearest_rank')])
     groups = [('Cycle comparison', ['Variant', 'NTT median', 'NTT overhead %', 'Sign median',
                'Sign overhead %', 'Verify median', 'Verify overhead %', 'Keygen median', 'Keygen overhead %'], cycles),

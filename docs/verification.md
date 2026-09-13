@@ -2,7 +2,7 @@
 
 The proofs use CBMC 6.10.0 and Z3 4.8.12 (the QF_AUFBV backend) for portable C implementation properties. It uses a 32 bit little endian integer and pointer model with i386 preprocessing, whose fixed width types and `unsigned` widths match this crypto core's Cortex M4 C types. It does not verify ARM machine code, startup code, ABI behavior, SHAKE, or the full ML DSA standard. The production arithmetic and generated checksum constants are the subjects of the proofs.
 
-The proof harnesses are in [verify/](../verify). The [arithmetic record](../verify/results_arithmetic.json) and [checker record](../verify/results_checkers.json) contain full commands, results, per job wall times, unwind bounds, tool versions, and SHA256 digests of production sources, harnesses, and generated proof views. Raw solver logs are in ignored `build/verify` and are identified by digest in the records. Passing a proof refers to all input values admitted by its documented preconditions, rather than random samples.
+The proof harnesses are in [verify/](../verify). The [arithmetic record](../verify/results_arithmetic.json) and [checker record](../verify/results_checkers.json) contain full commands, results, per job wall times, unwind bounds, tool versions, and SHA256 digests of production sources, harnesses, and generated proof views. Raw solver logs are in ignored `build/verify` and are identified by digest in the records. Passing a proof refers to all input values admitted by its documented preconditions, rather than random samples. The source view extractor removes comments while preserving quoted strings before checking and extracting the production loops.
 
 ## Reproduction
 
@@ -15,7 +15,7 @@ CBMC=/path/to/cbmc python3 verify/run.py --group checkers
 
 The records identify CBMC 6.10.0 and Z3 4.8.12. Other versions require a new run. The runner rejects CBMC 5.
 
-On hosts without 32-bit libc development headers, install them or extract the preprocessing headers locally:
+On hosts without 32 bit libc development headers, install them or extract the preprocessing headers locally:
 
 ```sh
 mkdir -p build/verify/headers
@@ -106,7 +106,7 @@ v = sum(alpha[i]*r[i]) mod q
 accept exactly when x == u and y == v
 ```
 
-The prior output row uses `alpha[i]=1` at odd physical indices and its stored `prior_alpha[i/2]` at even indices. Our checker uses the full `our_alpha[i]` table. The specification uses the exact generated production rows whose identities are established in their certificates. An individual product is formed in 64 bits and reduced modulo `q`. The summation specification is a fold starting at zero: `S_next=(S+term) mod q`.
+The prior output row uses `alpha[i]=1` at odd physical indices and its stored `prior_alpha[i/2]` at even indices. The current checker uses the full `our_alpha[i]` table. The specification uses the exact generated production rows whose identities are established in their certificates. An individual product is formed in 64 bits and reduced modulo `q`. The summation specification is a fold starting at zero: `S_next=(S+term) mod q`.
 
 | Property and entry | Production region | Sources | Extra define | Unwind | Result |
 | --- | --- | --- | --- | ---: | --- |
@@ -116,9 +116,9 @@ The prior output row uses `alpha[i]=1` at odd physical indices and its stored `p
 | `decide` | Prior final return expression | Same | `-DPRIOR` | 1 | Passed |
 | `memory` | Entire `mldsa_ntt_forward_prior` | `verify/checker_memory.c src/prior.c` | `-DPRIOR` | 257 | Passed |
 | `base` | Accumulator initialization in `mldsa_ntt_forward_our` | `verify/checker_step.c` | None | 1 | Passed |
-| `input_step` | Our input checksum loop body | Same | None | 1 | Passed |
-| `output_step` | Our output checksum loop body | Same | None | 1 | Passed |
-| `decide` | Our final return expression | Same | None | 1 | Passed |
+| `input_step` | Current input checksum loop body | Same | None | 1 | Passed |
+| `output_step` | Current output checksum loop body | Same | None | 1 | Passed |
+| `decide` | Current final return expression | Same | None | 1 | Passed |
 | `memory` | Entire `mldsa_ntt_forward_our` | `verify/checker_memory.c src/our.c` | None | 257 | Passed |
 
 The initialization proofs use the actual extracted declaration. Step proofs allow every physical coefficient index and every canonical prefix accumulator. They verify the correct table weight and coefficient operands, then verify the actual production addition against the modular fold specification. Multiplication is replaced by an arbitrary canonical result of a call with those checked operands, using the separately proved multiplication contract. This verifies weighted and ordinary sums, the prior odd/even layout, all generated array accesses, canonical result bounds, and safe index/representation conversions. There is no additional Montgomery conversion.
@@ -131,7 +131,7 @@ The full wrapper safety proofs execute both complete checksum loops and their fi
 
 ## No fault acceptance and scope
 
-When the baseline produces the mathematical result `r=T*p`, the concrete certificate identities `b=T^T*a` and `beta=T^T*alpha`, with `b` all ones, give `x=u` and `y=v`. The verified accumulator folds and decision then give acceptance. The verified layer updates, their input copy, and the production layer schedule support this compositional use of the forward transform. Both checker variants preserve the baseline output under the stronger arbitrary-output wrapper proof.
+When the baseline produces the mathematical result `r=T*p`, the concrete certificate identities `b=T^T*a` and `beta=T^T*alpha`, with `b` all ones, give `x=u` and `y=v`. The verified accumulator folds and decision then give acceptance. The verified layer updates, their input copy, and the production layer schedule support this compositional use of the forward transform. Both checker variants preserve the baseline output under the stronger arbitrary output wrapper proof.
 
 The no fault acceptance result therefore combines CBMC implementation lemmas with the exact network/row certificate. There is no end to end CBMC job containing the complete numerical NTT and both complete numerical checksum computations. The layer schedule and the assembly of the component lemmas are inspected reasoning, rather than an automatically checked global refinement proof. An independently machine checked assembly of that global proof remains outside this result.
 
@@ -141,7 +141,7 @@ The general two fault determinant theorem and the greedy construction theorem ar
 
 The checker proof jobs passed under the recorded unwind bounds with no timeouts or failed unwinding assertions. Current counts and summed per job wall times are in the [checker record](../verify/results_checkers.json) and the [generated comparison](comparison.md). Reproduction updates the JSON evidence without requiring hand edits to timing statements.
 
-Two [negative controls](../verify/negative_controls.json) introduced deliberate mistakes only in temporary proof views: replacing our input beta weight with our output first weight, and loading a forward layer's low wire as its high input. Both produced the expected assertion counterexample and CBMC exit status 10. To reproduce a control, copy its named view into `build/verify/negative`, apply the recorded textual substitution, execute its saved command, and remove that temporary view. The original generated views and production files stay intact.
+Two [negative controls](../verify/negative_controls.json) introduced deliberate mistakes only in temporary proof views: replacing the current input beta weight with the current output first weight, and loading a forward layer's low wire as its high input. Both produced the expected assertion counterexample and CBMC exit status 10. To reproduce a control, copy its named view into `build/verify/negative`, apply the recorded textual substitution, execute its saved command, and remove that temporary view. The original generated views and production files stay intact.
 
 The corresponding correctness commands are
 
@@ -158,6 +158,6 @@ python3 tools/run_mps2.py --prior
 python3 tools/run_mps2.py --our
 ```
 
-GCC, Clang, ASan, UBSan and the three QEMU correctness suites passed in the recorded runs. Both exact certificates matched the checked-in coefficient data and had zero failures. The [comprehensive regression record](../bench/thesis.json) also embeds both formal groups; [generated tables](thesis_results.md) report every job and runtime.
+GCC, Clang, ASan, UBSan and the three QEMU correctness suites passed in the recorded runs. Both exact certificates matched the checked in coefficient data and had zero failures. The [comprehensive regression record](../bench/thesis.json) also embeds both formal groups; [generated tables](thesis_results.md) report every job and runtime.
 
 These records describe portable C component proofs with inspected composition. They do not add a global refinement proof or formal verification of the hardware drivers. Physical DWT/stack measurements remain unmeasured.

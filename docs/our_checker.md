@@ -1,6 +1,6 @@
 # Deterministic intermediate boundary checker
 
-Our construction uses boundary `k=4` of the existing forward NTT. The baseline and published checker keep their original transforms and constants. All rows here use physical production array indices and canonical field values modulo `q=8380417`.
+The current construction uses boundary `k=4` of the existing forward NTT. The baseline and published checker keep their original transforms and constants. All rows here use physical production array indices and canonical field values modulo `q=8380417`.
 
 ## Model and criterion
 
@@ -86,9 +86,9 @@ The compact suite compares ten protected outputs against baseline: zero, unit ve
 
 Forty five single injections cover slots 0, 127, and 255 at boundaries 0, 1, 4, 7, and 8 with magnitudes 1, 17, and `q-1`. Ten pair selections with those three first magnitudes cover nearby and distant wires in one layer, adjacent layers, boundaries 1 and 7, boundaries 4 and 7, and input/output pairs. Each second magnitude is derived independently to cancel the first checksum. The test verifies that this cancellation occurs, that the final output differs from baseline, and that the protected transform rejects it. These 75 selected injections check the C implementation; the exhaustive algebraic certificate supplies complete modeled pair coverage.
 
-The common entry point checks the NIST SHAKE case, deterministic key and signature digests, valid verification, modified message rejection, and modified signature rejection. Our variant additionally rejects a malformed signature with a hint count above 80, and checks that key generation, signing, and verification propagate an injected NTT failure. The official known-answer tests compare complete NIST keyGen and sigGen outputs and check one valid and one invalid sigVer case for all three variants.
+The common entry point checks the NIST SHAKE case, deterministic key and signature digests, valid verification, modified message rejection, and modified signature rejection. The current variant additionally rejects a malformed signature with a hint count above 80, and checks that key generation, signing, and verification propagate an injected NTT failure. The official known answer tests compare complete NIST keyGen and sigGen outputs and check one valid and one invalid sigVer case for all three variants.
 
-GCC 11.4.0, Clang 14.0.0, AddressSanitizer, and UndefinedBehaviorSanitizer passed the targeted suite without diagnostics. Baseline, prior, and our compact suites also passed QEMU 6.2.0 `mps2-an386`, built with ARM GCC 10.3.1. The existing prior checker source, constants, generator, certificate, and selected injections are unchanged.
+GCC 11.4.0, Clang 14.0.0, AddressSanitizer, and UndefinedBehaviorSanitizer passed the targeted suite without diagnostics. Baseline, prior, and current method suites also passed QEMU 6.2.0 `mps2-an386`, built with ARM GCC 10.3.1. The prior algorithm, constants, generator, certificate and selected injections are unchanged.
 
 Use the toolchain overrides in [reproduction.md](reproduction.md#tool-overrides) for extracted ARM tools.
 
@@ -99,8 +99,8 @@ make build/count_checkers arm-mps2-bench arm-mps2-prior-bench arm-mps2-our-bench
 python3 tools/measure_checkers.py
 ```
 
-The [comparison table](comparison.md) and [raw measurements](../bench/comparison.json) include all three variants. Per forward transform the prior checker adds 640 modular products and 1024 additions; our implementation adds 768 products and 1024 additions. There are no additional subtractions. Our three 256 term weighted rows account for the products and 3072 constant bytes. The four accumulated checksum rows account for the additions.
+The [comparison table](comparison.md) and [raw measurements](../bench/comparison.json) include all three variants. Per forward transform the prior checker adds 640 modular products and 1024 additions; the current implementation adds 768 products and 1024 additions. There are no additional subtractions. The three weighted rows of the current method account for the products and 3072 constant bytes. The four accumulated checksum rows account for the additions.
 
-Matched benchmark images have ARM text sizes 11248, 14080, and 14576 bytes for baseline, prior, and our checker. Readonly tables are included in text. All have zero `.data` and 14876 bytes BSS. Our checker adds 3328 linked text bytes over baseline, or 496 over prior. Test injection code is absent from these images. All three benchmark counter availability paths report `DWT UNAVAILABLE` under this QEMU target and emit no observations.
+Matched benchmark images have ARM text sizes 11248, 14080, and 14576 bytes for baseline, prior, and the current checker. Readonly tables are included in text. All have zero `.data` and 14876 bytes BSS. The current checker adds 3328 linked text bytes over baseline, or 496 over prior. Test injection code is absent from these images. All three benchmark counter availability paths report `DWT UNAVAILABLE` under this QEMU target and emit no observations.
 
-The [our checker QEMU record](../test/qemu-mps2-an386-our.json) contains compact correctness results with the toolchain and emulator versions. These are functional validation and emulator layout sizes. Real DWT cycles and measured stack remain pending; [physical-stage software](../hardware/README.md) supplies reference targets and linked size reporting. [Focused formal verification](verification.md) is available with its documented component scope.
+The [current checker QEMU record](../test/qemu-mps2-an386-our.json) contains compact correctness results with the toolchain and emulator versions. These are functional validation and emulator layout sizes. Real DWT cycles and measured stack remain pending; [physical stage software](../hardware/README.md) supplies reference targets and linked size reporting. [Focused formal verification](verification.md) is available with its documented component scope.

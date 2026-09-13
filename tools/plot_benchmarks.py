@@ -8,10 +8,11 @@ from pathlib import Path
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 
 ROOT = Path(__file__).resolve().parents[1]
 VARIANTS = ('baseline', 'prior', 'our')
-LABELS = ('Baseline', 'Prior', 'Our construction')
+LABELS = ('Baseline', 'Prior method', 'Current method')
 COLORS = ('#77818c', '#3468a4', '#b85a35')
 
 
@@ -33,54 +34,58 @@ def main():
         svg.write_text('\n'.join(line.rstrip() for line in svg.read_text().splitlines()) + '\n')
         plt.close(figure)
 
-    figure, axes = plt.subplots(1, 2, figsize=(10, 3.6), sharey=True)
-    limit = max(data['configurations'][name]['variants'][variant]['operations']['ntt_forward']['median']
-                for name in data['configurations'] for variant in VARIANTS) * 1.18
-    for ax, (configuration, title) in zip(axes, (('o2', '-O2'), ('o3_lto', '-O3 with LTO'))):
-        values = [data['configurations'][configuration]['variants'][variant]['operations']['ntt_forward']['median']
+    figure, ax = plt.subplots(figsize=(8, 4))
+    for offset, configuration, title, color in ((-.18, 'o2', 'O2', COLORS[0]),
+                                               (.18, 'o3_lto', 'O3 + LTO', COLORS[1])):
+        values = [data['configurations'][configuration]['variants'][variant]['operations']['ntt_forward']['median'] / 1000
                   for variant in VARIANTS]
-        bars = ax.bar(LABELS, values, color=COLORS, width=.6)
-        ax.bar_label(bars, labels=[f'{value:,.0f}' for value in values], padding=4, fontsize=9)
-        ax.set_title(title)
-        ax.set_ylim(0, limit)
-        ax.ticklabel_format(axis='y', style='plain')
-        ax.grid(axis='y', alpha=.2)
-        ax.set_axisbelow(True)
-    axes[0].set_ylabel('Guest instructions per forward NTT')
-    figure.suptitle('QEMU Cortex M4: instrumented instruction counts', fontsize=12)
+        bars = ax.bar([i + offset for i in range(3)], values, color=color, width=.34, label=title)
+        ax.bar_label(bars, labels=[f'{value:.1f}' for value in values], padding=4, fontsize=10)
+    ax.set_xticks(range(3), LABELS)
+    ax.set_xlabel('Method')
+    ax.set_ylabel('Guest instructions (thousands)')
+    ax.set_title('Forward NTT on QEMU Cortex M4')
+    limit = max(config['variants'][variant]['operations']['ntt_forward']['median'] / 1000
+                for config in data['configurations'].values() for variant in VARIANTS)
+    ax.set_ylim(0, limit * 1.2)
+    ax.yaxis.set_major_locator(MaxNLocator(5, integer=True))
+    ax.grid(axis='y', alpha=.2)
+    ax.set_axisbelow(True)
+    ax.legend(frameon=False)
     save(figure, 'qemu_ntt')
 
     figure, axes = plt.subplots(1, 3, figsize=(11, 3.6))
     for ax, (op, title) in zip(axes, (('keygen', 'Key generation'), ('sign', 'Signing'), ('verify', 'Verification'))):
         rows = [data['configurations']['o3_lto']['variants'][variant]['operations'][op] for variant in VARIANTS]
         medians = [row['median'] / 1e6 for row in rows]
-        errors = [[(row['median'] - row['minimum']) / 1e6 for row in rows],
-                  [(row['p95_nearest_rank'] - row['median']) / 1e6 for row in rows]]
-        bars = ax.bar(LABELS, medians, color=COLORS, width=.6, yerr=errors,
-                      capsize=4, error_kw={'elinewidth': 1})
+        bars = ax.bar(('Baseline', 'Prior', 'Current'), medians, color=COLORS, width=.6)
         ax.bar_label(bars, labels=[f'{value:.2f}' for value in medians], padding=4, fontsize=9)
         ax.set_title(title)
         ax.set_ylabel('Guest instructions (millions)')
-        ax.tick_params(axis='x', labelrotation=15)
+        ax.set_xlabel('Method')
+        ax.set_ylim(0, max(medians) * 1.18)
+        ax.yaxis.set_major_locator(MaxNLocator(4, integer=True))
         ax.grid(axis='y', alpha=.2)
         ax.set_axisbelow(True)
-    figure.suptitle('QEMU -O3 + LTO: medians; whiskers show minimum to P95', fontsize=12)
+    figure.suptitle('ML DSA 44 on QEMU: O3 + LTO medians', fontsize=12)
     save(figure, 'qemu_mldsa')
 
-    figure, ax = plt.subplots(figsize=(7.5, 3.8))
-    bounds = data['construction_bounds']
-    for key, label, color in (('prior', 'Prior: (2n−1)M', COLORS[1]), ('our', 'Our balanced boundary: D(k)', COLORS[2])):
-        ax.loglog([row['n'] for row in bounds], [row[key] for row in bounds], 'o-', label=label, color=color)
-    ax.set_xlabel('Transform length n')
-    ax.set_ylabel('Sufficient field-size threshold')
-    ax.set_title(r'Construction guarantee: $\Theta(n^2\log n) \to \Theta(n^{3/2}\log n)$')
-    ax.set_xticks([16, 64, 256, 1024, 4096], labels=['16', '64', '256', '1024', '4096'])
-    ax.grid(alpha=.2, which='both')
-    ax.legend(frameon=False)
+    concrete = next(row for row in data['construction_bounds'] if row['n'] == 256)
+    figure, ax = plt.subplots(figsize=(6, 4))
+    values = [concrete[key] / 1000 for key in ('prior', 'our')]
+    bars = ax.bar(LABELS[1:], values, color=COLORS[1:], width=.5)
+    ax.bar_label(bars, labels=[f'{value:,.1f}' for value in values], padding=5)
+    ax.set_xlabel('Method')
+    ax.set_ylabel('Sufficient field bound (thousands)')
+    ax.set_title('Construction bound at n = 256')
+    ax.set_ylim(0, max(values) * 1.18)
+    ax.yaxis.set_major_locator(MaxNLocator(5, integer=True))
+    ax.grid(axis='y', alpha=.2)
+    ax.set_axisbelow(True)
     save(figure, 'construction_bound')
 
     configs = data['configurations']
-    lines = ['| Build | Baseline NTT | Prior NTT | Our NTT | Our vs prior |',
+    lines = ['| Build | Baseline | Prior method | Current method | Current vs prior |',
              '| --- | ---: | ---: | ---: | ---: |']
     for name, label in (('o2', '`-O2`'), ('o3_lto', '`-O3 -flto`')):
         rows = configs[name]['variants']
@@ -89,41 +94,52 @@ def main():
         lines.append(f'| {label} | ' + ' | '.join(f'{x:,.0f}' for x in counts) + f' | {delta:+.2f}% |')
     delta = configs['o3_lto']['variants']['our']['operations']['ntt_forward']['change_from_prior_percent']
     direction = 'more' if delta >= 0 else 'fewer'
-    concrete = next(row for row in data['construction_bounds'] if row['n'] == 256)
-    block = [f"For ML DSA (`n=256`, `h=8`, `k=4`), the sufficient threshold falls from "
-             f"**{concrete['prior']:,}** to **{concrete['our']:,}**, an **{data['construction_bound_ratio_at_256']:.2f}×** reduction. "
-             'Both rows pass the same exhaustive pair certificate.', '',
-             '![Sufficient construction thresholds](docs/figures/construction_bound.png)', '',
-             f"Forward NTT median guest-instruction counts, {data['samples_per_operation']} observations per build and variant:", '',
+    certificate = json.loads((ROOT / 'docs/our_certificate.json').read_text())
+    construction = [f"For `n={concrete['n']}`, `h={concrete['h']}` and `k={concrete['k']}`, "
+                    f"the generator verifies `M={concrete['M']}`, `K={concrete['K']}`, "
+                    f"`D={concrete['our']}` and `q={certificate['q']}>D`.", '',
+                    '| Method | Sufficient threshold |', '| --- | ---: |',
+                    f"| Prior method | {concrete['prior']:,} |", f"| Current method | {concrete['our']:,} |", '',
+                    f"The sufficient threshold is **{data['construction_bound_ratio_at_256']:.2f} times smaller**. "
+                    f"Both methods certify all **{certificate['checked_pairs']:,}** location pairs with zero determinant failures.", '',
+                    '![Construction bound at transform length 256](docs/figures/construction_bound.png)', '']
+    block = [f"Forward NTT median guest instruction counts, {data['samples_per_operation']} observations per build and method:", '',
              *lines, '',
-             f"With `-O3 -flto`, our current protected NTT uses **{abs(delta):.2f}% {direction} guest instructions** "
-             'than the prior checker. This measures the compiled implementations; it does not establish a physical cycle improvement.', '',
-             '![QEMU NTT instruction counts](docs/figures/qemu_ntt.png)', '',
-             '![QEMU ML DSA instruction counts](docs/figures/qemu_mldsa.png)', '',
-             '| Variant | Extra field multiplications | Extra field additions | Constant table bytes |',
-             '| --- | ---: | ---: | ---: | ---: |']
+             f"At `-O3 -flto`, the current method executes **{abs(delta):.2f}% {direction} instructions** "
+             'than the prior method. Its construction guarantee improves; this implementation has no measured cycle improvement.', '',
+             '![Forward NTT instruction counts](docs/figures/qemu_ntt.png)', '',
+             '| Method | Instruction reduction from `-O2` to `-O3 -flto` |', '| --- | ---: |']
+    for variant, label in zip(VARIANTS, LABELS):
+        first = configs['o2']['variants'][variant]['operations']['ntt_forward']['median']
+        optimized = configs['o3_lto']['variants'][variant]['operations']['ntt_forward']['median']
+        block.append(f'| {label} | {100 * (1 - optimized / first):.2f}% |')
+    block += ['', 'Key generation, signing and verification medians use the optimized configuration. '
+              'Signing includes its ordinary rejection variability; the linked statistics retain minimum, median, maximum and P95.', '',
+              '![ML DSA instruction counts](docs/figures/qemu_mldsa.png)', '',
+              '| Method | Extra field multiplications | Extra field additions | Constant table bytes |',
+              '| --- | ---: | ---: | ---: |']
     for variant, label in zip(VARIANTS, LABELS):
         row = data['costs'][variant]
         block.append(f"| {label} | {row['extra_field_calls']['mul']} | {row['extra_field_calls']['add']} | {row['constant_bytes']} |")
-    block += ['', '[Raw observations](bench/qemu_benchmark.json) · [Complete statistics](docs/qemu_results.md) · '
-              '[CSV](bench/qemu_benchmark.csv). Plots are generated by `tools/plot_benchmarks.py`; '
-              'no QEMU count is presented as a hardware cycle.', '']
+    block += ['', '[Raw observations](bench/qemu_benchmark.json), [complete statistics](docs/qemu_results.md) and '
+              '[CSV](bench/qemu_benchmark.csv). Python generates the graphs and tables from the raw record.', '']
     readme = ROOT / 'README.md'
     text = readme.read_text()
-    start = '<!-- benchmark-results:start -->'
-    end = '<!-- benchmark-results:end -->'
-    if text.count(start) != 1 or text.count(end) != 1:
-        raise ValueError('README benchmark insertion markers missing or duplicated')
-    prefix, suffix = text.split(start)
-    _, suffix = suffix.split(end)
-    readme.write_text(prefix + start + '\n\n' + '\n'.join(block) + end + suffix)
+    for name, content in (('construction-results', construction), ('benchmark-results', block)):
+        start, end = f'<!-- {name}:start -->', f'<!-- {name}:end -->'
+        if text.count(start) != 1 or text.count(end) != 1:
+            raise ValueError('README insertion markers missing or duplicated')
+        prefix, suffix = text.split(start)
+        _, suffix = suffix.split(end)
+        text = prefix + start + '\n\n' + '\n'.join(content) + end + suffix
+    readme.write_text(text)
     report = ['# QEMU instruction measurements', '',
               'Generated from [raw observations](../bench/qemu_benchmark.json). Unit: **guest instructions**, '
-              'after empty-marker subtraction. Physical cycles are unmeasured. Whiskers in the plots show '
-              'observed minimum to P95, not a confidence interval.', '',
+              'after empty marker subtraction. Physical cycles are unmeasured. The plots show medians; '
+              'this table retains the complete range and P95.', '',
               f"Compiler: `{data['compiler']}`. Emulator: `{data['qemu']}`. Target: `{data['machine']}`.", '',
-              'The 100-iteration assembly control adds exactly 301 instructions in every image. '
-              'Complete key/signature transcripts match all variants and both optimization settings.', '']
+              'The 100 iteration assembly control adds exactly 301 instructions in every image. '
+              'Complete key/signature transcripts match all methods and both optimization settings.', '']
     output = io.StringIO()
     writer = csv.writer(output, lineterminator='\n')
     keys = ('samples', 'minimum', 'median', 'maximum', 'p95_nearest_rank', 'overhead_percent', 'change_from_prior_percent')
@@ -134,7 +150,8 @@ def main():
                    '| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |']
         for variant in VARIANTS:
             for op, row in config['variants'][variant]['operations'].items():
-                report.append('| ' + ' | '.join(map(str, [variant, op, *[row[k] for k in keys[:-1]]])) + ' |')
+                label = LABELS[VARIANTS.index(variant)]
+                report.append('| ' + ' | '.join(map(str, [label, '`' + op + '`', *[row[k] for k in keys[:-1]]])) + ' |')
                 writer.writerow((name, variant, op, *[row[k] for k in keys]))
         report.append('')
     (ROOT / 'docs/qemu_results.md').write_text('\n'.join(report))

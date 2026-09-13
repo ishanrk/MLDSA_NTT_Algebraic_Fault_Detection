@@ -1,0 +1,207 @@
+From c512a7a149d0aa11b134c8bd3199fe333219fa6f Mon Sep 17 00:00:00 2001
+From: Ishan Kumthekar <ishanrk@protonmail.com>
+Date: Mon, 28 Sep 2026 09:06:08 -0400
+Subject: [PATCH] arm: Use SMLALD for two signed 16 bit products
+
+This patch recognizes the arithmetic
+
+  acc + (long long) a[0] * b[0]
+      + (long long) a[1] * b[1]
+
+where a[0], a[1] and b[0], b[1] are signed 16 bit lanes packed into
+two 32 bit registers. GCC currently emits two SMLALBB instructions
+plus two high half extractions for this computation. The patch emits
+one SMLALD instruction instead. This reduces the arithmetic sequence from 4
+instructions to 1 and the complete test function from 7
+instructions to 4.
+
+I noticed this while trying to optimize for Cortex M4 instruction counts for packed
+16 bit arithmetic used in the NTT poly multiplication implementation.
+
+The implementation adds two peephole patterns for the two little endian
+instruction orders produced after register allocation.
+
+Testing:
+
+Both the patched tree and the unpatched parent completed a three stage
+bootstrap with the default languages and completed make -k check.
+
+The full test results were identical between the patched and unpatched
+trees, with no regressions.
+
+Arm specific testing produced 4 PASS for the new tests and 38 PASS with
+2 expected XFAIL in the focused selection. Across 636 existing Arm
+compile tests, baseline and patched results were identical.
+
+gcc/ChangeLog:
+
+	* config/arm/arm.md: Add SMLALD peephole patterns.
+
+gcc/testsuite/ChangeLog:
+
+	* gcc.target/arm/smlald-dotprod-1.c: New test.
+	* gcc.target/arm/smlald-dotprod-2.c: New test.
+
+Signed-off-by: Ishan Kumthekar <ishanrk@protonmail.com>
+---
+ gcc/config/arm/arm.md                         | 95 +++++++++++++++++++
+ .../gcc.target/arm/smlald-dotprod-1.c         | 17 ++++
+ .../gcc.target/arm/smlald-dotprod-2.c         | 17 ++++
+ 3 files changed, 129 insertions(+)
+ create mode 100644 gcc/testsuite/gcc.target/arm/smlald-dotprod-1.c
+ create mode 100644 gcc/testsuite/gcc.target/arm/smlald-dotprod-2.c
+
+diff --git a/gcc/config/arm/arm.md b/gcc/config/arm/arm.md
+index febff17df..819a1cf3f 100644
+--- a/gcc/config/arm/arm.md
++++ b/gcc/config/arm/arm.md
+@@ -2738,6 +2738,101 @@
+   [(set_attr "type" "smlalxy")
+    (set_attr "predicable" "yes")])
+ 
++;; Combine two signed halfword multiply accumulates when both pairs of
++;; halfwords still come from the same packed registers.
++(define_peephole2
++  [(set (match_operand:SI 0 "s_register_operand" "")
++	(sign_extract:SI (match_operand:SI 1 "s_register_operand" "")
++			 (const_int 16) (const_int 16)))
++   (set (match_operand:DI 2 "s_register_operand" "")
++	(plus:DI
++	  (mult:DI (sign_extend:DI
++		      (match_operand:HI 3 "s_register_operand" ""))
++		   (sign_extend:DI
++		      (match_operand:HI 4 "s_register_operand" "")))
++	  (match_operand:DI 5 "s_register_operand" "")))
++   (set (match_operand:SI 6 "s_register_operand" "")
++	(sign_extract:SI (match_operand:SI 7 "s_register_operand" "")
++			 (const_int 16) (const_int 16)))
++   (set (match_dup 2)
++	(plus:DI
++	  (mult:DI (sign_extend:DI
++		      (match_operand:HI 8 "s_register_operand" ""))
++		   (sign_extend:DI
++		      (match_operand:HI 9 "s_register_operand" "")))
++	  (match_dup 2)))]
++  "TARGET_INT_SIMD && !BYTES_BIG_ENDIAN
++   && REG_P (operands[0]) && REG_P (operands[1])
++   && REG_P (operands[2]) && REG_P (operands[3])
++   && REG_P (operands[4]) && REG_P (operands[5])
++   && REG_P (operands[6]) && REG_P (operands[7])
++   && REG_P (operands[8]) && REG_P (operands[9])
++   && REGNO (operands[2]) == REGNO (operands[5])
++   && REGNO (operands[3]) == REGNO (operands[1])
++   && REGNO (operands[4]) == REGNO (operands[7])
++   && REGNO (operands[8]) == REGNO (operands[0])
++   && REGNO (operands[9]) == REGNO (operands[6])
++   && !reg_overlap_mentioned_p (operands[2], operands[1])
++   && !reg_overlap_mentioned_p (operands[2], operands[7])
++   && !reg_overlap_mentioned_p (operands[0], operands[1])
++   && !reg_overlap_mentioned_p (operands[0], operands[7])
++   && !reg_overlap_mentioned_p (operands[0], operands[2])
++   && !reg_overlap_mentioned_p (operands[6], operands[0])
++   && !reg_overlap_mentioned_p (operands[6], operands[2])
++   && peep2_reg_dead_p (4, operands[0])
++   && peep2_reg_dead_p (4, operands[6])"
++  [(set (match_dup 2)
++	(unspec:DI [(match_dup 1) (match_dup 7) (match_dup 5)]
++		   UNSPEC_SMLALD))])
++
++;; Both high halves can also be extracted before the low half product.
++(define_peephole2
++  [(set (match_operand:SI 0 "s_register_operand" "")
++	(sign_extract:SI (match_operand:SI 1 "s_register_operand" "")
++			 (const_int 16) (const_int 16)))
++   (set (match_operand:SI 2 "s_register_operand" "")
++	(sign_extract:SI (match_operand:SI 3 "s_register_operand" "")
++			 (const_int 16) (const_int 16)))
++   (set (match_operand:DI 4 "s_register_operand" "")
++	(plus:DI
++	  (mult:DI (sign_extend:DI
++		      (match_operand:HI 5 "s_register_operand" ""))
++		   (sign_extend:DI
++		      (match_operand:HI 6 "s_register_operand" "")))
++	  (match_operand:DI 7 "s_register_operand" "")))
++   (set (match_dup 4)
++	(plus:DI
++	  (mult:DI (sign_extend:DI
++		      (match_operand:HI 8 "s_register_operand" ""))
++		   (sign_extend:DI
++		      (match_operand:HI 9 "s_register_operand" "")))
++	  (match_dup 4)))]
++  "TARGET_INT_SIMD && !BYTES_BIG_ENDIAN
++   && REG_P (operands[0]) && REG_P (operands[1])
++   && REG_P (operands[2]) && REG_P (operands[3])
++   && REG_P (operands[4]) && REG_P (operands[5])
++   && REG_P (operands[6]) && REG_P (operands[7])
++   && REG_P (operands[8]) && REG_P (operands[9])
++   && REGNO (operands[4]) == REGNO (operands[7])
++   && REGNO (operands[5]) == REGNO (operands[1])
++   && REGNO (operands[6]) == REGNO (operands[3])
++   && REGNO (operands[8]) == REGNO (operands[0])
++   && REGNO (operands[9]) == REGNO (operands[2])
++   && !reg_overlap_mentioned_p (operands[4], operands[1])
++   && !reg_overlap_mentioned_p (operands[4], operands[3])
++   && !reg_overlap_mentioned_p (operands[0], operands[1])
++   && !reg_overlap_mentioned_p (operands[0], operands[3])
++   && !reg_overlap_mentioned_p (operands[0], operands[4])
++   && !reg_overlap_mentioned_p (operands[2], operands[1])
++   && !reg_overlap_mentioned_p (operands[2], operands[3])
++   && !reg_overlap_mentioned_p (operands[2], operands[4])
++   && !reg_overlap_mentioned_p (operands[2], operands[0])
++   && peep2_reg_dead_p (4, operands[0])
++   && peep2_reg_dead_p (4, operands[2])"
++  [(set (match_dup 4)
++	(unspec:DI [(match_dup 1) (match_dup 3) (match_dup 7)]
++		   UNSPEC_SMLALD))])
++
+ ;; Note: there is no maddhidi4ibt because this one is canonical form
+ (define_insn "*maddhidi4tb"
+   [(set (match_operand:DI 0 "s_register_operand" "=r")
+diff --git a/gcc/testsuite/gcc.target/arm/smlald-dotprod-1.c b/gcc/testsuite/gcc.target/arm/smlald-dotprod-1.c
+new file mode 100644
+index 000000000..41f0e0dcc
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/arm/smlald-dotprod-1.c
+@@ -0,0 +1,17 @@
++/* { dg-do compile } */
++/* { dg-require-effective-target arm_arch_v7em_ok } */
++/* { dg-require-effective-target arm_little_endian } */
++/* { dg-options "-O2 -mthumb" } */
++/* { dg-add-options arm_arch_v7em } */
++
++typedef short v2hi __attribute__((vector_size(4)));
++
++long long
++foo (v2hi a, v2hi b, long long acc)
++{
++  return acc
++         + (long long) a[0] * b[0]
++         + (long long) a[1] * b[1];
++}
++
++/* { dg-final { scan-assembler-times "\\tsmlald\\t" 1 } } */
+diff --git a/gcc/testsuite/gcc.target/arm/smlald-dotprod-2.c b/gcc/testsuite/gcc.target/arm/smlald-dotprod-2.c
+new file mode 100644
+index 000000000..f7f050f7c
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/arm/smlald-dotprod-2.c
+@@ -0,0 +1,17 @@
++/* { dg-do compile } */
++/* { dg-require-effective-target arm_arch_v7em_ok } */
++/* { dg-require-effective-target arm_little_endian } */
++/* { dg-options "-Os -mthumb" } */
++/* { dg-add-options arm_arch_v7em } */
++
++typedef short v2hi __attribute__((vector_size(4)));
++
++long long
++foo (v2hi a, v2hi b, long long acc)
++{
++  return acc
++         + (long long) a[0] * b[0]
++         + (long long) a[1] * b[1];
++}
++
++/* { dg-final { scan-assembler-times "\\tsmlald\\t" 1 } } */
+-- 
+2.34.1

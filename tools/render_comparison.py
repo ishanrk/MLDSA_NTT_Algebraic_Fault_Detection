@@ -5,8 +5,8 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-LABELS = {'baseline': 'Baseline', 'prior': 'Abdelmonem two checks',
-          'our': 'Our deterministic two checks'}
+LABELS = {'baseline': 'Baseline', 'prior': 'Prior method',
+          'our': 'Current method'}
 
 
 def tables(data):
@@ -70,7 +70,7 @@ def render(data, markdown, tex):
         'Extra counts subtract baseline calls. Stored coefficients count generated uint32 '
         'table entries; implicit unity weights require no storage. Both defenses have two '
         'scalar equality checks, implemented as four checksum accumulations.', '',
-        f'Our current straightforward checker uses {dm} more field multiplications and '
+        f'The current checker uses {dm} more field multiplications and '
         f'{db} more table bytes than the prior checker. Its improvement is the sufficient '
         'construction field bound; these results make no speedup claim.', '',
         f"ARM compiler: `{data['compiler']}`. Flags: `{data['arm_cflags']}`. "

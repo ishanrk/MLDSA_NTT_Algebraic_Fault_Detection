@@ -5,11 +5,11 @@
   "timeout_per_job_seconds": 45,
   "production_sha256": {
     "src/poly.c": "499b45f1faaf9d7e08a7be51f4cecc6874f59420640e0213966a838f427cad46",
-    "src/ntt.c": "77ef52bcdd3387aca4ecba29f146c07b463f7070da044705d9c228a9db90af23",
+    "src/ntt.c": "00a9e585231d6d31dd6f2a6db483ab2c9d000dd826763ddcff0bdbbe703aa9e5",
     "src/zetas.inc": "268f373132c4be8c6a4e1ce2eefdcf2530cee779d88d5b9033b750356378545f",
-    "src/prior.c": "897d7396093515481b5f933c13235bf9a2edaa1799d7238fb96fdc8922f7ffcb",
+    "src/prior.c": "6836e01f703c43752f3da6d860acc817ad48794e4544da419cc71187f3c36b63",
     "src/prior_tables.inc": "e5b40129aa09a46d35ba46a286b5ce2b5572a613468548229a2c7da2088ba534",
-    "src/our.c": "0a7dee1ef22ef1c244f65c5a543cd8a1eb42c03d16afffc698f3ed6cbe7eae5f",
+    "src/our.c": "64848fba95d6b67bed4c3c75fd8f632862103c2f846c8ff3aa68b57d74a0d1de",
     "src/our_tables.inc": "1e9caf847ebc5eeb8200e7713d5fe1f7762ddf3b9389cfc7bd1156cc5aa602eb",
     "include/mldsa_poly.h": "f2d92e9f73a353ae184093e9e47b51d784d6024d3e64e862e46d6a3dad591d0f",
     "include/mldsa_checker.h": "ce56e9f35c71cae1182a5c6b71854b97faf2d6ffcf439e05038c77f26b2b5b3c"
@@ -20,7 +20,7 @@
     "verify/layer.c": "4731e8a247a2305d6163830d3f98eda88d6504b9de4ad56dbd788c7ab6041310",
     "verify/ntt_memory.c": "6095218321c02a4f9a09b7d0f7293d71f3f1fe348e3293c29ba1e1a4f4a87de3",
     "verify/run.py": "4833d7ead8841ce35e75f476cfa6751f9bf6eeffb51d2adfd54e526a0be7a9c3",
-    "verify/source_views.py": "43c275abf620b1e0c79e815efcc6f4a3350f8f78b4938fa79516ab547ec36a06",
+    "verify/source_views.py": "c9cfb1b0d1cb00075b480b5377059ea85b18374e860c9e4256d44635eff7d592",
     "verify/range_ops.h": "5d6f08e3467a3c61f5803b3eddc5b8968a69040329e390a5afd27ce01f976f9c"
   },
   "source_view_sha256": {
@@ -36,7 +36,7 @@
     "our_return.inc": "7a171822cba6083226b3a78b2ad8ac1958ec354dd03b07cc515ad75e7f9e1b9c",
     "prior_initial.inc": "21d3b65f07c134f2f28d3a1f6339a4800f1cc04e1a56a00592607e18b794acac",
     "prior_input.inc": "aae768443b59aed14f7611e58af05d21b870efa95b508edb57bfddee260f1262",
-    "prior_output.inc": "405f25d7866eab64b7fd42a5adec47041f21a4b42b4d541d7db4461f690e80e8",
+    "prior_output.inc": "6ba5d1de1cc59b1315bb1e9a64d96df4aaec6893794a42b1879481e70cacf235",
     "prior_return.inc": "7a171822cba6083226b3a78b2ad8ac1958ec354dd03b07cc515ad75e7f9e1b9c"
   },
   "proofs": [
@@ -73,7 +73,7 @@
       "unwind": 1,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 0.469,
+      "seconds": 0.501,
       "exit_code": 0,
       "log_sha256": "2c4ed8e400bdefaf130c1cbf2b8e38b05dbb4960b26f4a6a88a8fa1ce564d62f"
     },
@@ -110,7 +110,7 @@
       "unwind": 1,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 0.059,
+      "seconds": 0.069,
       "exit_code": 0,
       "log_sha256": "026adfcf3d603a420fb9d700f98ee2cc07acbac00023075619acdbb154289c11"
     },
@@ -147,7 +147,7 @@
       "unwind": 1,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 0.117,
+      "seconds": 0.142,
       "exit_code": 0,
       "log_sha256": "a59071bc964a6535c165d33fb3bc199956acec55ade8326c14387650f9a7a6fb"
     },
@@ -184,7 +184,7 @@
       "unwind": 1,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 1.068,
+      "seconds": 1.263,
       "exit_code": 0,
       "log_sha256": "7899e1cf434c0debbc8aad14ebc56c812b6873c4cf792255e520c029ed297522"
     },
@@ -221,7 +221,7 @@
       "unwind": 1,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 0.058,
+      "seconds": 0.065,
       "exit_code": 0,
       "log_sha256": "ca80bde8b09ed3d20a8b25db60c536bb1884cca37d8cf50c35b7d035d23fe0ea"
     },
@@ -258,7 +258,7 @@
       "unwind": 1,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 0.069,
+      "seconds": 0.068,
       "exit_code": 0,
       "log_sha256": "82bb4084fd9fbf47264e7025c630c9d54e5492fcbc3c758b2116324021e720b4"
     },
@@ -294,7 +294,7 @@
       "unwind": 1,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 4.943,
+      "seconds": 5.281,
       "exit_code": 0,
       "log_sha256": "fc850c7fa29454671c5fc11870ddef9b1af2612cfe19a644fc001c6732994e8b"
     },
@@ -331,7 +331,7 @@
       "unwind": 1,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 4.083,
+      "seconds": 4.812,
       "exit_code": 0,
       "log_sha256": "88cf40d01c07de61997c82fa595e8c481eeda1087c96d16d2762407a09e3052f"
     },
@@ -368,7 +368,7 @@
       "unwind": 257,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 1.693,
+      "seconds": 1.839,
       "exit_code": 0,
       "log_sha256": "5b15f11bb5a9120e5809c2636596610493169399505c29ca4bcd02935f35eb9e"
     },
@@ -405,7 +405,7 @@
       "unwind": 257,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 1.975,
+      "seconds": 1.86,
       "exit_code": 0,
       "log_sha256": "7e365fbf28b288828f5ed5e67d28097b3186493c35cdd21f2f52c7d7a71b3cdd"
     },
@@ -442,7 +442,7 @@
       "unwind": 257,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 2.135,
+      "seconds": 1.883,
       "exit_code": 0,
       "log_sha256": "b87f2f1c2b5625e158d5b4fcd12e2f6737039a7fde1bb84fad72de1643efd867"
     },
@@ -479,7 +479,7 @@
       "unwind": 257,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 1.85,
+      "seconds": 1.922,
       "exit_code": 0,
       "log_sha256": "43caee2b1b5843d5161df92f6d7523566f1341ffb133bcb1a12730b17980ce00"
     },
@@ -516,7 +516,7 @@
       "unwind": 257,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 1.811,
+      "seconds": 1.939,
       "exit_code": 0,
       "log_sha256": "aab19bb233d06fb66f8f233fa89de3ffc9c25ae18b776cba1ea25aa1a710c138"
     },
@@ -553,7 +553,7 @@
       "unwind": 257,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 1.794,
+      "seconds": 1.914,
       "exit_code": 0,
       "log_sha256": "ee83fc2c8e360cfb429c2dbcd9aedb22ffb7d54fb1724e3b14abdc7274f80ac1"
     },
@@ -590,7 +590,7 @@
       "unwind": 257,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 1.823,
+      "seconds": 1.906,
       "exit_code": 0,
       "log_sha256": "bde2fdaceaf778e4fc89bcc64dc128014d37dc27fdb160f0dd2652383b99856c"
     },
@@ -627,7 +627,7 @@
       "unwind": 257,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 1.764,
+      "seconds": 1.958,
       "exit_code": 0,
       "log_sha256": "454249f144ed38bd1febd8f90a2d42ab98c7d162afb6395f9ca578c863884418"
     },
@@ -664,9 +664,9 @@
       "unwind": 257,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 18.872,
+      "seconds": 20.852,
       "exit_code": 0,
-      "log_sha256": "935c78edb6cb7f83c9c01ea6956260302de741750339dbd6ac2d1ad65ca165ae"
+      "log_sha256": "4588abeae0f979d34cd7951fa8924a6b74c556ce8a271ecd0863a6b4fb43d017"
     },
     {
       "name": "inverse_memory",
@@ -701,9 +701,9 @@
       "unwind": 257,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 22.354,
+      "seconds": 23.612,
       "exit_code": 0,
-      "log_sha256": "ce273322da23eeb9dc166c72bdfd9a6062032a2be442182555294d07edef80e5"
+      "log_sha256": "cd0cd05331657e6a46416338349f05862ee0bc8a5f2c23f4b314d467590652fe"
     },
     {
       "name": "pointwise_memory",
@@ -738,10 +738,10 @@
       "unwind": 257,
       "unwinding_assertions_enabled": true,
       "result": "passed",
-      "seconds": 1.221,
+      "seconds": 1.275,
       "exit_code": 0,
-      "log_sha256": "e02ae877dc8adf2e202f38993621fbc47acdce29b80c256321423d81d117ac08"
+      "log_sha256": "f6ebb81bd9c64e285b4a1c1c2206cb32e866d1969f47a427ab327c685e0e62a2"
     }
   ],
-  "total_seconds": 68.158
+  "total_seconds": 73.161
 }
