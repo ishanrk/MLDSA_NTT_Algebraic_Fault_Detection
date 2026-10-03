@@ -9,12 +9,13 @@ void board_print_cycles(const char *operation, uint32_t cycles);
 void board_error(const char *message);
 void board_finish(void);
 
-/* dwt cycle counter */
+// read the dwt cycle counter
 static inline uint32_t board_cycles(void)
 {
     return *(volatile uint32_t *)0xe0001004;
 }
 
+// finish prior memory work and flush the instruction pipeline
 static inline void board_sync(void)
 {
     __asm volatile ("dsb\nisb" ::: "memory");

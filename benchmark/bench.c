@@ -17,6 +17,7 @@ static const uint8_t msg[] = "benchmark";
 static mldsa_poly poly;
 static mldsa_ntt out, expected;
 
+// prepare fixed inputs then measure the ntt wrapper and signer
 int main(void)
 {
     board_init();
@@ -30,7 +31,9 @@ int main(void)
         seed[i] = (uint8_t)i;
     }
 
+    // use the plain transform as a reference for the wrapper output
     mldsa_ntt_forward(&expected, &poly);
+    // repeat the wrapper 32 times and keep any checker failure
     board_sync();
     uint32_t start = board_cycles();
     int ntt_error = 0;
@@ -55,6 +58,7 @@ int main(void)
         board_error("Key generation failed");
     }
 
+    // sign msg with sk and fixed rnd using an empty context
     board_sync();
     start = board_cycles();
     int sign_rc = mldsa44_sign(sig, sk, sizeof sk, msg, sizeof msg - 1,
@@ -62,6 +66,7 @@ int main(void)
     board_sync();
     uint32_t sign_cycles = board_cycles() - start;
 
+    // reject a failed sign or a signature that pk cannot verify
     if (sign_rc != 0 ||
             mldsa44_verify(pk, sizeof pk, msg, sizeof msg - 1,
                            0, 0, sig, sizeof sig) != 0)

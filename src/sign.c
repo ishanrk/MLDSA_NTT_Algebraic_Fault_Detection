@@ -5,14 +5,19 @@
 #include <string.h>
 
 #ifdef MLDSA_ARCHIE
-/* The marker supplies ARCHIE with a precise point before the nonce NTTs. */
 extern void mldsa_archie_restore_twiddles(void);
+// archie uses this marker to inject the fault before the nonce transforms
 __attribute__((noinline, used)) void mldsa_archie_nonce_start(void)
 {
     __asm__ volatile ("" ::: "memory");
 }
 #endif
 
+// sig receives the signature
+// sk is the signing key and sklen is its byte length
+// msg is the message and mlen is its byte length
+// ctx is the context and clen is its byte length
+// rnd is the 32 byte randomness used for this signing
 int mldsa44_sign(uint8_t sig[MLDSA44_SIGNATURE_BYTES],
                  const uint8_t *sk, size_t sklen,
                  const uint8_t *msg, size_t mlen,
@@ -65,6 +70,7 @@ int mldsa44_sign(uint8_t sig[MLDSA44_SIGNATURE_BYTES],
 
         mldsa44_expand_mask(y, rhopp, nonce);
 #ifdef MLDSA_ARCHIE
+        // archie can redirect the twiddle pointer before these four transforms
         mldsa_archie_nonce_start();
 #endif
         for (unsigned i = 0; i < MLDSA44_L; i++)
@@ -75,6 +81,7 @@ int mldsa44_sign(uint8_t sig[MLDSA44_SIGNATURE_BYTES],
             }
         }
 #ifdef MLDSA_ARCHIE
+        // restore normal zetas before transforming the challenge
         mldsa_archie_restore_twiddles();
 #endif
 
@@ -105,6 +112,9 @@ int mldsa44_sign(uint8_t sig[MLDSA44_SIGNATURE_BYTES],
 #endif
             mldsa44_mul_ntt(&cs2[i], &cn, &s2n[i]);
 #ifdef MLDSA_FAULTY_PRONE_MEMORY_OPTIMIZATION
+            // this path reuses the transformed nonce when forming z
+            // under the fault it represents a nonce with only y[0]
+            // the resulting z is that nonce plus c times s1
             mldsa_ntt sum, prod;
             mldsa_ntt_mul(&prod, &cn, &s1n[i]);
             for (unsigned j = 0; j < MLDSA_N; j++)

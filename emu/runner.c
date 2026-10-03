@@ -24,10 +24,13 @@ struct emu_record
 
 // keep this record in memory for archie
 __attribute__((used)) struct emu_record emu_result;
+// case 191 supplies the original secret and fixed signing inputs
+// its public key was reconstructed from that secret
 #include "fips_case.h"
 
 extern void emu_done(void);
 
+// run one signing and leave its result in ram for archie
 int main(void)
 {
     // mark the record so the reader can check it was initialized
@@ -38,6 +41,7 @@ int main(void)
     // fill the signature buffer so an aborted signer is easy to spot
     memset(emu_result.sig, 0xa5, sizeof emu_result.sig);
 
+    // the clean and faulted runs use this same public key
     memcpy(emu_result.pk, fips_pk, sizeof fips_pk);
     // the first 12 ntt calls transform s1 s2 and t0
     // calls 13 through 16 transform the four nonce rows
@@ -46,6 +50,7 @@ int main(void)
                                       sizeof fips_sk, fips_message, sizeof fips_message,
                                       fips_context, sizeof fips_context, fips_rnd);
     emu_result.forward_calls = emu_forward_calls;
+    // verify only after signing returns a complete signature
     if (emu_result.sign_rc == 0)
     {
         emu_result.verify_rc = mldsa44_verify(emu_result.pk,

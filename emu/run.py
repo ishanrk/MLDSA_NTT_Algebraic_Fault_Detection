@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""build two cortex m4 signers and test a fault in each."""
+"""build the plain cortex m4 signer and test one fault."""
 
 import argparse
 import json
@@ -13,6 +13,10 @@ ROOT = Path(__file__).resolve().parents[1]
 HERE = ROOT / "emu"
 
 
+
+# args are the command followed by its arguments
+# cwd is the directory where the command runs
+# quiet hides output unless the command fails
 def run(*args, cwd=ROOT, quiet=False):
     result = subprocess.run([str(arg) for arg in args], cwd=cwd, text=True,
                             stdout=subprocess.PIPE if quiet else None,
@@ -23,8 +27,10 @@ def run(*args, cwd=ROOT, quiet=False):
         result.check_returncode()
 
 
+
+# elf is the path to the arm firmware file
+# return a map from symbol names to addresses
 def symbols(elf):
-    """read symbol addresses from the elf file."""
     listing = subprocess.check_output(["arm-none-eabi-nm", "-n", str(elf)], text=True)
     names = {}
     for line in listing.splitlines():
@@ -32,20 +38,24 @@ def symbols(elf):
         if len(parts) == 3:
             names[parts[2]] = int(parts[0], 16)
 
-    # keep each symbol name with its address
+    # use addresses from this exact firmware build
     return names
 
 
+
+# variant names the firmware build such as plain
+# archie is the path to the archie checkout
+# write the qemu and fault configs for that build
 def write_configs(variant, archie):
-    """set up the fault for one signer."""
     elf = HERE / "build" / f"{variant}.elf"
     names = symbols(elf)
 
-    # find the pointer and the zero table used by the fault
+    # find the ram pointer and the table that will replace it
     pointer = names["mldsa_archie_twiddles"]
     zero_table = names["emu_zero_zetas"]
     marker = names["mldsa_archie_nonce_start"]
     result = names["emu_result"]
+
     # archie uses this config to run the signer in qemu
     qemu = {
         "qemu": str(archie / "qemu/build/qemu-system-arm"),
@@ -53,12 +63,14 @@ def write_configs(variant, archie):
         "plugin": str(archie / "faultplugin/libfaultplugin.so"),
         "machine": "mps2-an386", "additional_qemu_args": "-nographic",
     }
-    # archie runs one pointer overwrite
-    # fault_mask holds the replacement pointer value
+
+    # overwrite the pointer when the first nonce ntt starts
+    # fault_mask is the new address stored in that pointer
     fault = {
         "max_instruction_count": 100_000_000,
         "start": {"address": names["mldsa44_sign"], "counter": 1},
         "end": {"address": names["emu_done"], "counter": 1},
+        # archie dumps the public key and signature stored in emu_result
         "memorydump": [{"address": result, "length": RECORD_BYTES}],
         "faults": [[{
             "fault_address": [pointer], "fault_type": "data",
@@ -67,34 +79,49 @@ def write_configs(variant, archie):
             "trigger_address": [marker], "trigger_counter": [1],
         }]],
     }
+    # write the qemu settings and the fault addresses for this build
     (HERE / f"qemu-{variant}.json").write_text(json.dumps(qemu, indent=2) + "\n")
     (HERE / f"fault-{variant}.json").write_text(json.dumps(fault, indent=2) + "\n")
-    print(f"{variant}: overwrite RAM pointer 0x{pointer:x} with zero-table address "
-          f"0x{zero_table:x} at marker 0x{marker:x}")
+
+    print("\nfault injection")
+    print(f"  overwrite pointer at 0x{pointer:x}")
+    print(f"  new value is zero table address 0x{zero_table:x}")
+    print(f"  trigger at 0x{marker:x}")
 
 
+
+# variant names the firmware build to run
+# archie is the path to the archie checkout
+# run one clean signing and one signing with the injected fault
 def run_archie(variant, archie):
-    """run a clean signing and a faulted signing."""
-    print(f"{variant}: running clean reference, then one fault experiment", flush=True)
+    print(f"\n{variant} simulation", flush=True)
+    print("  running a clean reference and one fault experiment", flush=True)
+
     # overwrite lets archie replace an old result file
     run(sys.executable, archie / "controller.py", "--debug", "--overwrite",
         "--fault", HERE / f"fault-{variant}.json", "--qemu",
         HERE / f"qemu-{variant}.json", HERE / f"{variant}.hdf5",
         cwd=HERE, quiet=True)
 
+    # the controller stores both runs in the same hdf5 file
     # make sure the fault was injected once
     if (HERE / "log_0.txt").read_text(errors="replace").count("Inject memory fault") != 1:
         raise RuntimeError(f"ARCHIE did not inject exactly once: {variant}")
+    # keep the fault log and clean log under names tied to this build
     for path in HERE.glob("log_*.txt"):
         path.rename(HERE / f"{variant}-{path.name}")
-    print(f"{variant}: ARCHIE memory injections: 1")
+    print("  memory injections: 1")
 
 
+
+# main takes no arguments and reads the command line options
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--archie", type=Path,
                         default=Path.home() / "archie-demo" / "archie")
+    # analyze only reuses plain.hdf5 from an earlier run
     parser.add_argument("--analyze-only", action="store_true")
+    # these inputs are for the new signature made after recovery
     message_input = parser.add_mutually_exclusive_group()
     message_input.add_argument("--message", default="New message chosen by the attacker")
     message_input.add_argument("--message-file", type=Path,
@@ -104,22 +131,28 @@ def main():
     context_input.add_argument("--context-file", type=Path,
                                help="read exact forgery context bytes from a file")
     args = parser.parse_args()
+
     message = args.message_file.read_bytes() if args.message_file else args.message.encode()
     context = args.context_file.read_bytes() if args.context_file else args.context.encode()
     if len(context) > 255:
         parser.error("context must be at most 255 bytes")
+
+    # a full run builds the signer and starts a new simulation
     if not args.analyze_only:
         archie = args.archie.resolve()
         for path in (archie / "controller.py", archie / "qemu/build/qemu-system-arm",
                      archie / "faultplugin/libfaultplugin.so"):
             if not path.is_file():
                 raise FileNotFoundError(path)
-        run("make", "-C", HERE)
+        # build the plain firmware and the host signing library
+        run("make", "-C", HERE, "build/plain.elf")
         run("make", "build/libmldsa_nttz.so")
-        for variant in ("plain", "guarded"):
-            write_configs(variant, archie)
-            run_archie(variant, archie)
+        write_configs("plain", archie)
+        run_archie("plain", archie)
+
+    # read the saved results and write signatures and keys into emu/build
     analyze(message, context)
+
 
 
 if __name__ == "__main__":
