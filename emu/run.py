@@ -114,43 +114,58 @@ def run_archie(variant, archie):
 
 
 
-# main takes no arguments and reads the command line options
+# read options from the command line
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+
+    # convert the archie path to a path object
     parser.add_argument("--archie", type=Path,
                         default=Path.home() / "archie-demo" / "archie")
-    # analyze only reuses plain.hdf5 from an earlier run
+
+    # true when the flag is present
     parser.add_argument("--analyze-only", action="store_true")
-    # these inputs are for the new signature made after recovery
+
+    # choose message text or a file but not both
     message_input = parser.add_mutually_exclusive_group()
     message_input.add_argument("--message", default="New message chosen by the attacker")
     message_input.add_argument("--message-file", type=Path,
                                help="read exact forgery message bytes from a file")
+
+    # make the same choice for context
     context_input = parser.add_mutually_exclusive_group()
     context_input.add_argument("--context", default="")
     context_input.add_argument("--context-file", type=Path,
                                help="read exact forgery context bytes from a file")
+
+    # read the options into args
     args = parser.parse_args()
 
+    # files keep their bytes and text becomes utf8 bytes
     message = args.message_file.read_bytes() if args.message_file else args.message.encode()
     context = args.context_file.read_bytes() if args.context_file else args.context.encode()
+
+    # count bytes rather than characters
     if len(context) > 255:
         parser.error("context must be at most 255 bytes")
 
-    # a full run builds the signer and starts a new simulation
+    # skip the build and simulation with --analyze-only
     if not args.analyze_only:
+        # check the required archie files
         archie = args.archie.resolve()
         for path in (archie / "controller.py", archie / "qemu/build/qemu-system-arm",
                      archie / "faultplugin/libfaultplugin.so"):
             if not path.is_file():
                 raise FileNotFoundError(path)
-        # build the plain firmware and the host signing library
+
+        # build the firmware and host library
         run("make", "-C", HERE, "build/plain.elf")
         run("make", "build/libmldsa_nttz.so")
+
+        # run a clean signer and one fault experiment
         write_configs("plain", archie)
         run_archie("plain", archie)
 
-    # read the saved results and write signatures and keys into emu/build
+    # analyze the result and forge a signature
     analyze(message, context)
 
 
