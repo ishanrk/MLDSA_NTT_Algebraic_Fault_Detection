@@ -2,10 +2,10 @@
 #include "mldsa44_internal.h"
 #include "mldsa_shake.h"
 
-static int verify_core(const uint8_t *pk, size_t pklen,
-                       unsigned hash, const uint8_t *msg, size_t mlen,
-                       const uint8_t *ctx, size_t clen,
-                       const uint8_t *sig, size_t siglen)
+int mldsa44_verify(const uint8_t *pk, size_t pklen,
+                   const uint8_t *msg, size_t mlen,
+                   const uint8_t *ctx, size_t clen,
+                   const uint8_t *sig, size_t siglen)
 {
     uint8_t rho[32], tr[64], mu[64], ctilde[32], check[32];
     uint8_t w1bytes[MLDSA44_W1_BYTES], h[4][256];
@@ -14,39 +14,61 @@ static int verify_core(const uint8_t *pk, size_t pklen,
     unsigned diff = 0;
 
     if (pk == NULL || sig == NULL || pklen != MLDSA44_PUBLICKEY_BYTES ||
-        siglen != MLDSA44_SIGNATURE_BYTES || clen > 255U ||
-        (mlen && msg == NULL) || (clen && ctx == NULL))
+            siglen != MLDSA44_SIGNATURE_BYTES || clen > 255U ||
+            (mlen && msg == NULL) || (clen && ctx == NULL))
+    {
         return -1;
+    }
+
     mldsa44_pk_decode(rho, t1, pk);
     if (mldsa44_sig_decode(ctilde, z, h, sig))
+    {
         return -1;
-    for (unsigned i = 0; i < 4; i++) {
-        if (mldsa44_norm(&z[i], MLDSA44_GAMMA1 - MLDSA44_BETA))
-            return -1;
     }
+    for (unsigned i = 0; i < 4; i++)
+    {
+        if (mldsa44_norm(&z[i], MLDSA44_GAMMA1 - MLDSA44_BETA))
+        {
+            return -1;
+        }
+    }
+
     mldsa_shake256(tr, 64, pk, pklen);
-    mldsa44_representative(mu, tr, hash, msg, mlen, ctx, clen);
+    mldsa44_representative(mu, tr, msg, mlen, ctx, clen);
     mldsa44_sample_ball(&c, ctilde);
     if (mldsa44_ntt(&cn, &c))
+    {
         return -1;
+    }
+
     mldsa44_expand_a(a, rho);
-    for (unsigned i = 0; i < 4; i++) {
+    for (unsigned i = 0; i < 4; i++)
+    {
         if (mldsa44_ntt(&zn[i], &z[i]))
+        {
             return -1;
+        }
     }
     mldsa44_matvec(w, a, zn);
-    for (unsigned i = 0; i < 4; i++) {
+    for (unsigned i = 0; i < 4; i++)
+    {
         for (unsigned j = 0; j < MLDSA_N; j++)
+        {
             t1[i].c[j] = mldsa_mul(t1[i].c[j], 1U << MLDSA44_D);
+        }
         mldsa_ntt tn;
         if (mldsa44_ntt(&tn, &t1[i]))
+        {
             return -1;
+        }
         mldsa44_mul_ntt(&ct1, &cn, &tn);
-        for (unsigned j = 0; j < MLDSA_N; j++) {
+        for (unsigned j = 0; j < MLDSA_N; j++)
+        {
             uint32_t v = mldsa_sub(w[i].c[j], ct1.c[j]);
             w1[i].c[j] = mldsa44_use_hint(h[i][j], v);
         }
     }
+
     mldsa44_w1_encode(w1bytes, w1);
     mldsa_shake s;
     mldsa_shake_init(&s, 256);
@@ -54,24 +76,8 @@ static int verify_core(const uint8_t *pk, size_t pklen,
     mldsa_shake_absorb(&s, w1bytes, sizeof w1bytes);
     mldsa_shake_squeeze(&s, check, 32);
     for (unsigned i = 0; i < 32; i++)
+    {
         diff |= (unsigned)(ctilde[i] ^ check[i]);
+    }
     return diff ? -1 : 0;
-}
-
-int mldsa44_verify(const uint8_t *pk, size_t pklen,
-                   const uint8_t *msg, size_t mlen,
-                   const uint8_t *ctx, size_t clen,
-                   const uint8_t *sig, size_t siglen)
-{
-    return verify_core(pk, pklen, 0, msg, mlen, ctx, clen, sig, siglen);
-}
-
-int mldsa44_verify_digest(const uint8_t *pk, size_t pklen,
-                          unsigned hash, const uint8_t *digest, size_t dlen,
-                          const uint8_t *ctx, size_t clen,
-                          const uint8_t *sig, size_t siglen)
-{
-    if (dlen == 0U || dlen != mldsa44_digest_len(hash))
-        return -1;
-    return verify_core(pk, pklen, hash, digest, dlen, ctx, clen, sig, siglen);
 }

@@ -1,0 +1,116 @@
+{
+  "vsId": 42,
+  "algorithm": "ML-DSA",
+  "mode": "keyGen",
+  "revision": "FIPS204",
+  "isSample": false,
+  "testGroups": [
+    {
+      "tgId": 1,
+      "testType": "AFT",
+      "parameterSet": "ML-DSA-44",
+      "tests": [
+        {
+          "tcId": 1,
+          "seed": "7194B13C95231010AFD2C909992BD2003BA6F437C3886BDBE3F6B867A14BA161"
+        },
+        {
+          "tcId": 2,
+          "seed": "2EBE5A4123398DFBCD5BDF0A42EBDD03112BE3BC88A6E9B78D93120AB8D0120E"
+        },
+        {
+          "tcId": 3,
+          "seed": "2AA7609556919CCE9893561BB4120CDD9CFF12734267A8CCB4B2D2CA93066E1E"
+        },
+        {
+          "tcId": 4,
+          "seed": "5506D95C5C36BA3B22F1B237D8B8EDEBE81554745188E7E0A4AD671798820482"
+        },
+        {
+          "tcId": 5,
+          "seed": "AC83349C89E58131FD8D2DFC933B966C71F20614A220ECB99C7203710B9EFB26"
+        },
+        {
+          "tcId": 6,
+          "seed": "E0C3AF912D78950DC960D7474DC7B930D76E620D51E41CF9E15726B2A1751391"
+        },
+        {
+          "tcId": 7,
+          "seed": "465D3CCD2A180714B05DE7192CFD27C47AB53D37C8C3C728A1C11317B0CE895D"
+        },
+        {
+          "tcId": 8,
+          "seed": "EACE11DCE6D25D4E8B35AC58E8E2B68D3A65EC6E88411BDAF353227E602BD839"
+        },
+        {
+          "tcId": 9,
+          "seed": "5C4C6FD87DBC03B72EF802F76E31087EE4625AD9F7196501E4CB48B1C3CEFFA7"
+        },
+        {
+          "tcId": 10,
+          "seed": "0E422CE433EE6E9B9C640C2C3B9CFEA51CD2BAAAF5538E3FC7E1CB4456052165"
+        },
+        {
+          "tcId": 11,
+          "seed": "439DD31206C9022BAB92924FBD63BCD2475B6C407CB207748261D1999BEABFAD"
+        },
+        {
+          "tcId": 12,
+          "seed": "C9AD6F9FC1C9B02F294DFF7BD3EAA72A59B9092418BA2B1E62785CC07D999D53"
+        },
+        {
+          "tcId": 13,
+          "seed": "7A25F0F2317E1F6C8AF549393EFA2033008DBA451330F9B5A09E07EED0957369"
+        },
+        {
+          "tcId": 14,
+          "seed": "16A8B3221CCAD750D88C8E99592D77ADEFB1BC062ED186248AEAE09DFB6F4F8D"
+        },
+        {
+          "tcId": 15,
+          "seed": "AEC3B6920F4E6F4F54BC1897C6FAECBFDDBA3FAFA7E259297D69510C13F00616"
+        },
+        {
+          "tcId": 16,
+          "seed": "C9766D2443BE6C0263AADB0666C410AAAD8A66E5D574FC59A03DD2E21ECD3FA0"
+        },
+        {
+          "tcId": 17,
+          "seed": "84FFE91DF0D9A06DF8D882B739FB5D8FC54D3170D3E7E86342E0CCD2EB17440C"
+        },
+        {
+          "tcId": 18,
+          "seed": "F6CC76A94DA8F7937A5C9B71D36217F4BA26D7B544EA204ABE35B4CFF16EE952"
+        },
+        {
+          "tcId": 19,
+          "seed": "E5107D979E6571CFF1200032F607AB2AF28AEC18BA1952F008B7197424D89BD4"
+        },
+        {
+          "tcId": 20,
+          "seed": "147BB5AD367F4E24766D05CE134E08AB2F4C3E482EA1BEE0961C0496C6F08C8A"
+        },
+        {
+          "tcId": 21,
+          "seed": "24811A03D8D507EFF2BD581BE213FD54BD29CF577C63E948CF2B655F2608A305"
+        },
+        {
+          "tcId": 22,
+          "seed": "C9166C5021129FA38DB30E670FEBF814A1EC71760B2E060A451FCD1254240A78"
+        },
+        {
+          "tcId": 23,
+          "seed": "2ECC528F573715E6ACF8DB7FA57BB79B959A27DBBD8E4E5F579CFE0E332F669F"
+        },
+        {
+          "tcId": 24,
+          "seed": "4B887242A66BD665EACBA74079D7396A50CE0362E6D5D487BD5C190DE538EF1D"
+        },
+        {
+          "tcId": 25,
+          "seed": "737018B30354E77AD4D36D98AE629158B3291DE4D0FA0438B33BC9AC4BCDD3D7"
+        }
+      ]
+    }
+  ]
+}

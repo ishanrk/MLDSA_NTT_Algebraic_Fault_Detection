@@ -2,27 +2,23 @@
 #define MLDSA44_INTERNAL_H
 
 #include "mldsa_poly.h"
-#if defined(MLDSA_PRIOR_CHECKER) || defined(MLDSA_OUR_CHECKER)
-#include "mldsa_checker.h"
-#endif
-#if defined(MLDSA_PRIOR_CHECKER) && defined(MLDSA_OUR_CHECKER)
-#error Select one NTT checker
+#ifdef MLDSA_BLOCK_CHECKER
+#include "block_guard.h"
 #endif
 #include <stddef.h>
 
 static inline int mldsa44_ntt(mldsa_ntt *r, const mldsa_poly *a)
 {
-#ifdef MLDSA_PRIOR_CHECKER
-    return mldsa_ntt_forward_prior(r, a);
-#elif defined(MLDSA_OUR_CHECKER)
-    return mldsa_ntt_forward_our(r, a);
+#ifdef MLDSA_BLOCK_CHECKER
+    return mldsa_ntt_forward_block(r, a);
 #else
     mldsa_ntt_forward(r, a);
     return 0;
 #endif
 }
 
-enum {
+enum
+{
     MLDSA44_K = 4,
     MLDSA44_L = 4,
     MLDSA44_D = 13,
@@ -71,9 +67,7 @@ int mldsa44_sig_encode(uint8_t out[MLDSA44_SIG_BYTES], const uint8_t c[32],
 int mldsa44_sig_decode(uint8_t c[32], mldsa_poly z[4], uint8_t h[4][256],
                        const uint8_t in[MLDSA44_SIG_BYTES]);
 void mldsa44_w1_encode(uint8_t out[MLDSA44_W1_BYTES], const mldsa_poly w1[4]);
-size_t mldsa44_digest_len(unsigned hash);
 void mldsa44_representative(uint8_t mu[64], const uint8_t tr[64],
-                            unsigned hash,
                             const uint8_t *msg, size_t mlen,
                             const uint8_t *ctx, size_t clen);
 

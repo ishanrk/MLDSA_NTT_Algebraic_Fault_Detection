@@ -1,38 +1,51 @@
 #include "mldsa_poly.h"
 
-#ifdef MLDSA_TEST_FAULTS
-extern void mldsa_ntt_test_fault(unsigned l, uint32_t c[MLDSA_N]);
-#endif
-
-static const uint32_t zetas[MLDSA_N] = {
+static const uint32_t zetas[MLDSA_N] =
+{
 #include "zetas.inc"
 };
+
+#ifdef MLDSA_ARCHIE
+/* ARCHIE overwrites this pointer in guest RAM before the nonce transforms. */
+const uint32_t *volatile mldsa_archie_twiddles = zetas;
+volatile uint32_t emu_forward_calls;
+
+void mldsa_archie_restore_twiddles(void)
+{
+    mldsa_archie_twiddles = zetas;
+}
+#endif
 
 void mldsa_ntt_forward(mldsa_ntt *r, const mldsa_poly *a)
 {
     unsigned k = 0;
+#ifdef MLDSA_ARCHIE
+    emu_forward_calls++;
+    const uint32_t *twiddles = mldsa_archie_twiddles;
+#endif
 
     for (unsigned i = 0; i < MLDSA_N; i++)
+    {
         r->c[i] = a->c[i];
+    }
 
-#ifdef MLDSA_TEST_FAULTS
-    unsigned l = 0;
-    mldsa_ntt_test_fault(l, r->c);
-#endif
-    // one twiddle per block, in the production wire order
-    for (unsigned len = MLDSA_N / 2; len > 0; len /= 2) {
-        for (unsigned off = 0; off < MLDSA_N; off += 2 * len) {
+    for (unsigned len = MLDSA_N / 2; len > 0; len /= 2)
+    {
+        for (unsigned off = 0; off < MLDSA_N; off += 2 * len)
+        {
+#ifdef MLDSA_ARCHIE
+            uint32_t z = twiddles[++k];
+#else
             uint32_t z = zetas[++k];
-            for (unsigned j = off; j < off + len; j++) {
+#endif
+            for (unsigned j = off; j < off + len; j++)
+            {
                 uint32_t t = mldsa_mul(z, r->c[j + len]);
                 uint32_t u = r->c[j];
                 r->c[j] = mldsa_add(u, t);
                 r->c[j + len] = mldsa_sub(u, t);
             }
         }
-#ifdef MLDSA_TEST_FAULTS
-        mldsa_ntt_test_fault(++l, r->c);
-#endif
     }
 }
 
@@ -41,12 +54,17 @@ void mldsa_ntt_inverse(mldsa_poly *r, const mldsa_ntt *a)
     unsigned k = MLDSA_N;
 
     for (unsigned i = 0; i < MLDSA_N; i++)
+    {
         r->c[i] = a->c[i];
+    }
 
-    for (unsigned len = 1; len < MLDSA_N; len *= 2) {
-        for (unsigned off = 0; off < MLDSA_N; off += 2 * len) {
+    for (unsigned len = 1; len < MLDSA_N; len *= 2)
+    {
+        for (unsigned off = 0; off < MLDSA_N; off += 2 * len)
+        {
             uint32_t z = MLDSA_Q - zetas[--k];
-            for (unsigned j = off; j < off + len; j++) {
+            for (unsigned j = off; j < off + len; j++)
+            {
                 uint32_t u = r->c[j];
                 uint32_t v = r->c[j + len];
                 r->c[j] = mldsa_add(u, v);
@@ -56,11 +74,16 @@ void mldsa_ntt_inverse(mldsa_poly *r, const mldsa_ntt *a)
     }
 
     for (unsigned i = 0; i < MLDSA_N; i++)
+    {
         r->c[i] = mldsa_mul(r->c[i], 8347681U);
+    }
 }
 
 void mldsa_ntt_mul(mldsa_ntt *r, const mldsa_ntt *a, const mldsa_ntt *b)
 {
     for (unsigned i = 0; i < MLDSA_N; i++)
+    {
         r->c[i] = mldsa_mul(a->c[i], b->c[i]);
+    }
 }
+

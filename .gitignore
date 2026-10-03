@@ -1,2 +1,11 @@
 build/
 __pycache__/
+emu/build/
+emu/*.hdf5
+emu/qemu-*.json
+emu/fault-*.json
+emu/*.sig
+emu/*.pk
+emu/*-log_*.txt
+emu/log.txt
+

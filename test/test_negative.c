@@ -18,7 +18,9 @@ static void bad(const uint8_t *pk, size_t pklen, const uint8_t *msg,
                 const uint8_t *sig, size_t siglen)
 {
     if (mldsa44_verify(pk, pklen, msg, mlen, ctx, clen, sig, siglen) == 0)
+    {
         abort();
+    }
     cases++;
 }
 
@@ -31,16 +33,19 @@ int main(void)
     uint8_t msg[] = {1, 2, 3, 4, 5};
     uint8_t ctx[] = {6, 7, 8};
 
-    for (unsigned i = 0; i < 32; i++) {
+    for (unsigned i = 0; i < 32; i++)
+    {
         seed[i] = (uint8_t)rand32();
         rnd[i] = (uint8_t)rand32();
     }
     mldsa44_keygen(pk, sk, seed);
     if (mldsa44_sign(sig, sk, sizeof sk, msg, sizeof msg,
                      ctx, sizeof ctx, rnd) ||
-        mldsa44_verify(pk, sizeof pk, msg, sizeof msg,
-                       ctx, sizeof ctx, sig, sizeof sig))
+            mldsa44_verify(pk, sizeof pk, msg, sizeof msg,
+                           ctx, sizeof ctx, sig, sizeof sig))
+    {
         abort();
+    }
 
     msg[0] ^= 1U;
     bad(pk, sizeof pk, msg, sizeof msg, ctx, sizeof ctx, sig, sizeof sig);
@@ -51,20 +56,25 @@ int main(void)
     bad(pk, sizeof pk, msg, sizeof msg, ctx, 0, sig, sizeof sig);
     bad(pk, sizeof pk, msg, sizeof msg - 1U, ctx, sizeof ctx, sig, sizeof sig);
 
-    for (unsigned i = 0; i < sizeof pk; i += 17U) {
+    for (unsigned i = 0; i < sizeof pk; i += 17U)
+    {
         memcpy(key, pk, sizeof key);
         key[i] ^= 1U;
         bad(key, sizeof key, msg, sizeof msg, ctx, sizeof ctx, sig, sizeof sig);
     }
-    for (unsigned i = 0; i < sizeof sig; i += 19U) {
+    for (unsigned i = 0; i < sizeof sig; i += 19U)
+    {
         memcpy(tmp, sig, sizeof sig);
         tmp[i] ^= 1U;
         bad(pk, sizeof pk, msg, sizeof msg, ctx, sizeof ctx, tmp, sizeof sig);
     }
-    for (unsigned i = 0; i < 50U; i++) {
+    for (unsigned i = 0; i < 50U; i++)
+    {
         memcpy(tmp, sig, sizeof sig);
         for (unsigned j = 0; j < 1U + i % 8U; j++)
+        {
             tmp[rand32() % sizeof sig] ^= (uint8_t)(1U << (rand32() % 8U));
+        }
         bad(pk, sizeof pk, msg, sizeof msg, ctx, sizeof ctx, tmp, sizeof sig);
     }
 
@@ -112,28 +122,26 @@ int main(void)
     key[0] ^= 1U;
     bad(key, sizeof key, msg, sizeof msg, ctx, sizeof ctx, sig, sizeof sig);
 
-    for (unsigned i = 0; i < 100U; i++) {
+    for (unsigned i = 0; i < 100U; i++)
+    {
         for (unsigned j = 0; j < sizeof sig; j++)
+        {
             tmp[j] = (uint8_t)rand32();
+        }
         bad(pk, sizeof pk, msg, sizeof msg, ctx, sizeof ctx, tmp, sizeof sig);
         for (unsigned j = 0; j < sizeof pk; j++)
+        {
             key[j] = (uint8_t)rand32();
+        }
         bad(key, sizeof key, msg, sizeof msg, ctx, sizeof ctx, sig, sizeof sig);
     }
 
     sk[128] = (uint8_t)((sk[128] & 0xf8U) | 7U);
     if (mldsa44_sign(tmp, sk, sizeof sk, msg, sizeof msg,
                      ctx, sizeof ctx, rnd) == 0)
+    {
         abort();
-    if (mldsa44_sign_digest(tmp, sk, sizeof sk, 13, seed, 32,
-                            ctx, sizeof ctx, rnd) == 0 ||
-        mldsa44_sign_digest(tmp, sk, sizeof sk, MLDSA44_SHA2_256,
-                            seed, 31, ctx, sizeof ctx, rnd) == 0 ||
-        mldsa44_verify_digest(pk, sizeof pk, 13, seed, 32,
-                              ctx, sizeof ctx, sig, sizeof sig) == 0 ||
-        mldsa44_verify_digest(pk, sizeof pk, MLDSA44_SHA2_256, seed, 31,
-                              ctx, sizeof ctx, sig, sizeof sig) == 0)
-        abort();
+    }
     puts("negative verification and secret decode passed");
     printf("negative cases: %u\n", cases);
     return EXIT_SUCCESS;

@@ -27,28 +27,41 @@ static void equal(const mldsa_poly *a, const mldsa_poly *b,
                   const char *label, unsigned pos)
 {
     for (unsigned i = 0; i < MLDSA_N; i++)
+    {
         if (a->c[i] != b->c[i])
+        {
             fail(label, pos, i, a->c[i], b->c[i]);
+        }
+    }
 }
 
 static void schoolbook(mldsa_poly *r, const mldsa_poly *a, const mldsa_poly *b)
 {
     int64_t c[MLDSA_N] = {0};
 
-    for (unsigned i = 0; i < MLDSA_N; i++) {
-        for (unsigned j = 0; j < MLDSA_N; j++) {
+    for (unsigned i = 0; i < MLDSA_N; i++)
+    {
+        for (unsigned j = 0; j < MLDSA_N; j++)
+        {
             int64_t t = (int64_t)a->c[i] * b->c[j];
             if (i + j < MLDSA_N)
+            {
                 c[i + j] += t;
+            }
             else
+            {
                 c[i + j - MLDSA_N] -= t;
+            }
         }
     }
 
-    for (unsigned i = 0; i < MLDSA_N; i++) {
+    for (unsigned i = 0; i < MLDSA_N; i++)
+    {
         int64_t t = c[i] % MLDSA_Q;
         if (t < 0)
+        {
             t += MLDSA_Q;
+        }
         r->c[i] = (uint32_t)t;
     }
 }
@@ -83,29 +96,42 @@ static void check_pair(const mldsa_poly *a, const mldsa_poly *b,
 static void check_arithmetic(void)
 {
     uint32_t v[] = {0U, 1U, 2U, 4190208U, 4190209U,
-                    MLDSA_Q - 2U, MLDSA_Q - 1U};
+                    MLDSA_Q - 2U, MLDSA_Q - 1U
+                   };
 
-    for (unsigned i = 0; i < sizeof v / sizeof v[0]; i++) {
+    for (unsigned i = 0; i < sizeof v / sizeof v[0]; i++)
+    {
         uint32_t a = v[i];
         int32_t c = mldsa_center(a);
         if (mldsa_uncenter(c) != a)
+        {
             fail("center", 0, i, mldsa_uncenter(c), a);
-        for (unsigned j = 0; j < sizeof v / sizeof v[0]; j++) {
+        }
+        for (unsigned j = 0; j < sizeof v / sizeof v[0]; j++)
+        {
             uint32_t b = v[j];
             uint32_t sum = (uint32_t)(((uint64_t)a + b) % MLDSA_Q);
             uint32_t prod = (uint32_t)(((uint64_t)a * b) % MLDSA_Q);
             uint32_t diff = (uint32_t)(((uint64_t)a + MLDSA_Q - b) % MLDSA_Q);
             if (mldsa_add(a, b) != sum)
+            {
                 fail("add", i, j, mldsa_add(a, b), sum);
+            }
             if (mldsa_sub(a, b) != diff)
+            {
                 fail("sub", i, j, mldsa_sub(a, b), diff);
+            }
             if (mldsa_mul(a, b) != prod)
+            {
                 fail("mul", i, j, mldsa_mul(a, b), prod);
+            }
         }
     }
     if (mldsa_reduce(UINT64_MAX) != (uint32_t)(UINT64_MAX % MLDSA_Q))
+    {
         fail("reduce", 0, 0, mldsa_reduce(UINT64_MAX),
              (uint32_t)(UINT64_MAX % MLDSA_Q));
+    }
 }
 
 static void check_edges(void)
@@ -114,7 +140,8 @@ static void check_edges(void)
 
     check_pair(&a, &b, "zero", 0);
 
-    for (unsigned i = 0; i < MLDSA_N; i++) {
+    for (unsigned i = 0; i < MLDSA_N; i++)
+    {
         a.c[i] = 1;
         b.c[i] = MLDSA_Q - 1U;
     }
@@ -122,23 +149,26 @@ static void check_edges(void)
     check_pair(&b, &b, "minus ones", 0);
     check_pair(&a, &b, "opposites", 0);
 
-    for (unsigned i = 0; i < MLDSA_N; i++) {
+    for (unsigned i = 0; i < MLDSA_N; i++)
+    {
         a.c[i] = (i & 1U) ? MLDSA_Q - 1U : 0U;
         b.c[i] = (i & 1U) ? 0U : MLDSA_Q - 1U;
     }
     check_pair(&a, &b, "alternating", 0);
 
-    for (unsigned i = 0; i < MLDSA_N; i++) {
+    for (unsigned i = 0; i < MLDSA_N; i++)
+    {
         a.c[i] = (uint32_t)(i % 6U == 0U ? 0U :
-                   i % 6U == 1U ? 1U :
-                   i % 6U == 2U ? MLDSA_Q - 1U :
-                   i % 6U == 3U ? MLDSA_Q - 2U :
-                   i % 6U == 4U ? 4190208U : 4190209U);
+                            i % 6U == 1U ? 1U :
+                            i % 6U == 2U ? MLDSA_Q - 1U :
+                            i % 6U == 3U ? MLDSA_Q - 2U :
+                            i % 6U == 4U ? 4190208U : 4190209U);
         b.c[i] = a.c[MLDSA_N - 1U - i];
     }
     check_pair(&a, &b, "boundaries", 0);
 
-    for (unsigned i = 0; i < MLDSA_N; i++) {
+    for (unsigned i = 0; i < MLDSA_N; i++)
+    {
         mldsa_poly x = {{0}}, y = {{0}};
         mldsa_poly got, want = {{0}};
         x.c[i] = 1;
@@ -159,9 +189,11 @@ static void check_edges(void)
 
 static void check_random(void)
 {
-    for (unsigned pos = 0; pos < 10000U; pos++) {
+    for (unsigned pos = 0; pos < 10000U; pos++)
+    {
         mldsa_poly a, b;
-        for (unsigned i = 0; i < MLDSA_N; i++) {
+        for (unsigned i = 0; i < MLDSA_N; i++)
+        {
             a.c[i] = (uint32_t)(rand64() % MLDSA_Q);
             b.c[i] = (uint32_t)(rand64() % MLDSA_Q);
         }
@@ -174,15 +206,19 @@ int main(int argc, char **argv)
     const char *s = argc > 1 ? argv[1] : getenv("MLDSA_TEST_SEED");
     char *end;
 
-    if (argc > 2) {
+    if (argc > 2)
+    {
         fprintf(stderr, "usage: %s [seed]\n", argv[0]);
         return EXIT_FAILURE;
     }
     if (s == NULL)
+    {
         s = "132164";
+    }
     errno = 0;
     seed = strtoull(s, &end, 0);
-    if (errno != 0 || *s == '\0' || *end != '\0') {
+    if (errno != 0 || *s == '\0' || *end != '\0')
+    {
         fprintf(stderr, "invalid seed: %s\n", s);
         return EXIT_FAILURE;
     }
