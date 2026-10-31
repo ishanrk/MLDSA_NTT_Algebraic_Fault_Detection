@@ -1,0 +1,346 @@
+{
+  "scheme": "ML-DSA-44 local software simulation",
+  "trials": [
+    {
+      "trial": 1,
+      "deterministic": {
+        "model": "deterministic paired challenge NTT zero twiddles",
+        "chosen_messages_until_paired_first_attempt": 1,
+        "faulted_signature_verifies": false,
+        "faulted_ntts": 1,
+        "zeroed_twiddle_groups": 255,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      },
+      "randomized": {
+        "model": "randomized single signature nonce NTT zero twiddles",
+        "randomized_requests_until_first_attempt": 1,
+        "faulted_signature_verifies": true,
+        "unfaulted_alternative_byte_identical": true,
+        "unknown_constant_guesses": [
+          8,
+          1,
+          15,
+          -15
+        ],
+        "faulted_ntts": 4,
+        "zeroed_twiddle_groups": 1020,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      }
+    },
+    {
+      "trial": 2,
+      "deterministic": {
+        "model": "deterministic paired challenge NTT zero twiddles",
+        "chosen_messages_until_paired_first_attempt": 5,
+        "faulted_signature_verifies": false,
+        "faulted_ntts": 1,
+        "zeroed_twiddle_groups": 255,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      },
+      "randomized": {
+        "model": "randomized single signature nonce NTT zero twiddles",
+        "randomized_requests_until_first_attempt": 2,
+        "faulted_signature_verifies": true,
+        "unfaulted_alternative_byte_identical": true,
+        "unknown_constant_guesses": [
+          7,
+          -2,
+          12,
+          -12
+        ],
+        "faulted_ntts": 4,
+        "zeroed_twiddle_groups": 1020,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      }
+    },
+    {
+      "trial": 3,
+      "deterministic": {
+        "model": "deterministic paired challenge NTT zero twiddles",
+        "chosen_messages_until_paired_first_attempt": 7,
+        "faulted_signature_verifies": false,
+        "faulted_ntts": 1,
+        "zeroed_twiddle_groups": 255,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      },
+      "randomized": {
+        "model": "randomized single signature nonce NTT zero twiddles",
+        "randomized_requests_until_first_attempt": 5,
+        "faulted_signature_verifies": true,
+        "unfaulted_alternative_byte_identical": true,
+        "unknown_constant_guesses": [
+          6,
+          -5,
+          -1,
+          2
+        ],
+        "faulted_ntts": 4,
+        "zeroed_twiddle_groups": 1020,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      }
+    },
+    {
+      "trial": 4,
+      "deterministic": {
+        "model": "deterministic paired challenge NTT zero twiddles",
+        "chosen_messages_until_paired_first_attempt": 8,
+        "faulted_signature_verifies": false,
+        "faulted_ntts": 1,
+        "zeroed_twiddle_groups": 255,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      },
+      "randomized": {
+        "model": "randomized single signature nonce NTT zero twiddles",
+        "randomized_requests_until_first_attempt": 1,
+        "faulted_signature_verifies": true,
+        "unfaulted_alternative_byte_identical": true,
+        "unknown_constant_guesses": [
+          7,
+          3,
+          7,
+          13
+        ],
+        "faulted_ntts": 4,
+        "zeroed_twiddle_groups": 1020,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      }
+    },
+    {
+      "trial": 5,
+      "deterministic": {
+        "model": "deterministic paired challenge NTT zero twiddles",
+        "chosen_messages_until_paired_first_attempt": 4,
+        "faulted_signature_verifies": false,
+        "faulted_ntts": 1,
+        "zeroed_twiddle_groups": 255,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      },
+      "randomized": {
+        "model": "randomized single signature nonce NTT zero twiddles",
+        "randomized_requests_until_first_attempt": 1,
+        "faulted_signature_verifies": true,
+        "unfaulted_alternative_byte_identical": true,
+        "unknown_constant_guesses": [
+          6,
+          -5,
+          5,
+          -1
+        ],
+        "faulted_ntts": 4,
+        "zeroed_twiddle_groups": 1020,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      }
+    },
+    {
+      "trial": 6,
+      "deterministic": {
+        "model": "deterministic paired challenge NTT zero twiddles",
+        "chosen_messages_until_paired_first_attempt": 9,
+        "faulted_signature_verifies": false,
+        "faulted_ntts": 1,
+        "zeroed_twiddle_groups": 255,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      },
+      "randomized": {
+        "model": "randomized single signature nonce NTT zero twiddles",
+        "randomized_requests_until_first_attempt": 3,
+        "faulted_signature_verifies": true,
+        "unfaulted_alternative_byte_identical": true,
+        "unknown_constant_guesses": [
+          -9,
+          -6,
+          -14,
+          -2
+        ],
+        "faulted_ntts": 4,
+        "zeroed_twiddle_groups": 1020,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      }
+    },
+    {
+      "trial": 7,
+      "deterministic": {
+        "model": "deterministic paired challenge NTT zero twiddles",
+        "chosen_messages_until_paired_first_attempt": 10,
+        "faulted_signature_verifies": false,
+        "faulted_ntts": 1,
+        "zeroed_twiddle_groups": 255,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      },
+      "randomized": {
+        "model": "randomized single signature nonce NTT zero twiddles",
+        "randomized_requests_until_first_attempt": 2,
+        "faulted_signature_verifies": true,
+        "unfaulted_alternative_byte_identical": true,
+        "unknown_constant_guesses": [
+          -11,
+          -2,
+          -2,
+          2
+        ],
+        "faulted_ntts": 4,
+        "zeroed_twiddle_groups": 1020,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      }
+    },
+    {
+      "trial": 8,
+      "deterministic": {
+        "model": "deterministic paired challenge NTT zero twiddles",
+        "chosen_messages_until_paired_first_attempt": 5,
+        "faulted_signature_verifies": false,
+        "faulted_ntts": 1,
+        "zeroed_twiddle_groups": 255,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      },
+      "randomized": {
+        "model": "randomized single signature nonce NTT zero twiddles",
+        "randomized_requests_until_first_attempt": 2,
+        "faulted_signature_verifies": true,
+        "unfaulted_alternative_byte_identical": true,
+        "unknown_constant_guesses": [
+          -1,
+          14,
+          0,
+          23
+        ],
+        "faulted_ntts": 4,
+        "zeroed_twiddle_groups": 1020,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      }
+    },
+    {
+      "trial": 9,
+      "deterministic": {
+        "model": "deterministic paired challenge NTT zero twiddles",
+        "chosen_messages_until_paired_first_attempt": 1,
+        "faulted_signature_verifies": false,
+        "faulted_ntts": 1,
+        "zeroed_twiddle_groups": 255,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      },
+      "randomized": {
+        "model": "randomized single signature nonce NTT zero twiddles",
+        "randomized_requests_until_first_attempt": 1,
+        "faulted_signature_verifies": true,
+        "unfaulted_alternative_byte_identical": true,
+        "unknown_constant_guesses": [
+          10,
+          2,
+          18,
+          -7
+        ],
+        "faulted_ntts": 4,
+        "zeroed_twiddle_groups": 1020,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      }
+    },
+    {
+      "trial": 10,
+      "deterministic": {
+        "model": "deterministic paired challenge NTT zero twiddles",
+        "chosen_messages_until_paired_first_attempt": 1,
+        "faulted_signature_verifies": false,
+        "faulted_ntts": 1,
+        "zeroed_twiddle_groups": 255,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      },
+      "randomized": {
+        "model": "randomized single signature nonce NTT zero twiddles",
+        "randomized_requests_until_first_attempt": 1,
+        "faulted_signature_verifies": true,
+        "unfaulted_alternative_byte_identical": true,
+        "unknown_constant_guesses": [
+          14,
+          -6,
+          -2,
+          -4
+        ],
+        "faulted_ntts": 4,
+        "zeroed_twiddle_groups": 1020,
+        "protected_abort_before_signature_release": true,
+        "protected_clean_byte_identical": true,
+        "recovered_s1_coefficients": 1024,
+        "openssl_forgery_verifier": "unavailable",
+        "new_message_forgery_verified": true
+      }
+    }
+  ],
+  "successes": 10
+}

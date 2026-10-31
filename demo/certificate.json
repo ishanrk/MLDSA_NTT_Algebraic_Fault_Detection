@@ -1,0 +1,13 @@
+{
+  "q": 8380417,
+  "n": 256,
+  "permutation_seed": 204256,
+  "single_wire_locations": 2304,
+  "pairs_of_distinct_wire_locations": 2653056,
+  "short_intervals_per_fault_type": 13689,
+  "long_intervals_per_fault_type": 282375,
+  "all_twiddles_zero_rank": 5,
+  "per_event_escape_bound": "q^-5",
+  "catalog_union_bound_numerator": 564751,
+  "scope": "field arithmetic; one modeled event; protected checker and input"
+}

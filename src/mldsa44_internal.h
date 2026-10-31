@@ -2,10 +2,10 @@
 #define MLDSA44_INTERNAL_H
 
 #include "mldsa_poly.h"
-#if defined(MLDSA_PRIOR_CHECKER) || defined(MLDSA_OUR_CHECKER)
+#if defined(MLDSA_PRIOR_CHECKER) || defined(MLDSA_OUR_CHECKER) || defined(MLDSA_ENCODED_CHECKER)
 #include "mldsa_checker.h"
 #endif
-#if defined(MLDSA_PRIOR_CHECKER) && defined(MLDSA_OUR_CHECKER)
+#if (defined(MLDSA_PRIOR_CHECKER) + defined(MLDSA_OUR_CHECKER) + defined(MLDSA_ENCODED_CHECKER)) > 1
 #error Select one NTT checker
 #endif
 #include <stddef.h>
@@ -16,8 +16,22 @@ static inline int mldsa44_ntt(mldsa_ntt *r, const mldsa_poly *a)
     return mldsa_ntt_forward_prior(r, a);
 #elif defined(MLDSA_OUR_CHECKER)
     return mldsa_ntt_forward_our(r, a);
+#elif defined(MLDSA_ENCODED_CHECKER)
+    return mldsa_ntt_forward_encoded(r, a);
 #else
     mldsa_ntt_forward(r, a);
+    return 0;
+#endif
+}
+
+static inline int mldsa44_ntt4(mldsa_ntt r[4], const mldsa_poly a[4])
+{
+#ifdef MLDSA_ENCODED_CHECKER
+    return mldsa_ntt_forward_encoded4(r, a);
+#else
+    for (unsigned i = 0; i < 4; i++)
+        if (mldsa44_ntt(&r[i], &a[i]))
+            return -1;
     return 0;
 #endif
 }
