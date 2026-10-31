@@ -22,6 +22,36 @@ The signer computes a 256 coefficient NTT. A fault can corrupt it and expose the
 | `demo/bench_encoded.c` | Times single NTT calls and four input batches on the current host. |
 | `demo/openssl_mldsa.c` | Optional independent OpenSSL 3.5 or newer verifier. |
 
+## Function by function reading order
+
+| Function | Inputs, output, and reason it exists |
+| --- | --- |
+| `mldsa44_ntt` | Receives one normal polynomial and selects one forward NTT wrapper through a compile flag. It returns zero on success and a nonzero error on checker failure. Baseline behavior remains the same. |
+| `mldsa44_ntt4` | Receives the four already sampled nonce polynomials. In the encoded build it calls one four input checker using one fresh mask. Other builds call the existing one input dispatcher four times. |
+| `sign_core` | Decodes the expanded key, expands public matrix (A), transforms secret components, hashes the message, derives the nonce seed, and loops through signing attempts. It stops immediately when any protected NTT returns an error. The optional (z) branch replaces only the algebraically equivalent computation of (z). |
+| `mldsa_ntt_forward` | Copies input into the NTT buffer, then applies eight stages of butterflies. Each stage consumes public `zetas` in the original order. The demo compile flag lets the test replace each loaded twiddle. Production builds have no such call. |
+| `mldsa_demo_ntt_begin` | Increments a call counter and chooses call 17 for challenge corruption or calls 13 through 16 for nonce corruption. Only the first attempt is targeted. |
+| `mldsa_demo_ntt_twiddle` | Returns either the original twiddle or zero. It also counts zeroed twiddle groups. A zero twiddle makes each butterfly `(u + 0, u - 0)`, which eventually replicates coefficient zero throughout the output. |
+| `mldsa_encoded_random` | Demo adapter to the operating system random source. The checker itself asks for bytes through this hook and rejects if the source fails. A real platform integration must supply its own suitable hook. |
+| `draw` | Takes five uniform field values from a 23 bit rejection sample. Mask generation returns failure if the random source fails. |
+| `run` | Creates (Ur) and (Vr) once, then calls `check_one` on one or four fixed inputs. Any failure clears the entire output buffer. |
+| `check_one` | Forms the six expected input moments, runs the original NTT on the encoded input, decodes the output, computes six observed moments, and returns a mismatch flag. |
+| `gen_encoded_tables.make` | Defines the public permutation and the mathematical matrices. It computes (H) and (V) by the exact negacyclic roots and checks rank five for the complete zero twiddle transformation. |
+| `audit_encoded.boundary_maps` | Builds the output syndrome for each possible stage boundary wire and tracks how each of five mask coordinates reaches that boundary. |
+| `audit_encoded.audit` | Checks generated C bytes, NTT identities, all boundary pairs, all short interval column ranks, all long interval mask ranks, and the complete zero twiddle rank. Any failed assertion ends the audit without a certificate. |
+| `run_demo.invoke` and `trace` | Execute the selected C variant and parse how many forward NTTs and zero twiddle groups were actually reached. This prevents a later clean signing attempt from being mislabeled as a successful faulted one. |
+| `run_demo.matched_deterministic` | Selects a first attempt message with (c_0=0), obtains a clean and a faulty signature with identical deterministic nonce, computes (s_1) from their difference, and checks that protection writes no file. |
+| `run_demo.randomized` | Verifies clean parity, retries fresh randomized requests until a faulted first attempt emits a signature, calls the one signature attacker, and checks the protected abort. |
+| `run_demo.demonstrate_forgery` | Compares recovered (s_1) with the disposable victim key only after recovery, constructs an equivalent key from public data, and checks a signature on a distinct message. |
+| `attacker.challenge_from_seed` | Recreates the public sparse challenge from the signature's first 32 bytes using the same SHAKE sampling procedure. |
+| `attacker.parse_signature` | Decodes the four (z) polynomials from the next 2,304 signature bytes. The attacker never reads the victim key or nonce here. |
+| `attacker.recover_s1` | Inverts the public challenge in the polynomial ring, tries the bounded missing constant coefficient, and retains the unique small (s_1) candidate for each of four rows. |
+| `derive_equivalent.ntt` and `intt` | Direct mathematical transforms for attack analysis. They are slower than the production C butterfly but independent of the implementation path. |
+| `derive_equivalent.reconstruct` | Computes (A s_1) from public (A), finds (s'_2\in[-2,2]) that preserves public high bits (t_1), derives (t'_0), and packs an alternate expanded secret key. The victim key is not an input. |
+| `bench_encoded.main` | Confirms identical clean transform outputs and times five blocks each of baseline and protected single and four input calls. It includes host random sampling. |
+
+The verifier in `src/verify.c` is unchanged. It tests the new message forgery against the original public key. The attack is key recovery followed by an ordinary valid signature, not a bypass of the verifier.
+
 ## Construction and code
 
 All calculations are in \(\mathbb F_q\) for \(q=8380417\). Let \(T\) be the original forward NTT. The generator shuffles coefficient positions using a public permutation \(\pi\) with seed `204256`, then defines
