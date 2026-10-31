@@ -3,6 +3,10 @@
 #ifdef MLDSA_TEST_FAULTS
 extern void mldsa_ntt_test_fault(unsigned l, uint32_t c[MLDSA_N]);
 #endif
+#ifdef MLDSA_DEMO_TWIDDLE_FAULT
+extern void mldsa_demo_ntt_begin(void);
+extern uint32_t mldsa_demo_ntt_twiddle(uint32_t z);
+#endif
 
 static const uint32_t zetas[MLDSA_N] = {
 #include "zetas.inc"
@@ -11,6 +15,10 @@ static const uint32_t zetas[MLDSA_N] = {
 void mldsa_ntt_forward(mldsa_ntt *r, const mldsa_poly *a)
 {
     unsigned k = 0;
+
+#ifdef MLDSA_DEMO_TWIDDLE_FAULT
+    mldsa_demo_ntt_begin();
+#endif
 
     for (unsigned i = 0; i < MLDSA_N; i++)
         r->c[i] = a->c[i];
@@ -23,6 +31,9 @@ void mldsa_ntt_forward(mldsa_ntt *r, const mldsa_poly *a)
     for (unsigned len = MLDSA_N / 2; len > 0; len /= 2) {
         for (unsigned off = 0; off < MLDSA_N; off += 2 * len) {
             uint32_t z = zetas[++k];
+#ifdef MLDSA_DEMO_TWIDDLE_FAULT
+            z = mldsa_demo_ntt_twiddle(z);
+#endif
             for (unsigned j = off; j < off + len; j++) {
                 uint32_t t = mldsa_mul(z, r->c[j + len]);
                 uint32_t u = r->c[j];

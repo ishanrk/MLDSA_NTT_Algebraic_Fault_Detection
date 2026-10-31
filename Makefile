@@ -4,7 +4,7 @@ SAN =
 SEED =
 CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -Wconversion -Wshadow $(OPT) $(SAN) -fno-omit-frame-pointer
 CPPFLAGS = -Iinclude
-SRC = src/poly.c src/ntt.c src/prior.c src/our.c src/shake.c src/round.c src/encode.c src/sample.c src/vector.c src/keygen.c src/sign.c src/verify.c src/message.c
+SRC = src/poly.c src/ntt.c src/prior.c src/our.c src/encoded.c src/shake.c src/round.c src/encode.c src/sample.c src/vector.c src/keygen.c src/sign.c src/verify.c src/message.c
 ARM_CC ?= arm-none-eabi-gcc
 ARM_OBJCOPY ?= arm-none-eabi-objcopy
 ARM_SIZE ?= arm-none-eabi-size
@@ -175,3 +175,30 @@ thesis:
 .PHONY: qemu-benchmark
 qemu-benchmark:
 	python3 tools/qemu_benchmark.py
+
+DEMO_SRC = $(SRC) demo/fault_demo.c
+DEMO_FLAGS = -DMLDSA_DEMO_TWIDDLE_FAULT
+
+demo/bin/standard: $(DEMO_SRC) $(ARM_DEPS)
+	mkdir -p demo/bin
+	$(CC) $(CPPFLAGS) -Isrc $(CFLAGS) $(DEMO_FLAGS) $(DEMO_SRC) -o $@
+
+demo/bin/ntt-z: $(DEMO_SRC) $(ARM_DEPS)
+	mkdir -p demo/bin
+	$(CC) $(CPPFLAGS) -Isrc $(CFLAGS) $(DEMO_FLAGS) -DMLDSA_NTT_DOMAIN_Z $(DEMO_SRC) -o $@
+
+demo/bin/protected-standard: $(DEMO_SRC) $(ARM_DEPS) src/encoded_tables.inc
+	mkdir -p demo/bin
+	$(CC) $(CPPFLAGS) -Isrc $(CFLAGS) $(DEMO_FLAGS) -DMLDSA_ENCODED_CHECKER $(DEMO_SRC) -o $@
+
+demo/bin/protected-ntt-z: $(DEMO_SRC) $(ARM_DEPS) src/encoded_tables.inc
+	mkdir -p demo/bin
+	$(CC) $(CPPFLAGS) -Isrc $(CFLAGS) $(DEMO_FLAGS) -DMLDSA_NTT_DOMAIN_Z -DMLDSA_ENCODED_CHECKER $(DEMO_SRC) -o $@
+
+.PHONY: fault-demo
+fault-demo: demo/bin/standard demo/bin/ntt-z demo/bin/protected-standard demo/bin/protected-ntt-z
+	python3 demo/run_demo.py
+
+demo/bin/benchmark: demo/bench_encoded.c src/poly.c src/ntt.c src/encoded.c src/encoded_tables.inc
+	mkdir -p demo/bin
+	$(CC) $(CPPFLAGS) $(CFLAGS) -DMLDSA_ENCODED_CHECKER demo/bench_encoded.c src/poly.c src/ntt.c src/encoded.c -o $@

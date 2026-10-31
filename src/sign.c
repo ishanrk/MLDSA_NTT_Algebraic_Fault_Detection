@@ -15,7 +15,10 @@ static int sign_core(uint8_t sig[MLDSA44_SIGNATURE_BYTES],
     mldsa_ntt a[4][4], s1n[4], s2n[4], t0n[4];
     mldsa_ntt yn[4], cn;
     mldsa_poly s1[4], s2[4], t0[4], y[4], w[4], w1[4];
-    mldsa_poly z[4], r[4], cs1[4], cs2[4], ct0[4], c;
+    mldsa_poly z[4], r[4], cs2[4], ct0[4], c;
+#ifndef MLDSA_NTT_DOMAIN_Z
+    mldsa_poly cs1[4];
+#endif
 
     if (sig == NULL || sk == NULL || rnd == NULL ||
         sklen != MLDSA44_SECRETKEY_BYTES || clen > 255U ||
@@ -42,10 +45,8 @@ static int sign_core(uint8_t sig[MLDSA44_SIGNATURE_BYTES],
         int reject = 0;
 
         mldsa44_expand_mask(y, rhopp, nonce);
-        for (unsigned i = 0; i < 4; i++) {
-            if (mldsa44_ntt(&yn[i], &y[i]))
-                return -1;
-        }
+        if (mldsa44_ntt4(yn, y))
+            return -1;
         mldsa44_matvec(w, a, yn);
         for (unsigned i = 0; i < 4; i++) {
             for (unsigned j = 0; j < MLDSA_N; j++)
@@ -60,9 +61,20 @@ static int sign_core(uint8_t sig[MLDSA44_SIGNATURE_BYTES],
         if (mldsa44_ntt(&cn, &c))
             return -1;
         for (unsigned i = 0; i < 4; i++) {
+#ifndef MLDSA_NTT_DOMAIN_Z
             mldsa44_mul_ntt(&cs1[i], &cn, &s1n[i]);
+#endif
             mldsa44_mul_ntt(&cs2[i], &cn, &s2n[i]);
+#ifdef MLDSA_NTT_DOMAIN_Z
+            // This optional signer consumes the nonce NTT in both w and z.
+            mldsa_ntt sum, prod;
+            mldsa_ntt_mul(&prod, &cn, &s1n[i]);
+            for (unsigned j = 0; j < MLDSA_N; j++)
+                sum.c[j] = mldsa_add(yn[i].c[j], prod.c[j]);
+            mldsa_ntt_inverse(&z[i], &sum);
+#else
             mldsa_poly_add(&z[i], &y[i], &cs1[i]);
+#endif
             mldsa_poly_sub(&r[i], &w[i], &cs2[i]);
             reject |= mldsa44_norm(&z[i], MLDSA44_GAMMA1 - MLDSA44_BETA);
             for (unsigned j = 0; j < MLDSA_N; j++) {

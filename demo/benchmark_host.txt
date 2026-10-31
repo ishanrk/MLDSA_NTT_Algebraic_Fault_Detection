@@ -1,0 +1,5 @@
+Host: Linux-6.18.57-x86_64-with-glibc2.39
+Compiler: gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
+Single NTT added cost median of five runs: 146.4%
+Four input batch added cost median of five runs: 98.9%
+Includes host getrandom. No Cortex M4 result. CPU frequency and host load vary.

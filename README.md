@@ -1,5 +1,7 @@
 # Algebraic fault detection for the ML-DSA NTT
 
+For the separate public encoded checker and complete simulated Ravi signing attack demo, see [demo/README.md](demo/README.md). The original thesis two check implementation remains available.
+
 This is my honors thesis for my Bachelor's degree. It makes an improvement on algebraic fault detection for the Number Theoretic Transform (NTT), a linear transform used to accelerate polynomial multiplication in lattice based post quantum schemes such as ML-DSA and ML-KEM. A corrupted intermediate value can produce an incorrect transformed polynomial and can lead to key recovery when done many times intentionally. The goal of my thesis is to detect every nonzero output error caused by at most two additive faults at the modeled NTT wires.
 
 I independently implemented ML-DSA-44 from [NIST FIPS 204, Module Lattice Based Digital Signature Standard](https://csrc.nist.gov/pubs/fips/204/final), including keygen, signing, verification, polynomial arithmetic and SHAKE. I then implemented the two fault detection construction of [Abdelmonem et al.](https://eprint.iacr.org/2025/170) and my improved deterministic construction inside the same implementation. My construction reduces the finite field size needed for fault deteection by a factor of $\Theta(\sqrt n)$. The present C implemenation uses more field multiplications than Abdelmonem et al, however it offers more robust fault detection as well.
